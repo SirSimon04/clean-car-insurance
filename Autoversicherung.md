@@ -199,3 +199,5 @@ Ein Repository für Customer wird eingesetzt, weil:
 2. Es eine Abstraktion der Datenpersistenz bietet, wodurch die zugrunde liegende Datenbank ohne Änderungen an der Geschäftslogik geändert werden kann.  
 3. Es ermöglicht, komplexe Abfragen zu kapseln (z. B. findByName). 
 4. Es unterstützt das Prinzip der Aggregate Root in DDD, da Customer ein Aggregate Root ist.  
+
+
