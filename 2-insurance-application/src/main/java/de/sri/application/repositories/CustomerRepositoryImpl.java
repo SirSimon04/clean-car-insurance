@@ -25,7 +25,9 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
 	@Override
 	public Customer save(Customer customer) {
-		this.checkAndSetIds(customer);
+		customer = this.checkAndSetIds(customer);
+		this.customers.put(customer.getId(), customer);
+		System.out.println("Customer saved: " + customer);
 		return customer;
 	}
 
@@ -68,7 +70,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 				.collect(Collectors.toList());
 	}
 
-	private void checkAndSetIds(Customer customer) {
+	private Customer checkAndSetIds(Customer customer) {
 		if (customer.getId() == 0) {
 			int newId = idGenerator.incrementAndGet();
 			customer = new Customer(newId, customer.getFirstName(), customer.getLastName(),
@@ -101,6 +103,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 		}
 		customers.put(customer.getId(), customer);
 
+		return customer;
 	}
 
 	private void addSampleData() {
