@@ -115,7 +115,7 @@ class CustomerRepositoryImplTest {
     void testSavePolicy() {
         // Arrange
         Customer customer = this.repository.findById(1).get();
-        Policy policy = new Policy(0, PolicyStatus.ACTIVE, PolicyProgram.PREMIUM,
+        Policy policy = new Policy(0, PolicyStatus.ACTIVE, PolicyProgram.DELUXE,
                 30000.0, new Premium(150.0, "EUR"), customer.getId());
 
         // Act

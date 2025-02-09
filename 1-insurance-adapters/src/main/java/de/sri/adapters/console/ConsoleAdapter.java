@@ -160,7 +160,7 @@ public class ConsoleAdapter {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Add New Policy ---");
         String status = getStringInput("Enter policy status (ACTIVE/INACTIVE): ");
-        String program = getStringInput("Enter policy program (BASIC/STANDARD/PREMIUM): ");
+        String program = getStringInput("Enter policy program (BASIC/STANDARD/DELUXE): ");
         double carValue = getDoubleInput("Enter car value: ");
         double premiumAmount = getDoubleInput("Enter premium amount: ");
         String premiumCurrency = getStringInput("Enter premium currency: ");

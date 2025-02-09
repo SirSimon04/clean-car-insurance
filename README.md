@@ -16,6 +16,11 @@ Combined command to run the project from 0-insurance-main for rapid development:
 `
 
 ## Rules to Implement
+### PolicyPrograms Default Premium
+- BASIC: Base Premium = 5% of the car value
+- STANDARD: Base Premium = 10% of the car value
+- DELUXE: Base Premium = 15% of the car value
+
 ### General
 - [ ] Customers under 18 cannot submit a Policy
 - [ ] Customers under 21 have to pay young drivers fee
