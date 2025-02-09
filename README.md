@@ -23,10 +23,10 @@ Combined command to run the project from 0-insurance-main for rapid development:
 
 ### General
 - [x] Customers under 18 cannot submit a Policy
-- [ ] Customers under 21 have to pay young drivers fee
-- [ ] Customers over 80 have to pay senior drivers fee
-- [ ] If the car value is over 40.000€, you have to pay 1% of your car value per month on top
-- [ ] Cars with value over 100k will not be insuranced
+- [x] Customers under 21 have to pay young drivers fee (add 10% of premium)
+- [x] Customers over 80 have to pay senior drivers fee (add 10% of premium)
+- [x] If the car value is over 40.000€, you have to pay 1% of your car value per month on top
+- [x] Cars with value over 100k will not be insuranced
 
 
 ### Tickets
