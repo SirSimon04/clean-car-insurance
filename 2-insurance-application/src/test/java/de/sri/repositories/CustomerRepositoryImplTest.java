@@ -1,9 +1,8 @@
-package de.sri;
+package de.sri.repositories;
 
 import de.sri.application.repositories.CustomerRepositoryImpl;
 import de.sri.domain.entities.*;
 import de.sri.domain.valueobjects.Address;
-import de.sri.domain.valueobjects.Premium;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -116,7 +115,8 @@ class CustomerRepositoryImplTest {
         // Arrange
         Customer customer = this.repository.findById(1).get();
         Policy policy = new Policy(0, PolicyStatus.ACTIVE, PolicyProgram.DELUXE,
-                30000.0, new Premium(150.0, "EUR"), customer.getId());
+                30000.0, customer.getId());
+        
 
         // Act
         customer.addPolicy(policy);
