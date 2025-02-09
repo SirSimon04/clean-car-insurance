@@ -5,6 +5,9 @@ public class Premium {
 	private final String currency;
 
 	public Premium(double amount, String currency) {
+		if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
 		this.amount = amount;
 		this.currency = currency;
 	}

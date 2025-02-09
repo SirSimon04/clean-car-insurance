@@ -7,10 +7,6 @@ public final class PersonName {
     private final String lastName;    
 
     public PersonName(String firstName, String lastName) {
-        this(firstName, lastName);
-    }
-
-    public PersonName(String firstName, String lastName) {
         this.firstName = firstName.trim();
         this.lastName = lastName.trim();
     }
