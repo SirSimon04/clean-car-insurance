@@ -166,12 +166,11 @@ public class ConsoleAdapter {
         String status = getStringInput("Enter policy status (ACTIVE/INACTIVE): ");
         String program = getStringInput("Enter policy program (BASIC/STANDARD/DELUXE): ");
         double carValue = getDoubleInput("Enter car value: ");
-        double premiumAmount = getDoubleInput("Enter premium amount: ");
-        String premiumCurrency = getStringInput("Enter premium currency: ");
+        // double premiumAmount = getDoubleInput("Enter premium amount: ");
+        // String premiumCurrency = getStringInput("Enter premium currency: ");
 
         Policy policy = new Policy(0, PolicyStatus.valueOf(status.toUpperCase()),
-                PolicyProgram.valueOf(program.toUpperCase()), carValue, new Premium(premiumAmount, premiumCurrency),
-                customerId);
+                PolicyProgram.valueOf(program.toUpperCase()), carValue, customerId);
 
         customerManagement.addPolicyToCustomer(customerId, policy);
         System.out.println("Policy added successfully to customer.");

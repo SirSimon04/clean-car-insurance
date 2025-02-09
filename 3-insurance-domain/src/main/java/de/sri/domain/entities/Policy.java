@@ -10,13 +10,12 @@ public class Policy {
 	private Premium premium;
 	private final int customerId;
 
-	public Policy(int id, PolicyStatus status, PolicyProgram program, double carValue, Premium premium,
+	public Policy(int id, PolicyStatus status, PolicyProgram program, double carValue,
 			int customerId) {
 		this.id = id;
 		this.status = status;
 		this.program = program;
 		this.carValue = carValue;
-		this.premium = premium;
 		this.customerId = customerId;
 	}
 

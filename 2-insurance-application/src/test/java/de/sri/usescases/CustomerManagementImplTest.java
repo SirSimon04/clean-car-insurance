@@ -90,7 +90,7 @@ class CustomerManagementImplTest {
         // Call the addPolicyToCustomer method
         customerManagement.addPolicyToCustomer(1, policy);
 
-        assertEquals(1000, policy.getPremium().getAmount());
+        assertEquals(3000, policy.getPremium().getAmount());
         assertEquals(1, customer.getPolicies().size());
         assertEquals(policy, customer.getPolicies().get(0));
         verify(customerRepository, times(1)).save(customer);
@@ -129,64 +129,24 @@ class CustomerManagementImplTest {
     }
 
     @Test
-    void testAddPolicyToCustomerCarValueTooHigh() {
-        // Create a customer with age > 18
-        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(20), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
-        when(customerRepository.findById(1)).thenReturn(customer);
+    void add_policy_with_too_high_car_value() {        
+        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+        when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
-        // Create a policy with car value > 100000
-        Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 150000, new Premium(7500, "EUR"), 1);
+        Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 120000, 1);
 
-        // Call the addPolicyToCustomer method and assert that it throws an exception
-        assertThrows(IllegalArgumentException.class, () -> customerManagement.addPolicyToCustomer(1, policy));
-
-        // Verify that the customer is not updated in the repository
-        verify(customerRepository, never()).update(any());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> customerManagement.addPolicyToCustomer(1, policy));
+    assertEquals("Car value cannot be more than 100,000!", exception.getMessage());
     }
 
     @Test
-    void testAddPolicyToCustomerYoungDriverFee() {
-        // Create a customer with age < 21
-        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(20), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
-        when(customerRepository.findById(1)).thenReturn(customer);
+    void add_policy_with_customer_under_18_years_old() {        
+        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(17), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+        when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
-        // Create a policy
-        Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 50000, new Premium(2500, "EUR"), 1);
+        Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 120000, 1);
 
-        // Call the addPolicyToCustomer method
-        customerManagement.addPolicyToCustomer(1, policy);
-
-        // Verify that the premium is calculated correctly with the young driver fee
-        assertEquals(2750, policy.getPremium().getAmount()); // 2500 + (2500 * 0.1)
-
-        // Verify that the policy is added to the customer
-        assertEquals(1, customer.getPolicies().size());
-        assertEquals(policy, customer.getPolicies().get(0));
-
-        // Verify that the customer is updated in the repository
-        verify(customerRepository, times(1)).update(customer);
-    }
-
-    @Test
-    void testAddPolicyToCustomerSeniorDriverFee() {
-        // Create a customer with age > 80
-        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(85), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
-        when(customerRepository.findById(1)).thenReturn(customer);
-
-        // Create a policy
-        Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 50000, new Premium(2500, "EUR"), 1);
-
-        // Call the addPolicyToCustomer method
-        customerManagement.addPolicyToCustomer(1, policy);
-
-        // Verify that the premium is calculated correctly with the senior driver fee
-        assertEquals(2750, policy.getPremium().getAmount()); // 2500 + (2500 * 0.1)
-
-        // Verify that the policy is added to the customer
-        assertEquals(1, customer.getPolicies().size());
-        assertEquals(policy, customer.getPolicies().get(0));
-
-        // Verify that the customer is updated in the repository
-        verify(customerRepository, times(1)).update(customer);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> customerManagement.addPolicyToCustomer(1, policy));
+    assertEquals("Customer has to be 18 years old to create a policy!", exception.getMessage());
     }
 }

@@ -26,6 +26,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 	@Override
 	public Customer save(Customer customer) {
 		customer = this.checkAndSetIds(customer);
+		this.customers.remove(customer.getId());
 		this.customers.put(customer.getId(), customer);
 		System.out.println("Customer saved: " + customer);
 		return customer;
@@ -81,7 +82,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 				customer.removePolicy(policy.getId());
 				policy = new Policy(idGenerator.incrementAndGet(), policy.getStatus(),
 						policy.getProgram(),
-						policy.getCarValue(), policy.getPremium(), customer.getId());
+						policy.getCarValue(), customer.getId());
 				customer.addPolicy(policy);
 			}
 		}
@@ -117,12 +118,9 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 				LocalDate.of(1995, 2, 20),
 				"erika.mustermann@example.de", address2);
 
-		Policy policy1 = new Policy(idGenerator.incrementAndGet(), PolicyStatus.ACTIVE, PolicyProgram.STANDARD,
-				25000.0,
-				new Premium(120.0, "EUR"), customer1.getId());
+		Policy policy1 = new Policy(idGenerator.incrementAndGet(), PolicyStatus.ACTIVE, PolicyProgram.STANDARD,25000.0, customer1.getId());
 		Policy policy2 = new Policy(idGenerator.incrementAndGet(), PolicyStatus.INACTIVE, PolicyProgram.BASIC,
-				18000.0,
-				new Premium(80.0, "EUR"), customer2.getId());
+				18000.0, customer2.getId());
 
 		customer1.addPolicy(policy1);
 		customer2.addPolicy(policy2);
