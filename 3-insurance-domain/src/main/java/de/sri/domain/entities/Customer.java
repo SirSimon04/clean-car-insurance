@@ -53,9 +53,14 @@ public class Customer {
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(LocalDate dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
+	public int getAge(){
+		LocalDate now = LocalDate.now();
+		int age = now.getYear() - dateOfBirth.getYear();
+		if (now.getDayOfYear() < dateOfBirth.getDayOfYear()) {
+			age--;
+		}
+		return age;
+	}	
 
 	public String getEmail() {
 		return email;

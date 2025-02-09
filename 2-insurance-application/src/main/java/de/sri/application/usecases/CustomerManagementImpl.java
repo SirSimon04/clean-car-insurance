@@ -40,8 +40,12 @@ public class CustomerManagementImpl implements CustomerManagement {
 	}
 
 	@Override
-	public void addPolicyToCustomer(int customerId, Policy policy) {
+	public void addPolicyToCustomer(int customerId, Policy policy) {		
 		Customer customer = getCustomer(customerId);
+		// Customers has to be 18 years old to craete a policy
+		if (customer.getAge() < 18) {
+			throw new IllegalArgumentException("Customer has to be 18 years old to create a policy!");
+		}
 		customer.addPolicy(policy);
 		updateCustomer(customer);
 	}

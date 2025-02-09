@@ -22,7 +22,7 @@ Combined command to run the project from 0-insurance-main for rapid development:
 - DELUXE: Base Premium = 15% of the car value
 
 ### General
-- [ ] Customers under 18 cannot submit a Policy
+- [x] Customers under 18 cannot submit a Policy
 - [ ] Customers under 21 have to pay young drivers fee
 - [ ] Customers over 80 have to pay senior drivers fee
 - [ ] If the car value is over 40.000€, you have to pay 1% of your car value per month on top

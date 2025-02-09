@@ -29,7 +29,8 @@ public class ConsoleAdapter {
     public void start() {
         boolean running = true;
         while (running) {
-            printMainMenu();
+            try {
+                printMainMenu();
             int choice = getIntInput("Choose an option: ");
 
             switch (choice) {
@@ -72,7 +73,10 @@ public class ConsoleAdapter {
                 default:
                     System.out.println("Invalid option. Please try again.");
             }
-        }
+            } catch (Exception e) {
+                System.out.println("An error occurred: " + e.getMessage());
+            }
+        }            
     }
 
     private void printMainMenu() {
