@@ -14,17 +14,17 @@ class PremiumTest {
     }
 
     @Test
-    void testCreateInvalidPremiumZeroAmount() {
+    void create_invalid_premium_object_zero_amount() {
         assertThrows(IllegalArgumentException.class, () -> new Premium(0.0, "EUR"));
     }
 
     @Test
-    void testCreateInvalidPremiumNegativeAmount() {
+    void create_invalid_premium_object_negative_amount() {
         assertThrows(IllegalArgumentException.class, () -> new Premium(-100.0, "EUR"));
     }
 
     @Test
-    void testAddPremiumsSameCurrency() {
+    void add_premiums_with_same_currency() {
         Premium premium1 = new Premium(100.0, "EUR");
         Premium premium2 = new Premium(50.0, "EUR");
         Premium result = premium1.add(premium2);
@@ -33,14 +33,14 @@ class PremiumTest {
     }
 
     @Test
-    void testAddPremiumsDifferentCurrency() {
+    void add_premiums_with_different_currencies() {
         Premium premium1 = new Premium(100.0, "EUR");
         Premium premium2 = new Premium(50.0, "USD");
         assertThrows(IllegalArgumentException.class, () -> premium1.add(premium2));
     }
 
     @Test
-    void testSubtractPremiumsSameCurrency() {
+    void subtract_premiums_with_same_currency() {
         Premium premium1 = new Premium(100.0, "EUR");
         Premium premium2 = new Premium(50.0, "EUR");
         Premium result = premium1.subtract(premium2);
@@ -49,14 +49,14 @@ class PremiumTest {
     }
 
     @Test
-    void testSubtractPremiumsDifferentCurrency() {
+    void subtract_premiums_with_different_currencies() {
         Premium premium1 = new Premium(100.0, "EUR");
         Premium premium2 = new Premium(50.0, "USD");
         assertThrows(IllegalArgumentException.class, () -> premium1.subtract(premium2));
     }
 
     @Test
-    void testToString() {
+    void to_string_method() {
         Premium premium = new Premium(100.0, "EUR");
         assertEquals("100.0 EUR", premium.toString());
     }
