@@ -3,22 +3,27 @@ package de.sri.application.usecases;
 import de.sri.domain.entities.Customer;
 import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.PolicyProgram;
-import de.sri.domain.usecases.CustomerManagement;
+import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.PolicyManagement;
 import de.sri.domain.valueobjects.Premium;
 
 public class PolicyManagementImpl implements PolicyManagement{
 
 	//REVISIT: Should the repository be injected here?
-    private final CustomerManagement customerManagement;
+    private final CustomerRepository customerRepository;
 
-    public PolicyManagementImpl(CustomerManagement customerManagement) {
-        this.customerManagement = customerManagement;
+    public PolicyManagementImpl(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
     }
+
+	private Customer getCustomer(int customerId) {
+		return customerRepository.findById(customerId)
+				.orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+	}
 
     @Override
 	public void addPolicyToCustomer(int customerId, Policy policy) {		
-		Customer customer = this.customerManagement.getCustomer(customerId);
+		Customer customer = getCustomer(customerId);
 		// Customers has to be 18 years old to craete a policy
 		if (customer.getAge() < 18) {
 			throw new IllegalArgumentException("Customer has to be 18 years old to create a policy!");
@@ -58,25 +63,25 @@ public class PolicyManagementImpl implements PolicyManagement{
 
 		policy.setPremium(new Premium(premiumPrice, "EUR")); // REVISIT: Currency should be a constant
 		customer.addPolicy(policy);
-		this.customerManagement.updateCustomer(customer);
+		customerRepository.save(customer);
 	}
 
 	@Override
 	public void removePolicyFromCustomer(int customerId, Policy policy) {
-		Customer customer = this.customerManagement.getCustomer(customerId);
+		Customer customer = getCustomer(customerId);
 		customer.removePolicy(policy.getId());
-		this.customerManagement.updateCustomer(customer);
+		customerRepository.save(customer);
 	}
 
 	@Override
 	public void increaseAllPoliciesPremiumBy(int value, int customerId) {
-		Customer customer = this.customerManagement.getCustomer(customerId);
+		Customer customer = getCustomer(customerId);
 
 		customer.getPolicies().forEach(policy -> {
 			double newPremium = policy.getPremium().getAmount() + value;
 			policy.setPremium(new Premium(newPremium, policy.getPremium().getCurrency()));
 		});
-		
-		this.customerManagement.updateCustomer(customer);
+
+		customerRepository.save(customer);
 	}
 }
