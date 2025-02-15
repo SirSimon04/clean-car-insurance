@@ -16,7 +16,7 @@ public class Main {
 
         CustomerManagement customerManagement = new CustomerManagementImpl(customerRepository);
         PolicyManagement policyManagement = new PolicyManagementImpl(customerRepository);
-        TicketManagement ticketManagement = new TicketManagementImpl(customerManagement, policyManagement);
+        TicketManagement ticketManagement = new TicketManagementImpl(customerRepository, policyManagement);
 
         ConsoleAdapter consoleAdapter = new ConsoleAdapter(customerManagement, policyManagement, ticketManagement);
 
