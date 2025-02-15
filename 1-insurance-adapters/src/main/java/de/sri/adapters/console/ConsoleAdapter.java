@@ -2,6 +2,7 @@ package de.sri.adapters.console;
 
 import de.sri.domain.usecases.CustomerManagement;
 import de.sri.domain.usecases.PolicyManagement;
+import de.sri.domain.usecases.TicketManagement;
 import de.sri.domain.entities.Customer;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.valueobjects.Address;
@@ -19,12 +20,14 @@ import java.time.format.DateTimeFormatter;
 public class ConsoleAdapter {
     private final CustomerManagement customerManagement;
     private final PolicyManagement policyManagement;
+    private final TicketManagement ticketManagement;
     private final Scanner scanner;
     private final DateTimeFormatter dateFormatter;
 
-    public ConsoleAdapter(CustomerManagement customerManagement, PolicyManagement policyManagement) {
+    public ConsoleAdapter(CustomerManagement customerManagement, PolicyManagement policyManagement, TicketManagement ticketManagement) {
         this.customerManagement = customerManagement;
         this.policyManagement = policyManagement;
+        this.ticketManagement = ticketManagement;
         this.scanner = new Scanner(System.in);
         this.dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     }
@@ -197,7 +200,7 @@ public class ConsoleAdapter {
         double speedExcess = getDoubleInput("Enter speed excess: ");
 
         Ticket ticket = new Ticket(0, date, speedExcess, customerId);
-        customerManagement.createTicketForCustomer(customerId, ticket);
+        ticketManagement.createTicketForCustomer(customerId, ticket);
         System.out.println("Ticket created successfully for customer.");
     }
 

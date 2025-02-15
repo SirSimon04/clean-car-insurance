@@ -20,8 +20,6 @@ public interface CustomerManagement {
 
 	void createAccidentForCustomer(int customerId, Accident accident);
 
-	void createTicketForCustomer(int customerId, Ticket ticket);
-
 	List<Customer> getCustomersByPolicyStatus(PolicyStatus status);
 
 	List<Customer> getCustomersByAccidentCostGreaterThan(double cost);

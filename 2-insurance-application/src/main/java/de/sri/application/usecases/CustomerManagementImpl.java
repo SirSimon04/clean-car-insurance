@@ -47,13 +47,6 @@ public class CustomerManagementImpl implements CustomerManagement {
 	}
 
 	@Override
-	public void createTicketForCustomer(int customerId, Ticket ticket) {
-		Customer customer = getCustomer(customerId);
-		customer.addTicket(ticket);
-		updateCustomer(customer);
-	}
-
-	@Override
 	public List<Customer> getCustomersByPolicyStatus(PolicyStatus status) {
 		return customerRepository.findByPolicyStatus(status);
 	}
