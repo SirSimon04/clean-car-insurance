@@ -1,6 +1,7 @@
 package de.sri.adapters.console;
 
 import de.sri.domain.usecases.CustomerManagement;
+import de.sri.domain.usecases.PolicyManagement;
 import de.sri.domain.entities.Customer;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.valueobjects.Address;
@@ -17,11 +18,13 @@ import java.time.format.DateTimeFormatter;
 
 public class ConsoleAdapter {
     private final CustomerManagement customerManagement;
+    private final PolicyManagement policyManagement;
     private final Scanner scanner;
     private final DateTimeFormatter dateFormatter;
 
-    public ConsoleAdapter(CustomerManagement customerManagement) {
+    public ConsoleAdapter(CustomerManagement customerManagement, PolicyManagement policyManagement) {
         this.customerManagement = customerManagement;
+        this.policyManagement = policyManagement;
         this.scanner = new Scanner(System.in);
         this.dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     }
@@ -172,7 +175,7 @@ public class ConsoleAdapter {
         Policy policy = new Policy(0, PolicyStatus.valueOf(status.toUpperCase()),
                 PolicyProgram.valueOf(program.toUpperCase()), carValue, customerId);
 
-        customerManagement.addPolicyToCustomer(customerId, policy);
+        policyManagement.addPolicyToCustomer(customerId, policy);
         System.out.println("Policy added successfully to customer.");
     }
 

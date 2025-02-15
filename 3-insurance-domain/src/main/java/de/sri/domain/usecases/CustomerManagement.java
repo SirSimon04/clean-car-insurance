@@ -18,10 +18,6 @@ public interface CustomerManagement {
 
 	void deleteCustomer(int customerId);
 
-	void addPolicyToCustomer(int customerId, Policy policy);
-
-	void removePolicyFromCustomer(int customerId, Policy policy);
-
 	void createAccidentForCustomer(int customerId, Accident accident);
 
 	void createTicketForCustomer(int customerId, Ticket ticket);
