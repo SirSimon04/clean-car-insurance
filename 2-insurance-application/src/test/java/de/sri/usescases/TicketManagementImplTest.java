@@ -1,16 +1,10 @@
 package de.sri.usescases;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import de.sri.application.repositories.CustomerRepositoryImpl;
 import de.sri.application.usecases.PolicyManagementImpl;
@@ -64,5 +58,20 @@ public class TicketManagementImplTest {
         assertEquals(customerRepository.findById(101).get().getPolicies().get(0).getPremium().getAmount(), premium + ticketManagement.INCREASE_PREMIUM);        
     }
 
+    @Test
+    void create_ticket_for_customer_exceeds_5_decline_policy() {
+        Customer customer = new Customer(102, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+        customerRepository.save(customer);
+
+        Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000, 1);
+        policyManagementImpl.addPolicyToCustomer(102, policy);
+
+        for (int i = 0; i < 5; i++) {
+            Ticket ticket = new Ticket(i, LocalDate.now(), 10.0, 101);
+            ticketManagement.createTicketForCustomer(102, ticket);
+        }
+
+        assertEquals(customerRepository.findById(102).get().getPolicies().get(0).getStatus(), PolicyStatus.DECLINED);
+    }
     
 }

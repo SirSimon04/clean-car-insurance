@@ -1,6 +1,7 @@
 package de.sri.application.usecases;
 
 import de.sri.domain.entities.Customer;
+import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.entities.Ticket;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.PolicyManagement;
@@ -25,8 +26,15 @@ public class TicketManagementImpl implements TicketManagement {
 
     @Override
 	public void createTicketForCustomer(int customerId, Ticket ticket) {
-		Customer customer = getCustomer(customerId);        
+		Customer customer = getCustomer(customerId);           
 		customer.addTicket(ticket);
+        if(customer.getTickets().size() >= 5) {
+            // Too many tickets
+            customer.getPolicies().forEach(policy -> {
+                //policy.setPremium(policy.getPremium().getAmount() + INCREASE_PREMIUM);
+                policy.setStatus(PolicyStatus.DECLINED);
+            });
+        }
 		this.customerRepository.save(customer);
         this.policyManagement.increaseAllPoliciesPremiumBy(INCREASE_PREMIUM, customerId);
 	}
