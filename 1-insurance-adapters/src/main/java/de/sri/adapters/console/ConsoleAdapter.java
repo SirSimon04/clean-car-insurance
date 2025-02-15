@@ -10,7 +10,6 @@ import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.Accident;
 import de.sri.domain.entities.Ticket;
 import de.sri.domain.entities.PolicyProgram;
-import de.sri.domain.valueobjects.Premium;
 
 import java.util.List;
 import java.util.Scanner;
@@ -169,13 +168,10 @@ public class ConsoleAdapter {
     private void addPolicyToCustomer() {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Add New Policy ---");
-        String status = getStringInput("Enter policy status (ACTIVE/INACTIVE): ");
         String program = getStringInput("Enter policy program (BASIC/STANDARD/DELUXE): ");
-        double carValue = getDoubleInput("Enter car value: ");
-        // double premiumAmount = getDoubleInput("Enter premium amount: ");
-        // String premiumCurrency = getStringInput("Enter premium currency: ");
+        double carValue = getDoubleInput("Enter car value: ");        
 
-        Policy policy = new Policy(0, PolicyStatus.valueOf(status.toUpperCase()),
+        Policy policy = new Policy(0, PolicyStatus.ACTIVE,
                 PolicyProgram.valueOf(program.toUpperCase()), carValue, customerId);
 
         policyManagement.addPolicyToCustomer(customerId, policy);
