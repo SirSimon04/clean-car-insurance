@@ -8,6 +8,8 @@ import de.sri.domain.usecases.TicketManagement;
 
 public class TicketManagementImpl implements TicketManagement {
 
+    public final int INCREASE_PREMIUM = 10;
+
     private final CustomerManagement customerManagement;
     private final PolicyManagement policyManagement;
 
@@ -21,7 +23,7 @@ public class TicketManagementImpl implements TicketManagement {
 		Customer customer = this.customerManagement.getCustomer(customerId);
 		customer.addTicket(ticket);
 		this.customerManagement.updateCustomer(customer);
-        this.policyManagement.increaseAllPoliciesPremiumBy(10, customerId);
+        this.policyManagement.increaseAllPoliciesPremiumBy(INCREASE_PREMIUM, customerId);
 	}
     
 }
