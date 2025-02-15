@@ -79,11 +79,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 		}
 		for (Policy policy : customer.getPolicies()) {
 			if (policy.getId() == 0) {
-				customer.removePolicy(policy.getId());
-				policy = new Policy(idGenerator.incrementAndGet(), policy.getStatus(),
-						policy.getProgram(),
-						policy.getCarValue(), customer.getId());
-				customer.addPolicy(policy);
+				policy.setId(idGenerator.incrementAndGet());
 			}
 		}
 		for (Accident accident : customer.getAccidents()) {

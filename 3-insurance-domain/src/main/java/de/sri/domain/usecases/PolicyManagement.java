@@ -6,4 +6,6 @@ public interface PolicyManagement {
     void addPolicyToCustomer(int customerId, Policy policy);
 
 	void removePolicyFromCustomer(int customerId, Policy policy);
+
+    void increaseAllPoliciesPremiumBy(int value, int customerId);
 }

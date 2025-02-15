@@ -9,6 +9,7 @@ import de.sri.domain.valueobjects.Premium;
 
 public class PolicyManagementImpl implements PolicyManagement{
 
+	//REVISIT: Should the repository be injected here?
     private final CustomerManagement customerManagement;
 
     public PolicyManagementImpl(CustomerManagement customerManagement) {
@@ -64,6 +65,18 @@ public class PolicyManagementImpl implements PolicyManagement{
 	public void removePolicyFromCustomer(int customerId, Policy policy) {
 		Customer customer = this.customerManagement.getCustomer(customerId);
 		customer.removePolicy(policy.getId());
+		this.customerManagement.updateCustomer(customer);
+	}
+
+	@Override
+	public void increaseAllPoliciesPremiumBy(int value, int customerId) {
+		Customer customer = this.customerManagement.getCustomer(customerId);
+
+		customer.getPolicies().forEach(policy -> {
+			double newPremium = policy.getPremium().getAmount() + value;
+			policy.setPremium(new Premium(newPremium, policy.getPremium().getCurrency()));
+		});
+		
 		this.customerManagement.updateCustomer(customer);
 	}
 }

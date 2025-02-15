@@ -3,7 +3,7 @@ package de.sri.domain.entities;
 import de.sri.domain.valueobjects.Premium;
 
 public class Policy {
-	private final int id;
+	private int id;
 	private PolicyStatus status;
 	private PolicyProgram program;
 	private double carValue;
@@ -17,6 +17,10 @@ public class Policy {
 		this.program = program;
 		this.carValue = carValue;
 		this.customerId = customerId;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public int getId() {

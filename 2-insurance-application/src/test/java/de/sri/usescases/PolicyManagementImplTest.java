@@ -144,4 +144,18 @@ class PolicyManagementImplTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> policyManagement.addPolicyToCustomer(1, policy));
     assertEquals("Customer has to be 18 years old to create a policy!", exception.getMessage());
     }
+
+    @Test
+    void increase_all_policies_premium() {
+        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+
+        when(customerManagement.getCustomer(1)).thenReturn(customer);
+
+        Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 40000, 1);
+        policyManagement.addPolicyToCustomer(1, policy);
+
+        double premium = policy.getPremium().getAmount();
+        policyManagement.increaseAllPoliciesPremiumBy(10, customer.getId());
+        assertEquals(policy.getPremium().getAmount(), premium + 10);
+    }
 }
