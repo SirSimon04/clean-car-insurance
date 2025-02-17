@@ -43,7 +43,7 @@ public class TicketManagementImplTest {
     }
 
     @Test
-    void create_ticket_for_customer_increase_policy(){
+    void increase_policy_premium_per_ticket(){
         Customer customer = new Customer(101, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
         customerRepository.save(customer);
 
@@ -59,7 +59,7 @@ public class TicketManagementImplTest {
     }
 
     @Test
-    void create_ticket_for_customer_exceeds_5_decline_policy() {
+    void decline_policy_when_ticket_amount_reaches_5() {
         Customer customer = new Customer(102, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
         customerRepository.save(customer);
 
@@ -75,7 +75,7 @@ public class TicketManagementImplTest {
     }
 
     @Test
-    void speeding_over_20_increases_all_policies_based_on_highest_carValue() {
+    void increase_all_policy_premiums_based_on_highest_carValue_when_speeding_over_20() {
         Customer customer = new Customer(103, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
         customerRepository.save(customer);
 
@@ -92,7 +92,6 @@ public class TicketManagementImplTest {
 
         assertEquals(customerRepository.findById(103).get().getPolicies().get(0).getPremium().getAmount(), premium1 + ticketManagement.INCREASE_PREMIUM + 1000);
         assertEquals(customerRepository.findById(103).get().getPolicies().get(1).getPremium().getAmount(), premium2 + ticketManagement.INCREASE_PREMIUM + 1000);
-
     }
     
 }
