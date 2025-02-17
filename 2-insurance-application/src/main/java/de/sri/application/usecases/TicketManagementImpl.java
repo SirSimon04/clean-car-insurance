@@ -1,6 +1,7 @@
 package de.sri.application.usecases;
 
 import de.sri.domain.entities.Customer;
+import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.entities.Ticket;
 import de.sri.domain.repositories.CustomerRepository;
@@ -36,7 +37,14 @@ public class TicketManagementImpl implements TicketManagement {
             });
         }
 		this.customerRepository.save(customer);
-        this.policyManagement.increaseAllPoliciesPremiumBy(INCREASE_PREMIUM, customerId);
+
+        final double[] increasePremiumValue = {INCREASE_PREMIUM};
+        if(ticket.getSpeedExcess() > 20) {
+            customer.getPolicies().stream().max((p1, p2) -> Double.compare(p1.getPremium().getAmount(), p2.getPremium().getAmount())).ifPresent(policy -> {
+                increasePremiumValue[0] = INCREASE_PREMIUM + policy.getCarValue() * 0.02;
+            });
+        }
+        this.policyManagement.increaseAllPoliciesPremiumBy(increasePremiumValue[0], customerId);
 	}
     
 }

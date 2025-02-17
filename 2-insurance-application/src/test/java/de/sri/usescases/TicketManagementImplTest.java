@@ -35,7 +35,7 @@ public class TicketManagementImplTest {
         Customer customer = new Customer(100, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
         customerRepository.save(customer);
 
-        Ticket ticket = new Ticket(2, LocalDate.now(), 10.0, 100);
+        Ticket ticket = new Ticket(2, LocalDate.now(), 10.0);
         ticketManagement.createTicketForCustomer(100, ticket);
 
         assertEquals(customerRepository.findById(100).get().getTickets().size(), 1);
@@ -52,7 +52,7 @@ public class TicketManagementImplTest {
 
         double premium = policy.getPremium().getAmount();
 
-        Ticket ticket = new Ticket(2, LocalDate.now(), 10.0, 101);
+        Ticket ticket = new Ticket(2, LocalDate.now(), 10.0);
         ticketManagement.createTicketForCustomer(101, ticket);
 
         assertEquals(customerRepository.findById(101).get().getPolicies().get(0).getPremium().getAmount(), premium + ticketManagement.INCREASE_PREMIUM);        
@@ -67,11 +67,32 @@ public class TicketManagementImplTest {
         policyManagementImpl.addPolicyToCustomer(102, policy);
 
         for (int i = 0; i < 5; i++) {
-            Ticket ticket = new Ticket(i, LocalDate.now(), 10.0, 101);
+            Ticket ticket = new Ticket(i, LocalDate.now(), 10.0);
             ticketManagement.createTicketForCustomer(102, ticket);
         }
 
         assertEquals(customerRepository.findById(102).get().getPolicies().get(0).getStatus(), PolicyStatus.DECLINED);
+    }
+
+    @Test
+    void speeding_over_20_increases_all_policies_based_on_highest_carValue() {
+        Customer customer = new Customer(103, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+        customerRepository.save(customer);
+
+        Policy policy1 = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000, 103);
+        Policy policy2 = new Policy(2, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 50000, 103);
+        policyManagementImpl.addPolicyToCustomer(103, policy1);
+        policyManagementImpl.addPolicyToCustomer(103, policy2);
+
+        double premium1 = policy1.getPremium().getAmount();
+        double premium2 = policy2.getPremium().getAmount();
+
+        Ticket ticket = new Ticket(1, LocalDate.now(), 21.0);
+        ticketManagement.createTicketForCustomer(103, ticket);
+
+        assertEquals(customerRepository.findById(103).get().getPolicies().get(0).getPremium().getAmount(), premium1 + ticketManagement.INCREASE_PREMIUM + 1000);
+        assertEquals(customerRepository.findById(103).get().getPolicies().get(1).getPremium().getAmount(), premium2 + ticketManagement.INCREASE_PREMIUM + 1000);
+
     }
     
 }
