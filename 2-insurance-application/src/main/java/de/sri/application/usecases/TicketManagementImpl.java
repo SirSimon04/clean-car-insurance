@@ -1,7 +1,6 @@
 package de.sri.application.usecases;
 
 import de.sri.domain.entities.Customer;
-import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.entities.Ticket;
 import de.sri.domain.repositories.CustomerRepository;

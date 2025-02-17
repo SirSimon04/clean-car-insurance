@@ -1,10 +1,8 @@
 package de.sri.domain.usecases;
 
 import de.sri.domain.entities.Customer;
-import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.entities.Accident;
-import de.sri.domain.entities.Ticket;
 import java.util.List;
 
 public interface CustomerManagement {

@@ -8,7 +8,6 @@ import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.entities.Ticket;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.valueobjects.Address;
-import de.sri.domain.valueobjects.Premium;
 
 import java.time.LocalDate;
 import java.util.*;

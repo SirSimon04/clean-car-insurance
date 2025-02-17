@@ -6,7 +6,6 @@ import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.repositories.CustomerRepository;
-import de.sri.domain.usecases.CustomerManagement;
 import de.sri.domain.valueobjects.Address;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
