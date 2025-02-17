@@ -7,5 +7,5 @@ public interface PolicyManagement {
 
 	void removePolicyFromCustomer(int customerId, Policy policy);
 
-    void increaseAllPoliciesPremiumBy(int value, int customerId);
+    void increaseAllPoliciesPremiumBy(double value, int customerId);
 }

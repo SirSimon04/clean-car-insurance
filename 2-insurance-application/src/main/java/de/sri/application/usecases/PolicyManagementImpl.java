@@ -74,7 +74,7 @@ public class PolicyManagementImpl implements PolicyManagement{
 	}
 
 	@Override
-	public void increaseAllPoliciesPremiumBy(int value, int customerId) {
+	public void increaseAllPoliciesPremiumBy(double value, int customerId) {
 		Customer customer = getCustomer(customerId);
 
 		customer.getPolicies().forEach(policy -> {
