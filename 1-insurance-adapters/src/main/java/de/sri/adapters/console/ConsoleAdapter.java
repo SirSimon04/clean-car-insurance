@@ -195,7 +195,7 @@ public class ConsoleAdapter {
         LocalDate date = getDateInput("Enter ticket date (YYYY-MM-DD): ");
         double speedExcess = getDoubleInput("Enter speed excess: ");
 
-        Ticket ticket = new Ticket(0, date, speedExcess, customerId);
+        Ticket ticket = new Ticket(0, date, speedExcess);
         ticketManagement.createTicketForCustomer(customerId, ticket);
         System.out.println("Ticket created successfully for customer.");
     }

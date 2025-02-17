@@ -94,7 +94,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 			if (ticket.getId() == 0) {
 				customer.removeTicket(ticket.getId());
 				ticket = new Ticket(idGenerator.incrementAndGet(), ticket.getDate(),
-						ticket.getSpeedExcess(), customer.getId());
+						ticket.getSpeedExcess());
 				customer.addTicket(ticket);
 			}
 		}
@@ -125,8 +125,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 				customer1.getId());
 		customer1.addAccident(accident1);
 
-		Ticket ticket1 = new Ticket(idGenerator.incrementAndGet(), LocalDate.of(2025, 1, 10), 20.0,
-				customer2.getId());
+		Ticket ticket1 = new Ticket(idGenerator.incrementAndGet(), LocalDate.of(2025, 1, 10), 20.0);
 		customer2.addTicket(ticket1);
 
 		save(customer1);

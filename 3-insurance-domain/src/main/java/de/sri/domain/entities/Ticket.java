@@ -6,13 +6,11 @@ public class Ticket {
 	private final int id;
 	private LocalDate date;
 	private double speedExcess;
-	private final int customerId;
 
-	public Ticket(int id, LocalDate date, double speedExcess, int customerId) {
+	public Ticket(int id, LocalDate date, double speedExcess) {
 		this.id = id;
 		this.date = date;
 		this.speedExcess = speedExcess;
-		this.customerId = customerId;
 	}
 
 	public int getId() {
@@ -35,9 +33,6 @@ public class Ticket {
 		this.speedExcess = speedExcess;
 	}
 
-	public int getCustomerId() {
-		return customerId;
-	}
 
 	@Override
 	public String toString() {
@@ -45,7 +40,6 @@ public class Ticket {
 				"id=" + id +
 				", date=" + date +
 				", speedExcess=" + speedExcess +
-				", customerId=" + customerId +
 				'}';
 	}
 }
