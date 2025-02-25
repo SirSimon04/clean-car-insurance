@@ -32,11 +32,11 @@ Combined command to run the project from 0-insurance-main for rapid development:
 ### Tickets
 - [x] Each ticket will increase the premium by 10€
 - [x] When Customer reach 5 Tickets, then the policy will be declined
-- [ ] If the speed excess is over 20 km/h, then extra fee of 2% of car value 
-- [ ] If speed excess is over 50 km/h, then decline policy
+- [x] If the speed excess is over 20 km/h, then extra fee of 2% of car value 
+- [x] If speed excess is over 50 km/h, then decline policy
 
 ### Accidents
-- [ ] Each accident will increase the premium by 20€
-- [ ] When Customer reach 3 Accidents, then the policy will be declined
-- [ ] If damage value of Customer car is over car value, then decline policy
-- [ ] If damage value of other involements is higher 60.000€, then policy will be declined 
+- [x] Each accident will increase the premium by 20€
+- [x] When Customer reach 3 Accidents, then the policy will be declined
+- [x] If damage value of Customer car is over car value, then decline policy
+- [x] If damage value of other involements is higher 60.000€, then policy will be declined 
