@@ -35,14 +35,19 @@ public class TicketManagementImpl implements TicketManagement {
                 policy.setStatus(PolicyStatus.DECLINED);
             });
         }
-		this.customerRepository.save(customer);
 
         final double[] increasePremiumValue = {INCREASE_PREMIUM};
-        if(ticket.getSpeedExcess() > 20) {
+        if(ticket.getSpeedExcess() > 20 && ticket.getSpeedExcess() <= 50) {
             customer.getPolicies().stream().max((p1, p2) -> Double.compare(p1.getPremium().getAmount(), p2.getPremium().getAmount())).ifPresent(policy -> {
                 increasePremiumValue[0] = INCREASE_PREMIUM + policy.getCarValue() * 0.02;
             });
+        } else if (ticket.getSpeedExcess() > 50) {
+            customer.getPolicies().forEach(policy -> {
+                //policy.setPremium(policy.getPremium().getAmount() + INCREASE_PREMIUM);
+                policy.setStatus(PolicyStatus.DECLINED);
+            });
         }
+        this.customerRepository.save(customer);
         this.policyManagement.increaseAllPoliciesPremiumBy(increasePremiumValue[0], customerId);
 	}
     
