@@ -183,8 +183,9 @@ public class ConsoleAdapter {
         System.out.println("\n--- Create New Accident ---");
         double cost = getDoubleInput("Enter accident cost: ");
         LocalDate date = getDateInput("Enter accident date (YYYY-MM-DD): ");
+        int policyId = getIntInput("Enter policy ID: ");
 
-        Accident accident = new Accident(0, cost, date, customerId);
+        Accident accident = new Accident(0, cost, date, customerId, policyId);
         customerManagement.createAccidentForCustomer(customerId, accident);
         System.out.println("Accident created successfully for customer.");
     }

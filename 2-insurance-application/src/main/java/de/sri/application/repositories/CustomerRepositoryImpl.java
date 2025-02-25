@@ -85,7 +85,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 			if (accident.getId() == 0) {
 				customer.removeAccident(accident.getId());
 				accident = new Accident(idGenerator.incrementAndGet(), accident.getCost(),
-						accident.getDate(), customer.getId());
+						accident.getDate(), customer.getId(), accident.getPolicyId());
 				customer.addAccident(accident);
 			}
 		}
@@ -121,7 +121,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 		customer2.addPolicy(policy2);
 
 		Accident accident1 = new Accident(idGenerator.incrementAndGet(), 3000.0, LocalDate.of(2025, 1, 5),
-				customer1.getId());
+				customer1.getId(), policy1.getId());
 		customer1.addAccident(accident1);
 
 		Ticket ticket1 = new Ticket(idGenerator.incrementAndGet(), LocalDate.of(2025, 1, 10), 20.0);
