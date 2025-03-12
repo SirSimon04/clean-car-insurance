@@ -9,6 +9,8 @@ import de.sri.domain.valueobjects.Premium;
 import de.sri.domain.exceptions.CustomerNotFoundException;
 import de.sri.domain.exceptions.CustomerTooYoungException;
 import de.sri.domain.exceptions.CarTooExpensiveException;
+import de.sri.application.premiumcalculator.PremiumCalculationStrategyFactory;
+import de.sri.application.premiumcalculator.PremiumCalculationStrategy;
 
 public class PolicyManagementImpl implements PolicyManagement {
 
@@ -38,21 +40,10 @@ public class PolicyManagementImpl implements PolicyManagement {
 		}
 
 		// Calculate Premium price for the Customer
-		PolicyProgram program = policy.getProgram();
-		double premiumPrice = 0;
-		switch (program) {
-			case BASIC:
-				premiumPrice += policy.getCarValue() * 0.05;
-				break;
-			case STANDARD:
-				premiumPrice += policy.getCarValue() * 0.1;
-				break;
-			case DELUXE:
-				premiumPrice += policy.getCarValue() * 0.15;
-				break;
-			default:
-				break;
-		}
+		PremiumCalculationStrategy strategy = PremiumCalculationStrategyFactory
+				.getStrategy(policy.getProgram());
+
+		double premiumPrice = strategy.calculatePremium(policy.getCarValue());
 
 		// Check if young or senior driver fee should be added
 		if (customer.getAge() < 21 || customer.getAge() > 80) {
