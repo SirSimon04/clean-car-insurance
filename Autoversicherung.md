@@ -1,3 +1,103 @@
+# Design Patterns
+## Strategy Pattern
+```mermaid
+classDiagram
+    class PremiumCalculationStrategy {
+        <<interface>>
+        +calculatePremium(double carValue) double
+    }
+
+    class BasicPremiumCalculationStrategy {
+        +calculatePremium(double carValue) double
+    }
+
+    class StandardPremiumCalculationStrategy {
+        +calculatePremium(double carValue) double
+    }
+
+    class DeluxePremiumCalculationStrategy {
+        +calculatePremium(double carValue) double
+    }
+
+    class PremiumCalculationStrategyFactory {
+        +getStrategy(PolicyProgram program) PremiumCalculationStrategy
+    }
+
+    class Policy {
+        -double carValue
+        -PremiumCalculationStrategy premiumCalculationStrategy
+    }
+
+    class PolicyProgram {
+        <<enumeration>>
+        BASIC
+        STANDARD
+        DELUXE
+    }
+
+    class PolicyManagementImpl {
+        -CustomerRepository customerRepository
+        +addPolicyToCustomer(int customerId, Policy policy)
+    }
+
+    PremiumCalculationStrategy <|.. BasicPremiumCalculationStrategy
+    PremiumCalculationStrategy <|.. StandardPremiumCalculationStrategy
+    PremiumCalculationStrategy <|.. DeluxePremiumCalculationStrategy
+    PremiumCalculationStrategyFactory --> PremiumCalculationStrategy
+    Policy --> PremiumCalculationStrategy
+    Policy --> PolicyProgram
+    PolicyManagementImpl --> PremiumCalculationStrategyFactory
+    PolicyManagementImpl --> Policy
+```
+
+## Builder Pattern
+```mermaid
+classDiagram
+    class Customer {
+        -int id
+        -String firstName
+        -String lastName
+        -LocalDate dateOfBirth
+        -String email
+        +getId() int
+        +getFirstName() String
+        +getLastName() String
+        +getDateOfBirth() LocalDate
+        +getEmail() String
+    }
+
+    class Customer.Builder {
+        +withId(int id) Builder
+        +withFirstName(String firstName) Builder
+        +withLastName(String lastName) Builder
+        +withDateOfBirth(LocalDate dateOfBirth) Builder
+        +withEmail(String email) Builder
+        +build() Customer
+    }
+
+    class CustomerDirector {
+        -Customer.Builder builder
+        +CustomerDirector(Customer.Builder builder)
+        +buildTemporary(String firstName, String lastName, LocalDate dateOfBirth, String email) Customer
+        +buildNew(int id, String firstName, String lastName, LocalDate dateOfBirth, String email) Customer
+        +buildNewWithId(int id, Customer customer) Customer
+    }
+
+    class CustomerRepositoryImpl {
+        -Map<Integer, Customer> customers
+        +CustomerRepositoryImpl()
+        +save(Customer customer) Customer
+        +findById(int id) Optional<Customer>
+        +findAll() List<Customer>
+        +delete(int id) void
+    }
+
+    Customer.Builder -- Customer
+    CustomerDirector --> Customer
+    CustomerRepositoryImpl --> CustomerDirector
+```
+
+
 # DDD
 ## Entities
 - Customer
