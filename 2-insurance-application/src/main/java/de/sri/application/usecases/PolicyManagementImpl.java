@@ -7,10 +7,11 @@ import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.PolicyManagement;
 import de.sri.domain.valueobjects.Premium;
 import de.sri.domain.exceptions.CustomerNotFoundException;
+import de.sri.domain.exceptions.CustomerTooYoungException;
+import de.sri.domain.exceptions.CarTooExpensiveException;
 
 public class PolicyManagementImpl implements PolicyManagement {
 
-	// REVISIT: Should the repository be injected here?
 	private final CustomerRepository customerRepository;
 
 	public PolicyManagementImpl(CustomerRepository customerRepository) {
@@ -23,16 +24,17 @@ public class PolicyManagementImpl implements PolicyManagement {
 	}
 
 	@Override
-	public void addPolicyToCustomer(int customerId, Policy policy) throws CustomerNotFoundException {
+	public void addPolicyToCustomer(int customerId, Policy policy)
+			throws CustomerTooYoungException, CustomerNotFoundException, CarTooExpensiveException {
 		Customer customer = getCustomer(customerId);
 		// Customers has to be 18 years old to craete a policy
 		if (customer.getAge() < 18) {
-			throw new IllegalArgumentException("Customer has to be 18 years old to create a policy!");
+			throw new CustomerTooYoungException();
 		}
 
 		// Car value cannot be more than 100.000
 		if (policy.getCarValue() > 100000) {
-			throw new IllegalArgumentException("Car value cannot be more than 100,000!");
+			throw new CarTooExpensiveException(100000);
 		}
 
 		// Calculate Premium price for the Customer

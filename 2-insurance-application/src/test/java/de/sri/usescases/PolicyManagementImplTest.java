@@ -7,6 +7,8 @@ import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.exceptions.CustomerNotFoundException;
+import de.sri.domain.exceptions.CustomerTooYoungException;
+import de.sri.domain.exceptions.CarTooExpensiveException;
 import de.sri.domain.directors.TestCustomerDirector;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +32,7 @@ class PolicyManagementImplTest {
         private PolicyManagementImpl policyManagement;
 
         @Test
-        void add_basic_policy() throws CustomerNotFoundException {
+        void add_basic_policy() throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException {
                 Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
                 when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -42,11 +44,11 @@ class PolicyManagementImplTest {
                 assertEquals(500, policy.getPremium().getAmount());
                 assertEquals(1, customer.getPolicies().size());
                 assertEquals(policy, customer.getPolicies().get(0));
-                //
         }
 
         @Test
-        void add_policy_basic_with_young_driver() throws CustomerNotFoundException {
+        void add_policy_basic_with_young_driver()
+                        throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException {
                 // Create a customer with age < 18
                 Customer customer = new TestCustomerDirector(new Customer.Builder()).createYoungDriver();
                 when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
@@ -58,11 +60,11 @@ class PolicyManagementImplTest {
                 assertEquals(550, policy.getPremium().getAmount());
                 assertEquals(1, customer.getPolicies().size());
                 assertEquals(policy, customer.getPolicies().get(0));
-                //
         }
 
         @Test
-        void add_policy_basic_with_senior_driver() throws CustomerNotFoundException {
+        void add_policy_basic_with_senior_driver()
+                        throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException {
                 // Create a customer with age > 80
                 Customer customer = new TestCustomerDirector(new Customer.Builder()).createSeniorDriver();
                 when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
@@ -74,11 +76,11 @@ class PolicyManagementImplTest {
                 assertEquals(550, policy.getPremium().getAmount());
                 assertEquals(1, customer.getPolicies().size());
                 assertEquals(policy, customer.getPolicies().get(0));
-
         }
 
         @Test
-        void add_basic_policy_with_car_value_fee() throws CustomerNotFoundException {
+        void add_basic_policy_with_car_value_fee()
+                        throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException {
                 Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
                 when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -93,7 +95,8 @@ class PolicyManagementImplTest {
         }
 
         @Test
-        void add_standard_policy() throws CustomerNotFoundException {
+        void add_standard_policy()
+                        throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException {
                 Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
                 when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -105,11 +108,10 @@ class PolicyManagementImplTest {
                 assertEquals(1000, policy.getPremium().getAmount());
                 assertEquals(1, customer.getPolicies().size());
                 assertEquals(policy, customer.getPolicies().get(0));
-
         }
 
         @Test
-        void add_deluxe_policy() throws CustomerNotFoundException {
+        void add_deluxe_policy() throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException {
                 Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
                 when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -121,7 +123,6 @@ class PolicyManagementImplTest {
                 assertEquals(1500, policy.getPremium().getAmount());
                 assertEquals(1, customer.getPolicies().size());
                 assertEquals(policy, customer.getPolicies().get(0));
-
         }
 
         @Test
@@ -131,9 +132,9 @@ class PolicyManagementImplTest {
 
                 Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 120000, 1);
 
-                IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                CarTooExpensiveException exception = assertThrows(CarTooExpensiveException.class,
                                 () -> policyManagement.addPolicyToCustomer(1, policy));
-                assertEquals("Car value cannot be more than 100,000!", exception.getMessage());
+                assertEquals("Car value cannot be more than 100000!", exception.getMessage());
         }
 
         @Test
@@ -143,13 +144,14 @@ class PolicyManagementImplTest {
 
                 Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 120000, 1);
 
-                IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                CustomerTooYoungException exception = assertThrows(CustomerTooYoungException.class,
                                 () -> policyManagement.addPolicyToCustomer(1, policy));
                 assertEquals("Customer has to be 18 years old to create a policy!", exception.getMessage());
         }
 
         @Test
-        void increase_all_policies_premium() throws CustomerNotFoundException {
+        void increase_all_policies_premium()
+                        throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException {
                 Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
 
                 when(customerRepository.findById(1)).thenReturn(Optional.of(customer));

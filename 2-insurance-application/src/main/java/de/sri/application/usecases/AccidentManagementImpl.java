@@ -8,6 +8,7 @@ import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.AccidentManagement;
 import de.sri.domain.valueobjects.Premium;
 import de.sri.domain.exceptions.CustomerNotFoundException;
+import de.sri.domain.exceptions.PolicyNotFoundException;
 
 public class AccidentManagementImpl implements AccidentManagement {
 
@@ -25,7 +26,8 @@ public class AccidentManagementImpl implements AccidentManagement {
     }
 
     @Override
-    public void createAccidentForCustomer(int customerId, Accident accident) throws CustomerNotFoundException {
+    public void createAccidentForCustomer(int customerId, Accident accident)
+            throws CustomerNotFoundException, PolicyNotFoundException {
         Customer customer = getCustomer(customerId);
         customer.addAccident(accident);
         if (customer.getAccidents().size() >= 3) {
@@ -36,7 +38,7 @@ public class AccidentManagementImpl implements AccidentManagement {
         }
 
         Policy policy = customer.getPolicies().stream().filter(p -> p.getId() == accident.getPolicyId()).findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Policy not found"));
+                .orElseThrow(() -> new PolicyNotFoundException(accident.getPolicyId()));
 
         policy.setPremium(
                 new Premium(

@@ -13,6 +13,8 @@ import de.sri.domain.entities.Ticket;
 import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.exceptions.BaseDomainException;
 import de.sri.domain.exceptions.CustomerNotFoundException;
+import de.sri.domain.exceptions.CarTooExpensiveException;
+import de.sri.domain.exceptions.CustomerTooYoungException;
 import de.sri.domain.directors.CustomerDirector;
 
 import java.util.List;
@@ -179,7 +181,8 @@ public class ConsoleAdapter {
         System.out.println("Customer deleted successfully.");
     }
 
-    private void addPolicyToCustomer() throws CustomerNotFoundException {
+    private void addPolicyToCustomer()
+            throws CustomerNotFoundException, CarTooExpensiveException, CustomerTooYoungException {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Add New Policy ---");
         String program = getStringInput("Enter policy program (BASIC/STANDARD/DELUXE): ");
