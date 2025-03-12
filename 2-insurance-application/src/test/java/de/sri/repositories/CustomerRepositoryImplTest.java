@@ -3,6 +3,7 @@ package de.sri.repositories;
 import de.sri.application.repositories.CustomerRepositoryImpl;
 import de.sri.domain.entities.*;
 import de.sri.domain.valueobjects.Address;
+import de.sri.domain.directors.CustomerDirector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ class CustomerRepositoryImplTest {
     void testSave() {
         // Arrange
         Address address = new Address("Teststraße 42", "Hamburg", "HH", "20457", "Deutschland");
-        Customer customer = new Customer(0, "Anna", "Schmidt",
+        Customer customer = new CustomerDirector(new Customer.Builder()).buildNew(0, "Anna", "Schmidt",
                 LocalDate.of(1987, 6, 15), "anna.schmidt@example.de", address);
 
         // Act

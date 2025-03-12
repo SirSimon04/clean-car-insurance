@@ -9,6 +9,7 @@ import de.sri.domain.entities.Ticket;
 import de.sri.domain.exceptions.CustomerNotFoundException;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.valueobjects.Address;
+import de.sri.domain.directors.CustomerDirector;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -77,8 +78,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 	private Customer checkAndSetIds(Customer customer) {
 		if (customer.getId() == 0) {
 			int newId = idGenerator.incrementAndGet();
-			customer = new Customer(newId, customer.getFirstName(), customer.getLastName(),
-					customer.getDateOfBirth(), customer.getEmail(), customer.getAddress());
+			customer = new CustomerDirector(new Customer.Builder()).buildNewWithId(newId, customer);
 		}
 		for (Policy policy : customer.getPolicies()) {
 			if (policy.getId() == 0) {
@@ -110,10 +110,12 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 		Address address1 = new Address("Musterstraße 1", "Berlin", "BE", "10115", "Deutschland");
 		Address address2 = new Address("Hauptstraße 23", "München", "BY", "80331", "Deutschland");
 
-		Customer customer1 = new Customer(idGenerator.incrementAndGet(), "Max", "Mustermann",
+		Customer customer1 = new CustomerDirector(new Customer.Builder()).buildNew(
+				idGenerator.incrementAndGet(), "Max", "Mustermann",
 				LocalDate.of(1990, 1, 10),
 				"max.mustermann@example.de", address1);
-		Customer customer2 = new Customer(idGenerator.incrementAndGet(), "Erika", "Mustermann",
+		Customer customer2 = new CustomerDirector(new Customer.Builder()).buildNew(
+				idGenerator.incrementAndGet(), "Erika", "Mustermann",
 				LocalDate.of(1995, 2, 20),
 				"erika.mustermann@example.de", address2);
 

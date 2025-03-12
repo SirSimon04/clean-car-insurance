@@ -53,14 +53,14 @@ public class Customer {
 		return dateOfBirth;
 	}
 
-	public int getAge(){
+	public int getAge() {
 		LocalDate now = LocalDate.now();
 		int age = now.getYear() - dateOfBirth.getYear();
 		if (now.getDayOfYear() < dateOfBirth.getDayOfYear()) {
 			age--;
 		}
 		return age;
-	}	
+	}
 
 	public String getEmail() {
 		return email;
@@ -124,5 +124,70 @@ public class Customer {
 				", email='" + email + '\'' +
 				", address=" + address +
 				'}';
+	}
+
+	public static class Builder {
+		private int id;
+		private String firstName;
+		private String lastName;
+		private LocalDate dateOfBirth;
+		private String email;
+		private Address address;
+		private List<Policy> policies = new ArrayList<>();
+		private List<Accident> accidents = new ArrayList<>();
+		private List<Ticket> tickets = new ArrayList<>();
+
+		public Builder withId(int id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder withFirstName(String firstName) {
+			this.firstName = firstName;
+			return this;
+		}
+
+		public Builder withLastName(String lastName) {
+			this.lastName = lastName;
+			return this;
+		}
+
+		public Builder withDateOfBirth(LocalDate dateOfBirth) {
+			this.dateOfBirth = dateOfBirth;
+			return this;
+		}
+
+		public Builder withEmail(String email) {
+			this.email = email;
+			return this;
+		}
+
+		public Builder withAddress(Address address) {
+			this.address = address;
+			return this;
+		}
+
+		public Builder withPolicies(List<Policy> policies) {
+			this.policies = policies;
+			return this;
+		}
+
+		public Builder withAccidents(List<Accident> accidents) {
+			this.accidents = accidents;
+			return this;
+		}
+
+		public Builder withTickets(List<Ticket> tickets) {
+			this.tickets = tickets;
+			return this;
+		}
+
+		public Customer build() {
+			Customer customer = new Customer(id, firstName, lastName, dateOfBirth, email, address);
+			customer.policies = this.policies;
+			customer.accidents = this.accidents;
+			customer.tickets = this.tickets;
+			return customer;
+		}
 	}
 }

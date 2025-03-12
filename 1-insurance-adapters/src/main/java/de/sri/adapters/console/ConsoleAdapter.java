@@ -13,6 +13,7 @@ import de.sri.domain.entities.Ticket;
 import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.exceptions.BaseDomainException;
 import de.sri.domain.exceptions.CustomerNotFoundException;
+import de.sri.domain.directors.CustomerDirector;
 
 import java.util.List;
 import java.util.Scanner;
@@ -126,7 +127,8 @@ public class ConsoleAdapter {
         String country = getStringInput("Country: ");
 
         Address address = new Address(street, city, state, zipCode, country);
-        Customer customer = new Customer(0, firstName, lastName, dateOfBirth, email, address);
+        Customer customer = new CustomerDirector(new Customer.Builder()).buildNew(0, firstName, lastName, dateOfBirth,
+                email, address);
 
         customer = writeCustomerManagement.createCustomer(customer);
         System.out.println("Customer created successfully with ID: " + customer.getId());
@@ -164,7 +166,8 @@ public class ConsoleAdapter {
         String country = getStringInputWithDefault("Enter new country", currentAddress.getCountry());
 
         Address newAddress = new Address(street, city, state, zipCode, country);
-        Customer updatedCustomer = new Customer(id, firstName, lastName, dateOfBirth, email, newAddress);
+        Customer updatedCustomer = new CustomerDirector(new Customer.Builder()).buildNew(id, firstName, lastName,
+                dateOfBirth, email, newAddress);
 
         writeCustomerManagement.updateCustomer(updatedCustomer);
         System.out.println("Customer updated successfully.");
