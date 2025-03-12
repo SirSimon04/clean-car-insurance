@@ -1,6 +1,7 @@
 package de.sri.adapters.console;
 
-import de.sri.domain.usecases.CustomerManagement;
+import de.sri.domain.usecases.ReadCustomerManagement;
+import de.sri.domain.usecases.WriteCustomerManagement;
 import de.sri.domain.usecases.PolicyManagement;
 import de.sri.domain.usecases.TicketManagement;
 import de.sri.domain.entities.Customer;
@@ -17,14 +18,18 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class ConsoleAdapter {
-    private final CustomerManagement customerManagement;
+    private final ReadCustomerManagement readCustomerManagement;
+    private final WriteCustomerManagement writeCustomerManagement;
     private final PolicyManagement policyManagement;
     private final TicketManagement ticketManagement;
     private final Scanner scanner;
     private final DateTimeFormatter dateFormatter;
 
-    public ConsoleAdapter(CustomerManagement customerManagement, PolicyManagement policyManagement, TicketManagement ticketManagement) {
-        this.customerManagement = customerManagement;
+    public ConsoleAdapter(ReadCustomerManagement readCustomerManagement,
+            WriteCustomerManagement writeCustomerManagement, PolicyManagement policyManagement,
+            TicketManagement ticketManagement) {
+        this.readCustomerManagement = readCustomerManagement;
+        this.writeCustomerManagement = writeCustomerManagement;
         this.policyManagement = policyManagement;
         this.ticketManagement = ticketManagement;
         this.scanner = new Scanner(System.in);
@@ -36,52 +41,52 @@ public class ConsoleAdapter {
         while (running) {
             try {
                 printMainMenu();
-            int choice = getIntInput("Choose an option: ");
+                int choice = getIntInput("Choose an option: ");
 
-            switch (choice) {
-                case 1:
-                    createCustomer();
-                    break;
-                case 2:
-                    getCustomer();
-                    break;
-                case 3:
-                    listAllCustomers();
-                    break;
-                case 4:
-                    updateCustomer();
-                    break;
-                case 5:
-                    deleteCustomer();
-                    break;
-                case 6:
-                    addPolicyToCustomer();
-                    break;
-                case 7:
-                    createAccidentForCustomer();
-                    break;
-                case 8:
-                    createTicketForCustomer();
-                    break;
-                case 9:
-                    getCustomersByPolicyStatus();
-                    break;
-                case 10:
-                    getCustomersByAccidentCostGreaterThan();
-                    break;
-                case 11:
-                    getCustomersByTicketSpeedExcessGreaterThan();
-                    break;
-                case 12:
-                    running = false;
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
-            }
+                switch (choice) {
+                    case 1:
+                        createCustomer();
+                        break;
+                    case 2:
+                        getCustomer();
+                        break;
+                    case 3:
+                        listAllCustomers();
+                        break;
+                    case 4:
+                        updateCustomer();
+                        break;
+                    case 5:
+                        deleteCustomer();
+                        break;
+                    case 6:
+                        addPolicyToCustomer();
+                        break;
+                    case 7:
+                        createAccidentForCustomer();
+                        break;
+                    case 8:
+                        createTicketForCustomer();
+                        break;
+                    case 9:
+                        getCustomersByPolicyStatus();
+                        break;
+                    case 10:
+                        getCustomersByAccidentCostGreaterThan();
+                        break;
+                    case 11:
+                        getCustomersByTicketSpeedExcessGreaterThan();
+                        break;
+                    case 12:
+                        running = false;
+                        break;
+                    default:
+                        System.out.println("Invalid option. Please try again.");
+                }
             } catch (Exception e) {
                 System.out.println("An error occurred: " + e.getMessage());
             }
-        }            
+        }
     }
 
     private void printMainMenu() {
@@ -117,24 +122,24 @@ public class ConsoleAdapter {
         Address address = new Address(street, city, state, zipCode, country);
         Customer customer = new Customer(0, firstName, lastName, dateOfBirth, email, address);
 
-        customer = customerManagement.createCustomer(customer);
+        customer = writeCustomerManagement.createCustomer(customer);
         System.out.println("Customer created successfully with ID: " + customer.getId());
     }
 
     private void getCustomer() {
         int id = getIntInput("Enter customer ID: ");
-        Customer customer = customerManagement.getCustomer(id);
+        Customer customer = readCustomerManagement.getCustomer(id);
         printCustomerDetails(customer);
     }
 
     private void listAllCustomers() {
         System.out.println("\n--- All Customers ---");
-        customerManagement.getAllCustomers().forEach(this::printCustomerDetails);
+        readCustomerManagement.getAllCustomers().forEach(this::printCustomerDetails);
     }
 
     private void updateCustomer() {
         int id = getIntInput("Enter customer ID to update: ");
-        Customer customer = customerManagement.getCustomer(id);
+        Customer customer = readCustomerManagement.getCustomer(id);
 
         System.out.println("\n--- Update Customer ---");
         System.out.println("Press Enter to keep the current value.");
@@ -155,13 +160,13 @@ public class ConsoleAdapter {
         Address newAddress = new Address(street, city, state, zipCode, country);
         Customer updatedCustomer = new Customer(id, firstName, lastName, dateOfBirth, email, newAddress);
 
-        customerManagement.updateCustomer(updatedCustomer);
+        writeCustomerManagement.updateCustomer(updatedCustomer);
         System.out.println("Customer updated successfully.");
     }
 
     private void deleteCustomer() {
         int id = getIntInput("Enter customer ID to delete: ");
-        customerManagement.deleteCustomer(id);
+        writeCustomerManagement.deleteCustomer(id);
         System.out.println("Customer deleted successfully.");
     }
 
@@ -169,7 +174,7 @@ public class ConsoleAdapter {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Add New Policy ---");
         String program = getStringInput("Enter policy program (BASIC/STANDARD/DELUXE): ");
-        double carValue = getDoubleInput("Enter car value: ");        
+        double carValue = getDoubleInput("Enter car value: ");
 
         Policy policy = new Policy(0, PolicyStatus.ACTIVE,
                 PolicyProgram.valueOf(program.toUpperCase()), carValue, customerId);
@@ -186,7 +191,7 @@ public class ConsoleAdapter {
         int policyId = getIntInput("Enter policy ID: ");
 
         Accident accident = new Accident(0, cost, date, customerId, policyId);
-        customerManagement.createAccidentForCustomer(customerId, accident);
+        writeCustomerManagement.createAccidentForCustomer(customerId, accident);
         System.out.println("Accident created successfully for customer.");
     }
 
@@ -204,7 +209,7 @@ public class ConsoleAdapter {
     private void getCustomersByPolicyStatus() {
         String statusInput = getStringInput("Enter policy status (ACTIVE/INACTIVE): ");
         PolicyStatus status = PolicyStatus.valueOf(statusInput.toUpperCase());
-        List<Customer> customers = customerManagement.getCustomersByPolicyStatus(status);
+        List<Customer> customers = readCustomerManagement.getCustomersByPolicyStatus(status);
 
         System.out.println("\n--- Customers with Policy Status: " + status + " ---");
         customers.forEach(this::printCustomerDetails);
@@ -212,7 +217,7 @@ public class ConsoleAdapter {
 
     private void getCustomersByAccidentCostGreaterThan() {
         double cost = getDoubleInput("Enter accident cost threshold: ");
-        List<Customer> customers = customerManagement.getCustomersByAccidentCostGreaterThan(cost);
+        List<Customer> customers = readCustomerManagement.getCustomersByAccidentCostGreaterThan(cost);
 
         System.out.println("\n--- Customers with Accident Cost Greater Than: " + cost + " ---");
         customers.forEach(this::printCustomerDetails);
@@ -220,7 +225,7 @@ public class ConsoleAdapter {
 
     private void getCustomersByTicketSpeedExcessGreaterThan() {
         double speedExcess = getDoubleInput("Enter speed excess threshold: ");
-        List<Customer> customers = customerManagement.getCustomersByTicketSpeedExcessGreaterThan(speedExcess);
+        List<Customer> customers = readCustomerManagement.getCustomersByTicketSpeedExcessGreaterThan(speedExcess);
 
         System.out.println("\n--- Customers with Ticket Speed Excess Greater Than: " + speedExcess + " ---");
         customers.forEach(this::printCustomerDetails);

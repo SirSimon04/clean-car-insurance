@@ -2,20 +2,15 @@ package de.sri.application.usecases;
 
 import de.sri.domain.entities.*;
 import de.sri.domain.repositories.CustomerRepository;
-import de.sri.domain.usecases.CustomerManagement;
+import de.sri.domain.usecases.ReadCustomerManagement;
 
 import java.util.List;
 
-public class CustomerManagementImpl implements CustomerManagement {
+public class ReadCustomerManagementImpl implements ReadCustomerManagement {
 	private final CustomerRepository customerRepository;
 
-	public CustomerManagementImpl(CustomerRepository customerRepository) {
+	public ReadCustomerManagementImpl(CustomerRepository customerRepository) {
 		this.customerRepository = customerRepository;
-	}
-
-	@Override
-	public Customer createCustomer(Customer customer) {
-		return customerRepository.save(customer);
 	}
 
 	@Override
@@ -27,23 +22,6 @@ public class CustomerManagementImpl implements CustomerManagement {
 	@Override
 	public List<Customer> getAllCustomers() {
 		return customerRepository.findAll();
-	}
-
-	@Override
-	public void updateCustomer(Customer customer) {
-		customerRepository.save(customer);
-	}
-
-	@Override
-	public void deleteCustomer(int customerId) {
-		customerRepository.delete(customerId);
-	}
-
-	@Override
-	public void createAccidentForCustomer(int customerId, Accident accident) {
-		Customer customer = getCustomer(customerId);
-		customer.addAccident(accident);
-		updateCustomer(customer);
 	}
 
 	@Override
