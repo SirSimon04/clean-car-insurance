@@ -2,6 +2,7 @@ package de.sri.domain.repositories;
 
 import de.sri.domain.entities.Customer;
 import de.sri.domain.entities.PolicyStatus;
+import de.sri.domain.exceptions.CustomerNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,7 @@ public interface CustomerRepository {
 
 	List<Customer> findAll();
 
-	void delete(int id);
+	void delete(int id) throws CustomerNotFoundException;
 
 	List<Customer> findByPolicyStatus(PolicyStatus status);
 

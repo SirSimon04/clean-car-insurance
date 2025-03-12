@@ -2,11 +2,12 @@ package de.sri.domain.usecases;
 
 import de.sri.domain.entities.Customer;
 import de.sri.domain.entities.PolicyStatus;
+import de.sri.domain.exceptions.CustomerNotFoundException;
 import java.util.List;
 
 public interface ReadCustomerManagement {
 
-	Customer getCustomer(int customerId);
+	Customer getCustomer(int customerId) throws CustomerNotFoundException;
 
 	List<Customer> getAllCustomers();
 

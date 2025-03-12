@@ -11,6 +11,8 @@ import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.Accident;
 import de.sri.domain.entities.Ticket;
 import de.sri.domain.entities.PolicyProgram;
+import de.sri.domain.exceptions.BaseDomainException;
+import de.sri.domain.exceptions.CustomerNotFoundException;
 
 import java.util.List;
 import java.util.Scanner;
@@ -83,10 +85,14 @@ public class ConsoleAdapter {
                     default:
                         System.out.println("Invalid option. Please try again.");
                 }
+            } catch (BaseDomainException e) {
+                System.out.println("Error: " + e.getMessage());
             } catch (Exception e) {
-                System.out.println("An error occurred: " + e.getMessage());
+                // In einem realen Beispiel sollte man hier loggen.
+                System.out.println("An unexpected error occurred. Try again or contact support.");
             }
         }
+
     }
 
     private void printMainMenu() {
@@ -126,7 +132,7 @@ public class ConsoleAdapter {
         System.out.println("Customer created successfully with ID: " + customer.getId());
     }
 
-    private void getCustomer() {
+    private void getCustomer() throws CustomerNotFoundException {
         int id = getIntInput("Enter customer ID: ");
         Customer customer = readCustomerManagement.getCustomer(id);
         printCustomerDetails(customer);
@@ -137,7 +143,7 @@ public class ConsoleAdapter {
         readCustomerManagement.getAllCustomers().forEach(this::printCustomerDetails);
     }
 
-    private void updateCustomer() {
+    private void updateCustomer() throws CustomerNotFoundException {
         int id = getIntInput("Enter customer ID to update: ");
         Customer customer = readCustomerManagement.getCustomer(id);
 
@@ -164,13 +170,13 @@ public class ConsoleAdapter {
         System.out.println("Customer updated successfully.");
     }
 
-    private void deleteCustomer() {
+    private void deleteCustomer() throws CustomerNotFoundException {
         int id = getIntInput("Enter customer ID to delete: ");
         writeCustomerManagement.deleteCustomer(id);
         System.out.println("Customer deleted successfully.");
     }
 
-    private void addPolicyToCustomer() {
+    private void addPolicyToCustomer() throws CustomerNotFoundException {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Add New Policy ---");
         String program = getStringInput("Enter policy program (BASIC/STANDARD/DELUXE): ");
@@ -183,7 +189,7 @@ public class ConsoleAdapter {
         System.out.println("Policy added successfully to customer.");
     }
 
-    private void createAccidentForCustomer() {
+    private void createAccidentForCustomer() throws CustomerNotFoundException {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Create New Accident ---");
         double cost = getDoubleInput("Enter accident cost: ");
@@ -195,7 +201,7 @@ public class ConsoleAdapter {
         System.out.println("Accident created successfully for customer.");
     }
 
-    private void createTicketForCustomer() {
+    private void createTicketForCustomer() throws CustomerNotFoundException {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Create New Ticket ---");
         LocalDate date = getDateInput("Enter ticket date (YYYY-MM-DD): ");

@@ -6,23 +6,24 @@ import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.PolicyManagement;
 import de.sri.domain.valueobjects.Premium;
+import de.sri.domain.exceptions.CustomerNotFoundException;
 
-public class PolicyManagementImpl implements PolicyManagement{
+public class PolicyManagementImpl implements PolicyManagement {
 
-	//REVISIT: Should the repository be injected here?
-    private final CustomerRepository customerRepository;
+	// REVISIT: Should the repository be injected here?
+	private final CustomerRepository customerRepository;
 
-    public PolicyManagementImpl(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
-
-	private Customer getCustomer(int customerId) {
-		return customerRepository.findById(customerId)
-				.orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+	public PolicyManagementImpl(CustomerRepository customerRepository) {
+		this.customerRepository = customerRepository;
 	}
 
-    @Override
-	public void addPolicyToCustomer(int customerId, Policy policy) {		
+	private Customer getCustomer(int customerId) throws CustomerNotFoundException {
+		return customerRepository.findById(customerId)
+				.orElseThrow(() -> new CustomerNotFoundException(customerId));
+	}
+
+	@Override
+	public void addPolicyToCustomer(int customerId, Policy policy) throws CustomerNotFoundException {
 		Customer customer = getCustomer(customerId);
 		// Customers has to be 18 years old to craete a policy
 		if (customer.getAge() < 18) {
@@ -30,7 +31,7 @@ public class PolicyManagementImpl implements PolicyManagement{
 		}
 
 		// Car value cannot be more than 100.000
-		if(policy.getCarValue() > 100000) {
+		if (policy.getCarValue() > 100000) {
 			throw new IllegalArgumentException("Car value cannot be more than 100,000!");
 		}
 
@@ -46,18 +47,18 @@ public class PolicyManagementImpl implements PolicyManagement{
 				break;
 			case DELUXE:
 				premiumPrice += policy.getCarValue() * 0.15;
-				break;		
+				break;
 			default:
 				break;
 		}
-		
+
 		// Check if young or senior driver fee should be added
-		if(customer.getAge() < 21 || customer.getAge() > 80) {
+		if (customer.getAge() < 21 || customer.getAge() > 80) {
 			premiumPrice += premiumPrice * 0.1;
 		}
 
 		// Check if car value is more than 40.000
-		if(policy.getCarValue() > 40000) {
+		if (policy.getCarValue() > 40000) {
 			premiumPrice += policy.getCarValue() * 0.01;
 		}
 
@@ -67,14 +68,14 @@ public class PolicyManagementImpl implements PolicyManagement{
 	}
 
 	@Override
-	public void removePolicyFromCustomer(int customerId, Policy policy) {
+	public void removePolicyFromCustomer(int customerId, Policy policy) throws CustomerNotFoundException {
 		Customer customer = getCustomer(customerId);
 		customer.removePolicy(policy.getId());
 		customerRepository.save(customer);
 	}
 
 	@Override
-	public void increaseAllPoliciesPremiumBy(double value, int customerId) {
+	public void increaseAllPoliciesPremiumBy(double value, int customerId) throws CustomerNotFoundException {
 		Customer customer = getCustomer(customerId);
 
 		customer.getPolicies().forEach(policy -> {

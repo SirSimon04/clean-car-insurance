@@ -14,6 +14,7 @@ import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.entities.Ticket;
+import de.sri.domain.exceptions.CustomerNotFoundException;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.valueobjects.Address;
 
@@ -29,10 +30,10 @@ public class TicketManagementImplTest {
         this.ticketManagement = new TicketManagementImpl(customerRepository, policyManagementImpl);
     }
 
-
     @Test
-    void create_ticket_for_customer() {
-        Customer customer = new Customer(100, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+    void create_ticket_for_customer() throws CustomerNotFoundException {
+        Customer customer = new Customer(100, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         customerRepository.save(customer);
 
         Ticket ticket = new Ticket(2, LocalDate.now(), 10.0);
@@ -43,8 +44,9 @@ public class TicketManagementImplTest {
     }
 
     @Test
-    void increase_policy_premium_per_ticket(){
-        Customer customer = new Customer(101, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+    void increase_policy_premium_per_ticket() throws CustomerNotFoundException {
+        Customer customer = new Customer(101, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         customerRepository.save(customer);
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000, 1);
@@ -55,12 +57,14 @@ public class TicketManagementImplTest {
         Ticket ticket = new Ticket(2, LocalDate.now(), 10.0);
         ticketManagement.createTicketForCustomer(101, ticket);
 
-        assertEquals(customerRepository.findById(101).get().getPolicies().get(0).getPremium().getAmount(), premium + ticketManagement.INCREASE_PREMIUM);        
+        assertEquals(customerRepository.findById(101).get().getPolicies().get(0).getPremium().getAmount(),
+                premium + ticketManagement.INCREASE_PREMIUM);
     }
 
     @Test
-    void decline_policy_when_ticket_amount_reaches_5() {
-        Customer customer = new Customer(102, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+    void decline_policy_when_ticket_amount_reaches_5() throws CustomerNotFoundException {
+        Customer customer = new Customer(102, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         customerRepository.save(customer);
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000, 1);
@@ -75,8 +79,10 @@ public class TicketManagementImplTest {
     }
 
     @Test
-    void increase_all_policy_premiums_based_on_highest_carValue_when_speeding_over_20() {
-        Customer customer = new Customer(103, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+    void increase_all_policy_premiums_based_on_highest_carValue_when_speeding_over_20()
+            throws CustomerNotFoundException {
+        Customer customer = new Customer(103, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         customerRepository.save(customer);
 
         Policy policy1 = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000, 103);
@@ -90,13 +96,16 @@ public class TicketManagementImplTest {
         Ticket ticket = new Ticket(1, LocalDate.now(), 21.0);
         ticketManagement.createTicketForCustomer(103, ticket);
 
-        assertEquals(customerRepository.findById(103).get().getPolicies().get(0).getPremium().getAmount(), premium1 + ticketManagement.INCREASE_PREMIUM + 1000);
-        assertEquals(customerRepository.findById(103).get().getPolicies().get(1).getPremium().getAmount(), premium2 + ticketManagement.INCREASE_PREMIUM + 1000);
+        assertEquals(customerRepository.findById(103).get().getPolicies().get(0).getPremium().getAmount(),
+                premium1 + ticketManagement.INCREASE_PREMIUM + 1000);
+        assertEquals(customerRepository.findById(103).get().getPolicies().get(1).getPremium().getAmount(),
+                premium2 + ticketManagement.INCREASE_PREMIUM + 1000);
     }
 
     @Test
-    void decline_all_policy_premiums_when_speeding_over_50() {
-        Customer customer = new Customer(103, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+    void decline_all_policy_premiums_when_speeding_over_50() throws CustomerNotFoundException {
+        Customer customer = new Customer(103, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         customerRepository.save(customer);
 
         Policy policy1 = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000, 103);
@@ -110,5 +119,5 @@ public class TicketManagementImplTest {
         assertEquals(customerRepository.findById(103).get().getPolicies().get(0).getStatus(), PolicyStatus.DECLINED);
         assertEquals(customerRepository.findById(103).get().getPolicies().get(1).getStatus(), PolicyStatus.DECLINED);
     }
-    
+
 }

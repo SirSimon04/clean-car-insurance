@@ -3,6 +3,7 @@ package de.sri.application.usecases;
 import de.sri.domain.entities.*;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.ReadCustomerManagement;
+import de.sri.domain.exceptions.CustomerNotFoundException;
 
 import java.util.List;
 
@@ -14,9 +15,9 @@ public class ReadCustomerManagementImpl implements ReadCustomerManagement {
 	}
 
 	@Override
-	public Customer getCustomer(int customerId) {
+	public Customer getCustomer(int customerId) throws CustomerNotFoundException {
 		return customerRepository.findById(customerId)
-				.orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+				.orElseThrow(() -> new CustomerNotFoundException(customerId));
 	}
 
 	@Override

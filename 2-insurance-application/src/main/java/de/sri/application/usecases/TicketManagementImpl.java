@@ -6,6 +6,7 @@ import de.sri.domain.entities.Ticket;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.PolicyManagement;
 import de.sri.domain.usecases.TicketManagement;
+import de.sri.domain.exceptions.CustomerNotFoundException;
 
 public class TicketManagementImpl implements TicketManagement {
 
@@ -19,36 +20,38 @@ public class TicketManagementImpl implements TicketManagement {
         this.policyManagement = policyManagement;
     }
 
-    private Customer getCustomer(int customerId) {
-		return customerRepository.findById(customerId)
-				.orElseThrow(() -> new IllegalArgumentException("Customer not found"));
-	}
+    private Customer getCustomer(int customerId) throws CustomerNotFoundException {
+        return customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
+    }
 
     @Override
-	public void createTicketForCustomer(int customerId, Ticket ticket) {
-		Customer customer = getCustomer(customerId);           
-		customer.addTicket(ticket);
-        if(customer.getTickets().size() >= 5) {
+    public void createTicketForCustomer(int customerId, Ticket ticket) throws CustomerNotFoundException {
+        Customer customer = getCustomer(customerId);
+        customer.addTicket(ticket);
+        if (customer.getTickets().size() >= 5) {
             // Too many tickets
             customer.getPolicies().forEach(policy -> {
-                //policy.setPremium(policy.getPremium().getAmount() + INCREASE_PREMIUM);
+                // policy.setPremium(policy.getPremium().getAmount() + INCREASE_PREMIUM);
                 policy.setStatus(PolicyStatus.DECLINED);
             });
         }
 
-        final double[] increasePremiumValue = {INCREASE_PREMIUM};
-        if(ticket.getSpeedExcess() > 20 && ticket.getSpeedExcess() <= 50) {
-            customer.getPolicies().stream().max((p1, p2) -> Double.compare(p1.getPremium().getAmount(), p2.getPremium().getAmount())).ifPresent(policy -> {
-                increasePremiumValue[0] = INCREASE_PREMIUM + policy.getCarValue() * 0.02;
-            });
+        final double[] increasePremiumValue = { INCREASE_PREMIUM };
+        if (ticket.getSpeedExcess() > 20 && ticket.getSpeedExcess() <= 50) {
+            customer.getPolicies().stream()
+                    .max((p1, p2) -> Double.compare(p1.getPremium().getAmount(), p2.getPremium().getAmount()))
+                    .ifPresent(policy -> {
+                        increasePremiumValue[0] = INCREASE_PREMIUM + policy.getCarValue() * 0.02;
+                    });
         } else if (ticket.getSpeedExcess() > 50) {
             customer.getPolicies().forEach(policy -> {
-                //policy.setPremium(policy.getPremium().getAmount() + INCREASE_PREMIUM);
+                // policy.setPremium(policy.getPremium().getAmount() + INCREASE_PREMIUM);
                 policy.setStatus(PolicyStatus.DECLINED);
             });
         }
         this.customerRepository.save(customer);
         this.policyManagement.increaseAllPoliciesPremiumBy(increasePremiumValue[0], customerId);
-	}
-    
+    }
+
 }

@@ -60,7 +60,7 @@ class CustomerRepositoryImplTest {
     }
 
     @Test
-    void testDelete() {
+    void testDelete() throws Exception {
         // Arrange
         int existingCustomerId = 1;
 
@@ -116,7 +116,6 @@ class CustomerRepositoryImplTest {
         Customer customer = this.repository.findById(1).get();
         Policy policy = new Policy(0, PolicyStatus.ACTIVE, PolicyProgram.DELUXE,
                 30000.0, customer.getId());
-        
 
         // Act
         customer.addPolicy(policy);

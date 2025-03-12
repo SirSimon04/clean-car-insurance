@@ -6,6 +6,7 @@ import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.entities.Ticket;
+import de.sri.domain.exceptions.CustomerNotFoundException;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.valueobjects.Address;
 
@@ -42,7 +43,10 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 	}
 
 	@Override
-	public void delete(int id) {
+	public void delete(int id) throws CustomerNotFoundException {
+		if (!customers.containsKey(id)) {
+			throw new CustomerNotFoundException(id);
+		}
 		customers.remove(id);
 	}
 
@@ -113,7 +117,8 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 				LocalDate.of(1995, 2, 20),
 				"erika.mustermann@example.de", address2);
 
-		Policy policy1 = new Policy(idGenerator.incrementAndGet(), PolicyStatus.ACTIVE, PolicyProgram.STANDARD,25000.0, customer1.getId());
+		Policy policy1 = new Policy(idGenerator.incrementAndGet(), PolicyStatus.ACTIVE, PolicyProgram.STANDARD,
+				25000.0, customer1.getId());
 		Policy policy2 = new Policy(idGenerator.incrementAndGet(), PolicyStatus.INACTIVE, PolicyProgram.BASIC,
 				18000.0, customer2.getId());
 

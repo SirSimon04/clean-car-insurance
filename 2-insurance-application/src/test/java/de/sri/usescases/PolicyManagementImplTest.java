@@ -7,6 +7,7 @@ import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.valueobjects.Address;
+import de.sri.domain.exceptions.CustomerNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,8 +31,9 @@ class PolicyManagementImplTest {
     private PolicyManagementImpl policyManagement;
 
     @Test
-    void add_basic_policy() {        
-        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+    void add_basic_policy() throws CustomerNotFoundException {
+        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000, 1);
@@ -46,13 +48,14 @@ class PolicyManagementImplTest {
     }
 
     @Test
-    void add_policy_basic_with_young_driver() {
+    void add_policy_basic_with_young_driver() throws CustomerNotFoundException {
         // Create a customer with age < 18
-        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(20), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(20), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000, 1);
-        
+
         policyManagement.addPolicyToCustomer(1, policy);
 
         assertEquals(550, policy.getPremium().getAmount());
@@ -62,24 +65,26 @@ class PolicyManagementImplTest {
     }
 
     @Test
-    void add_policy_basic_with_senior_driver() {
+    void add_policy_basic_with_senior_driver() throws CustomerNotFoundException {
         // Create a customer with age > 80
-        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(85), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(85), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000, 1);
-        
+
         policyManagement.addPolicyToCustomer(1, policy);
 
         assertEquals(550, policy.getPremium().getAmount());
         assertEquals(1, customer.getPolicies().size());
         assertEquals(policy, customer.getPolicies().get(0));
-        
+
     }
 
     @Test
-    void add_basic_policy_with_car_value_fee() {        
-        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+    void add_basic_policy_with_car_value_fee() throws CustomerNotFoundException {
+        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 50000, 1);
@@ -89,12 +94,13 @@ class PolicyManagementImplTest {
 
         assertEquals(3000, policy.getPremium().getAmount());
         assertEquals(1, customer.getPolicies().size());
-        assertEquals(policy, customer.getPolicies().get(0));        
+        assertEquals(policy, customer.getPolicies().get(0));
     }
 
     @Test
-    void add_standard_policy() {        
-        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+    void add_standard_policy() throws CustomerNotFoundException {
+        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.STANDARD, 10000, 1);
@@ -105,12 +111,13 @@ class PolicyManagementImplTest {
         assertEquals(1000, policy.getPremium().getAmount());
         assertEquals(1, customer.getPolicies().size());
         assertEquals(policy, customer.getPolicies().get(0));
-        
+
     }
 
     @Test
-    void add_deluxe_policy() {        
-        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+    void add_deluxe_policy() throws CustomerNotFoundException {
+        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.DELUXE, 10000, 1);
@@ -121,34 +128,39 @@ class PolicyManagementImplTest {
         assertEquals(1500, policy.getPremium().getAmount());
         assertEquals(1, customer.getPolicies().size());
         assertEquals(policy, customer.getPolicies().get(0));
-        
+
     }
 
     @Test
-    void add_policy_with_too_high_car_value() {        
-        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+    void add_policy_with_too_high_car_value() {
+        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 120000, 1);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> policyManagement.addPolicyToCustomer(1, policy));
-    assertEquals("Car value cannot be more than 100,000!", exception.getMessage());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> policyManagement.addPolicyToCustomer(1, policy));
+        assertEquals("Car value cannot be more than 100,000!", exception.getMessage());
     }
 
     @Test
-    void add_policy_with_customer_under_18_years_old() {        
-        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(17), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+    void add_policy_with_customer_under_18_years_old() {
+        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(17), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 120000, 1);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> policyManagement.addPolicyToCustomer(1, policy));
-    assertEquals("Customer has to be 18 years old to create a policy!", exception.getMessage());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> policyManagement.addPolicyToCustomer(1, policy));
+        assertEquals("Customer has to be 18 years old to create a policy!", exception.getMessage());
     }
 
     @Test
-    void increase_all_policies_premium() {
-        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com", new Address("Street", "City", "State", "Zip", "Country"));
+    void increase_all_policies_premium() throws CustomerNotFoundException {
+        Customer customer = new Customer(1, "John", "Doe", LocalDate.now().minusYears(60), "john.doe@example.com",
+                new Address("Street", "City", "State", "Zip", "Country"));
 
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
