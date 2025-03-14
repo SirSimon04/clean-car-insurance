@@ -89,7 +89,6 @@ class ConsoleAdapterTest {
         consoleAdapter.start();
 
         String output = getOutput();
-        System.out.println("Actual Output:\n" + output); // Debugging-Ausgabe
 
         assertTrue(output.contains("Customer created successfully with ID: 1"));
         verify(writeCustomerManagement, times(1)).createCustomer(any(Customer.class));
@@ -99,10 +98,7 @@ class ConsoleAdapterTest {
     void getCustomer_success() throws CustomerNotFoundException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
-        // Mocking the menu selection and customer retrieval inputs
-        doReturn(2).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString()); // 2 for get, 1 for
-                                                                                            // ID, 12
-                                                                                            // to exit
+        doReturn(2).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
 
         Customer customer = new CustomerDirector(new Customer.Builder()).buildNew(1, "John", "Doe",
                 LocalDate.of(2000, 1, 1), "john.doe@example.com",
