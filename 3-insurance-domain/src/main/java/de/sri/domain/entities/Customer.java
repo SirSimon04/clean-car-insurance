@@ -16,7 +16,7 @@ public class Customer {
 	private List<Accident> accidents;
 	private List<Ticket> tickets;
 
-	public Customer(int id, String firstName, String lastName, LocalDate dateOfBirth, String email,
+	private Customer(int id, String firstName, String lastName, LocalDate dateOfBirth, String email,
 			Address address) {
 		this.id = id;
 		this.firstName = firstName;

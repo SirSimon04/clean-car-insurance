@@ -8,17 +8,14 @@ public class Policy {
 	private PolicyProgram program;
 	private double carValue;
 	private Premium premium;
-	private final int customerId;
 
-	public Policy(int id, PolicyStatus status, PolicyProgram program, double carValue,
-			int customerId) {
+	public Policy(int id, PolicyStatus status, PolicyProgram program, double carValue) {
 		this.id = id;
 		this.status = status;
 		this.program = program;
 		this.carValue = carValue;
-		this.customerId = customerId;
 	}
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -59,10 +56,6 @@ public class Policy {
 		this.premium = premium;
 	}
 
-	public int getCustomerId() {
-		return customerId;
-	}
-
 	@Override
 	public String toString() {
 		return "Policy{" +
@@ -71,7 +64,6 @@ public class Policy {
 				", program=" + program +
 				", carValue=" + carValue +
 				", premium=" + premium +
-				", customerId=" + customerId +
 				'}';
 	}
 }

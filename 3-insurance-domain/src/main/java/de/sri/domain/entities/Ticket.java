@@ -33,7 +33,6 @@ public class Ticket {
 		this.speedExcess = speedExcess;
 	}
 
-
 	@Override
 	public String toString() {
 		return "Ticket{" +
