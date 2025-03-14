@@ -37,16 +37,8 @@ public class Customer {
 		return firstName;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
 	public String getLastName() {
 		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
 	}
 
 	public LocalDate getDateOfBirth() {
@@ -66,16 +58,8 @@ public class Customer {
 		return email;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public Address getAddress() {
 		return address;
-	}
-
-	public void setAddress(Address address) {
-		this.address = address;
 	}
 
 	public List<Policy> getPolicies() {
