@@ -151,7 +151,7 @@ class PolicyManagementImplTest {
                                                                 .createDriverUnder18();
                                 when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
-                                Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 120000);
+                                Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 1200001);
 
                                 CustomerTooYoungException exception = assertThrows(CustomerTooYoungException.class,
                                                                 () -> policyManagement.addPolicyToCustomer(1, policy));
@@ -174,4 +174,18 @@ class PolicyManagementImplTest {
                                 policyManagement.increaseAllPoliciesPremiumBy(10, customer.getId());
                                 assertEquals(policy.getPremium().getAmount(), premium + 10);
                 }
+
+                @Test
+                void add_policy_with_customer_not_found()
+                        throws CustomerNotFoundException, CustomerTooYoungException,
+                        CarTooExpensiveException {
+                    when(customerRepository.findById(1)).thenReturn(Optional.empty());
+
+                    Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000);
+
+                    CustomerNotFoundException exception = assertThrows(CustomerNotFoundException.class,
+                            () -> policyManagement.addPolicyToCustomer(1, policy));
+                    assertEquals("The user with id 1 was not found.", exception.getMessage());
+}
+
 }
