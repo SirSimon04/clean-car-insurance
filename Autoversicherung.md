@@ -623,24 +623,22 @@ In der Adapter-Schicht wurde der Console-Adapter gezielt getestet, um dessen Fun
 ![](/testCoverage.png)
  
 ### Fakes und Mocks
-In der Anwendung wird ausschließlich das `CustomerRepository` gemockt. Dies geschieht aber in mehreren Test Klassen, um die Geschäftslogik isuliert von der realen Implementierung des `CustomerRepository`zu trennen. Eine weitere Möglichkeit wäre das Schreiben von Test für den `ConsoleAdapter`und das Mocken dieses. Dies wird aber nicht getätigt.
+
 #### Mock-Objekt: `CustomerRepository`
- 
+In den Tests wird das `CustomerRepository` gemockt. Dies geschieht in mehreren Test Klassen, um die Geschäftslogik isoliert von der Implementierung des `CustomerRepository`zu trennen. 
+
 **UML:**
 
 ```mermaid
 
 classDiagram
-    class PolicyManagementImpl {
-      +addPolicyToCustomer(int customerId, Policy policy)
-    }
 
     class CustomerRepository {
       +findById(int id) Optional~Customer~
       <<interface>>
     }
 
-    PolicyManagementImpl --> CustomerRepository
+    PolicyManagementImplTest --> CustomerRepository
 ``` 
  
 **Code-Beispiel:**
@@ -675,7 +673,102 @@ class PolicyManagementImplTest {
 
 Das Mock-Objekt *customerRepository* simuliert das Verhalten des `CustomerRepository`-Interfaces. Es wird verwendet, um die Abhängigkeit von der realen Implementierung zu isolieren und die Geschäftslogik von `PolicyManagementImpl` unabhängig zu testen. In diesem Test wird das Verhalten der `findById()`-Methode simuliert, sodass ein Senior-Customer zurückgegeben wird, ohne dass eine tatsächliche Datenbankabfrage durch den echten CustomerRepository stattfindet.
 
-#### Mock-Objekt: `CustomerRepository`
+#### Mock-Objekt: `WriteCustomerManagement`
+In den Tests des Adapters werden sämtliche Usecases gemockt. Dazu gehört das `WriteCustomerManagement`, aber auch `ReadCustomerManagement`, `PolicyManagement` und `TicketManagement`. Dies geschieht in der Testklasse `ConsoleAdapterTest`, um die Funktionsweise des Adapters unabhängig von der eigentlichen Geschäftlogik testen zu können. In den Tests des `ConsoleAdapter` werden außerdem die Methoden, die Nutzereingaben verlangen, gemockt, um automatisierte Tests zu ermöglichen, bei denen nicht manuell eine Eingabe erfolgen muss.
+
+**UML:**
+
+```mermaid
+classDiagram
+    class ReadCustomerManagement {
+      +getCustomer(int id) Customer
+      +getAllCustomers() List~Customer~
+      +getCustomersByPolicyStatus(PolicyStatus status) List~Customer~
+      +getCustomersByAccidentCostGreaterThan(double cost) List~Customer~
+      +getCustomersByTicketSpeedExcessGreaterThan(double speed) List~Customer~
+      <<interface>>
+    }
+
+    class WriteCustomerManagement {
+      +createCustomer(Customer customer) Customer
+      +updateCustomer(Customer customer)
+      +deleteCustomer(int id)
+      +createAccidentForCustomer(int id, Accident accident)
+      <<interface>>
+    }
+
+    class PolicyManagement {
+      +addPolicyToCustomer(int id, Policy policy)
+      <<interface>>
+    }
+
+    class TicketManagement {
+      +createTicketForCustomer(int id, Ticket ticket)
+      <<interface>>
+    }
+
+    ConsoleAdapterTest --> ReadCustomerManagement
+    ConsoleAdapterTest --> WriteCustomerManagement
+    ConsoleAdapterTest --> PolicyManagement
+    ConsoleAdapterTest --> TicketManagement
+``` 
+
+**Code-Beispiel:**
+
+```java
+@ExtendWith(MockitoExtension.class)
+class ConsoleAdapterTest {
+
+    @Mock
+    private ReadCustomerManagement readCustomerManagement;
+
+    @Mock
+    private WriteCustomerManagement writeCustomerManagement;
+
+    @Mock
+    private PolicyManagement policyManagement;
+
+    @Mock
+    private TicketManagement ticketManagement;
+
+    @InjectMocks
+    private ConsoleAdapter consoleAdapter;
+
+    @Test
+        void createCustomer_success() {
+            consoleAdapter = Mockito.spy(consoleAdapter);
+
+            // Mocken der Eingabe-Methoden für automatisierte Tests
+            doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
+            doReturn("John").when(consoleAdapter).getStringInput(eq("Enter first name: "));
+            doReturn("Doe").when(consoleAdapter).getStringInput(eq("Enter last name: "));
+            doReturn(LocalDate.of(2000, 1, 1)).when(consoleAdapter)
+                .getDateInput(eq("Enter date of birth (YYYY-MM-DD): "));
+            doReturn("john.doe@example.com").when(consoleAdapter).getStringInput(eq("Enter email: "));
+            doReturn("Street").when(consoleAdapter).getStringInput(eq("Street: "));
+            doReturn("City").when(consoleAdapter).getStringInput(eq("City: "));
+            doReturn("State").when(consoleAdapter).getStringInput(eq("State: "));
+            doReturn("12345").when(consoleAdapter).getStringInput(eq("Zip Code: "));
+            doReturn("Country").when(consoleAdapter).getStringInput(eq("Country: "));
+
+            Customer createdCustomer = new CustomerDirector(new Customer.Builder()).buildNew(1, "John", "Doe",
+                    LocalDate.of(2000, 1, 1), "john.doe@example.com",
+                    new Address("Street", "City", "State", "12345", "Country"));
+            when(writeCustomerManagement.createCustomer(any(Customer.class))).thenReturn(createdCustomer);
+
+            consoleAdapter.start();
+
+            String output = getOutput();
+
+            assertTrue(output.contains("Customer created successfully with ID: 1"));
+            verify(writeCustomerManagement, times(1)).createCustomer(any(Customer.class));
+        }
+}
+```
+
+**Beschreibung:**
+
+Das Mock-Objekt *writeCustomerManagement* simuliert das Verhalten des `WriteCustomerManagement`-Interfaces. Es wird verwendet, um die Abhängigkeit von der realen Implementierung zu isolieren und die Adapter-Logik des `ConsoleAdapter` unabhängig von der Implementierung der Use-Cases zu testen. In den Tests wird das Verhalten der Methoden wie `createCustomer()`, `updateCustomer()`, etc. simuliert, ohne dass die tatsächliche Implementierung der Usecases (Business Logic) aufgerufen wird.
 
 
 # 6. Domain-Driven-Design (DDD)
