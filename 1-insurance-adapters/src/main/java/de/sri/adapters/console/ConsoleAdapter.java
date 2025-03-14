@@ -52,47 +52,7 @@ public class ConsoleAdapter {
             try {
                 printMainMenu();
                 int choice = getIntInput("Choose an option: ");
-
-                switch (choice) {
-                    case 1:
-                        createCustomer();
-                        break;
-                    case 2:
-                        getCustomer();
-                        break;
-                    case 3:
-                        listAllCustomers();
-                        break;
-                    case 4:
-                        updateCustomer();
-                        break;
-                    case 5:
-                        deleteCustomer();
-                        break;
-                    case 6:
-                        addPolicyToCustomer();
-                        break;
-                    case 7:
-                        createAccidentForCustomer();
-                        break;
-                    case 8:
-                        createTicketForCustomer();
-                        break;
-                    case 9:
-                        getCustomersByPolicyStatus();
-                        break;
-                    case 10:
-                        getCustomersByAccidentCostGreaterThan();
-                        break;
-                    case 11:
-                        getCustomersByTicketSpeedExcessGreaterThan();
-                        break;
-                    case 12:
-                        running = false;
-                        break;
-                    default:
-                        System.out.println("Invalid option. Please try again.");
-                }
+                running = handleChoice(choice);
             } catch (BaseDomainException e) {
                 System.out.println("Error: " + e.getMessage());
             } catch (Exception e) {
@@ -100,7 +60,49 @@ public class ConsoleAdapter {
                 System.out.println("An unexpected error occurred. Try again or contact support.");
             }
         }
+    }
 
+    private boolean handleChoice(int choice) throws BaseDomainException {
+        switch (choice) {
+            case 1:
+                createCustomer();
+                break;
+            case 2:
+                getCustomer();
+                break;
+            case 3:
+                listAllCustomers();
+                break;
+            case 4:
+                updateCustomer();
+                break;
+            case 5:
+                deleteCustomer();
+                break;
+            case 6:
+                addPolicyToCustomer();
+                break;
+            case 7:
+                createAccidentForCustomer();
+                break;
+            case 8:
+                createTicketForCustomer();
+                break;
+            case 9:
+                getCustomersByPolicyStatus();
+                break;
+            case 10:
+                getCustomersByAccidentCostGreaterThan();
+                break;
+            case 11:
+                getCustomersByTicketSpeedExcessGreaterThan();
+                break;
+            case 12:
+                return false;
+            default:
+                System.out.println("Invalid option. Please try again.");
+        }
+        return true;
     }
 
     protected void printMainMenu() {
