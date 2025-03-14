@@ -8,14 +8,17 @@ classDiagram
     }
 
     class BasicPremiumCalculationStrategy {
+        -double percentage
         +calculatePremium(double carValue) double
     }
 
     class StandardPremiumCalculationStrategy {
+        -double percentage
         +calculatePremium(double carValue) double
     }
 
     class DeluxePremiumCalculationStrategy {
+        -double percentage
         +calculatePremium(double carValue) double
     }
 
@@ -23,10 +26,6 @@ classDiagram
         +getStrategy(PolicyProgram program) PremiumCalculationStrategy
     }
 
-    class Policy {
-        -double carValue
-        -PremiumCalculationStrategy premiumCalculationStrategy
-    }
 
     class PolicyProgram {
         <<enumeration>>
@@ -35,35 +34,32 @@ classDiagram
         DELUXE
     }
 
-    class PolicyManagementImpl {
-        -CustomerRepository customerRepository
+    class PolicyManagementImpl {        
         +addPolicyToCustomer(int customerId, Policy policy)
     }
 
     PremiumCalculationStrategy <|.. BasicPremiumCalculationStrategy
     PremiumCalculationStrategy <|.. StandardPremiumCalculationStrategy
     PremiumCalculationStrategy <|.. DeluxePremiumCalculationStrategy
-    PremiumCalculationStrategyFactory --> PremiumCalculationStrategy
-    Policy --> PremiumCalculationStrategy
-    Policy --> PolicyProgram
-    PolicyManagementImpl --> PremiumCalculationStrategyFactory
-    PolicyManagementImpl --> Policy
+    PremiumCalculationStrategyFactory --> PremiumCalculationStrategy    
+    PremiumCalculationStrategyFactory --> PolicyProgram        
+    PolicyManagementImpl --> PremiumCalculationStrategyFactory   
+    PolicyManagementImpl -->  PremiumCalculationStrategy
 ```
 
 ## Builder Pattern
 ```mermaid
-classDiagram
+classDiagram    
     class Customer {
-        -int id
-        -String firstName
-        -String lastName
-        -LocalDate dateOfBirth
-        -String email
-        +getId() int
-        +getFirstName() String
-        +getLastName() String
-        +getDateOfBirth() LocalDate
-        +getEmail() String
+      -id: int 
+      -firstName: String 
+      -lastName: String
+      -dateOfBirth: LocalDate
+      -email: String
+      -address: Address
+      -policies: List~Policy~
+      -accidents: List~Accident~
+      -tickets: List~Ticket~       
     }
 
     class Customer.Builder {
@@ -72,24 +68,29 @@ classDiagram
         +withLastName(String lastName) Builder
         +withDateOfBirth(LocalDate dateOfBirth) Builder
         +withEmail(String email) Builder
+        +withPolicies(List~Policy~ policies) Builder
+        +withAccidents(List~Accident~ accidents) Builder
+        +withTickets(List~Ticket~ tickets) Builder
         +build() Customer
     }
 
     class CustomerDirector {
-        -Customer.Builder builder
+        #Customer.Builder builder
         +CustomerDirector(Customer.Builder builder)
         +buildTemporary(String firstName, String lastName, LocalDate dateOfBirth, String email) Customer
         +buildNew(int id, String firstName, String lastName, LocalDate dateOfBirth, String email) Customer
-        +buildNewWithId(int id, Customer customer) Customer
+        +buildNewFromObject(int id, Customer customer) Customer
     }
 
     class CustomerRepositoryImpl {
-        -Map<Integer, Customer> customers
-        +CustomerRepositoryImpl()
-        +save(Customer customer) Customer
-        +findById(int id) Optional<Customer>
-        +findAll() List<Customer>
+        -Map~Integer, Customer~ customers
+        +findById(int id) Customer
+        +save(Customer customer) void  
         +delete(int id) void
+        +findAll() List~Customer~
+        +findByPolicyStatus(PolicyStatus status) List~Customer~
+        +findByAccidentCostGreaterThan(double cost) List~Customer~
+        +findByTicketSpeedExcessGreaterThan(double speedExcess) List~Customer~
     }
 
     Customer.Builder -- Customer

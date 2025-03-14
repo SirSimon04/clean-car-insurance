@@ -2,7 +2,6 @@ package de.sri.application.usecases;
 
 import de.sri.domain.entities.Customer;
 import de.sri.domain.entities.Policy;
-import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.PolicyManagement;
 import de.sri.domain.valueobjects.Premium;
