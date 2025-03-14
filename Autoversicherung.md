@@ -974,6 +974,165 @@ Ein Repository für Customer wird eingesetzt, weil:
 3. Es ermöglicht, komplexe Abfragen zu kapseln (z. B. findByName). 
 4. Es unterstützt das Prinzip der Aggregate Root in DDD, da Customer ein Aggregate Root ist.  
 
+# 7. Refactoring
+## Code Smells
+### Long Method
+
+#### Code-Beispiel:
+Die Methode `addPolicyToCustomer` in `PolicyManagementImpl` ist zu lang und enthält zu viele Verantwortlichkeiten.
+
+```java
+public void addPolicyToCustomer(int customerId, Policy policy)
+        throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException {
+    Customer customer = customerRepository.findById(customerId)
+            .orElseThrow(() -> new CustomerNotFoundException(customerId));
+
+    if (customer.getAge() < 18) {
+        throw new CustomerTooYoungException(customerId);
+    }
+
+    if (policy.getCarValue() > 100000) {
+        throw new CarTooExpensiveException(policy.getCarValue());
+    }
+
+    customer.addPolicy(policy);
+    customerRepository.save(customer);
+}
+```
+
+#### Möglicher Lösungsweg:
+Aufteilung der Methode in kleinere Methoden, die jeweils eine einzelne Verantwortung haben.
+
+```java
+public void addPolicyToCustomer(int customerId, Policy policy)
+        throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException {
+    Customer customer = findCustomerById(customerId);
+    validateCustomerAge(customer);
+    validateCarValue(policy);
+    addPolicyAndSaveCustomer(customer, policy);
+}
+
+private Customer findCustomerById(int customerId) throws CustomerNotFoundException {
+    return customerRepository.findById(customerId)
+            .orElseThrow(() -> new CustomerNotFoundException(customerId));
+}
+
+private void validateCustomerAge(Customer customer) throws CustomerTooYoungException {
+    if (customer.getAge() < 18) {
+        throw new CustomerTooYoungException(customer.getId());
+    }
+}
+
+private void validateCarValue(Policy policy) throws CarTooExpensiveException {
+    if (policy.getCarValue() > 100000) {
+        throw new CarTooExpensiveException(policy.getCarValue());
+    }
+}
+
+private void addPolicyAndSaveCustomer(Customer customer, Policy policy) {
+    customer.addPolicy(policy);
+    customerRepository.save(customer);
+}
+```
+
+### Duplicated Code
+
+#### Code-Beispiel:
+In der `PolicyManagementImpl` und `TicketManagementImpl` gibt es ähnliche Logik für das Abrufen und Überprüfen von Kunden.
+
+```java
+class PolicyManagementImpl {
+    // ...
+    private Customer getCustomer(int customerId) throws CustomerNotFoundException {
+        return customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException(customerId));
+    }
+}
+```
+
+```java
+class TicketManagementImpl {
+    // ...
+    private Customer getCustomer(int customerId) throws CustomerNotFoundException {
+        return customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException(customerId));
+    }
+}
+```
+
+#### Möglicher Lösungsweg:
+Extrahieren der gemeinsamen Logik in eine Hilfsklasse.
+
+```java
+package de.sri.application.usecases;
+
+public class CustomerHelper {
+
+    public static Customer getCustomer(CustomerRepository customerRepository, int customerId) throws CustomerNotFoundException {
+        return customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException(customerId));
+    }
+
+}
+```
+
+## Refactorings
+
+### Refactoring: Replace Conditional with Polymorphism
+
+#### Begründung:
+Das Refactoring "Replace Conditional with Polymorphism" wird angewendet, um die Wartbarkeit und Erweiterbarkeit des Codes zu verbessern. Anstatt eine lange `switch`-Anweisung zu verwenden, um die Premium-Berechnung basierend auf dem `PolicyProgram` zu bestimmen, wird das Strategy-Pattern verwendet. Dies ermöglicht es, neue Berechnungsstrategien hinzuzufügen, ohne den bestehenden Code zu ändern.
+
+Commit: `d8729c9c1f914fe12341021ee10d92481abb4f7b`
+
+#### UML Vorher:
+```mermaid
+classDiagram
+    class PolicyManagementImpl {
+        +addPolicyToCustomer(int customerId, Policy policy)
+    }
+    class PolicyProgram {
+        <<enumeration>>
+        BASIC
+        STANDARD
+        DELUXE
+    }
+    PolicyManagementImpl --> PolicyProgram
+```
+
+#### UML Nachher:
+```mermaid
+classDiagram
+    class PolicyManagementImpl {
+        +addPolicyToCustomer(int customerId, Policy policy)
+    }
+    class PremiumCalculationStrategy {
+        <<interface>>
+        +calculatePremium(double carValue) double
+    }
+    class BasicPremiumCalculationStrategy {
+        +calculatePremium(double carValue) double
+    }
+    class StandardPremiumCalculationStrategy {
+        +calculatePremium(double carValue) double
+    }
+    class DeluxePremiumCalculationStrategy {
+        +calculatePremium(double carValue) double
+    }
+    class PremiumCalculationStrategyFactory {
+        +getStrategy(PolicyProgram program) PremiumCalculationStrategy
+    }
+    class PolicyProgram {
+        <<enumeration>>
+        BASIC
+        STANDARD
+        DELUXE
+    }
+    PolicyManagementImpl --> PremiumCalculationStrategyFactory
+    PolicyManagementImpl --> PolicyProgram
+    PremiumCalculationStrategyFactory --> PremiumCalculationStrategy
+    PremiumCalculationStrategy <|.. BasicPremiumCalculationStrategy
+    PremiumCalculationStrategy <|.. StandardPremiumCalculationStrategy
+    PremiumCalculationStrategy <|.. DeluxePremiumCalculationStrategy
+```
+
 
 # 8. Design Patterns
 ## Strategy Pattern
