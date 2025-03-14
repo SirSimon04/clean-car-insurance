@@ -114,14 +114,15 @@ classDiagram
 	- wirkt sich auf den Preis der Policy aus
 	- Id, Name, Beschreibung
 - Policystatus
-	- sagt aus, ob eine abgeschlossene Policy aktiv oder inaktiv ist
-	- Id, Name
+	- beschreibt den Status einer abgeschlossenen Versicherung
+  - vorhandene Status: aktive, inaktive, abgelehnt	
 - Accidents
 	- Unfälle, die ein Kunde begangen hat
-	- Id, Schadenskosten, Datum, kundenId
+	- Id, Schadenskosten, Datum
 - Tickets
-	- Verkehrsverstöße von Kunden, beispielsweise zu schnelles Fahren
-	- Id, Datum, Geschwindigkeitsüberschreitung, kundenId
+	- Verkehrsverstöße (in Bezug auf zu schnelles Fahren) von Kunden
+	- Id, Datum, Geschwindigkeitsüberschreitung
+
 
 ## Nutzer
 - Mitarbeiter der Versicherungsfirma
@@ -131,16 +132,12 @@ classDiagram
 		- alte Kunden und ihre Policys anzeigen
 	- Accident hinzufügen
 		- bei Kundenmeldung über einen Accident soll dieser in das System eingetragen werden
-		- Änderungen an allen Policys des Kunden sollen ersichtlich werden
+		- Änderungen an der spezifischen Policy des Kunden soll ersichtlicht werden
 			- bis zu einer bestimmten Menge an Unfällen wird es teurer, die Policies können aber auch gekündigt werden
 	- Ticket hinzufügen
 		- bei Kundenmeldung über ein Ticket soll dieses in das System eingetragen werden
 		- Änderungen an allen Policys des Kunden sollen ersichtlich werden
 			- bis zu einer bestimmten Menge an Tickets oder ab einer bestimmten Geschwindigkeitsüberschreitung wird es teurer, die Policies können aber auch gekündigt werden
-	- Übersicht anzeigen
-		- Einsicht über (Anzahl) Kunden, (Anzahl) Policys
-		- Summe Wert versicherte Autos
-		- Summe aller monatlichen Einnahmen
 
 
 | Bezeichnung | Bedeutung                                                                               | Begründung                                                                                                                                                                                                                                                           |
@@ -148,32 +145,8 @@ classDiagram
 | Policy      | eine Versicherung, die ein Kunde für ein Auto abgeschlossen hat                         | Ein Kunde schließt einen Vertrag für jede seiner Versicherungen ab (Insurance Policy). Bei einer Autoversicherung werden nur diese Art von Verträgen verwaltet, deswegen die kürzere Bezeichnung.                                                                    |
 | Ticket      | Verkehrsverstöße von Kunden für zu schnelles Fahren                                     | Bei einer einer Autoversicherung sind für die Kostenberechnung einer Policy Geschwindigkeitsüberschreitungen releveant, da dadurch das Risiko eines Schadens erhöht wird. Andere Arten von Verkehrsvergehen, wie falsches Parken, werden dabei nicht berücksichtigt. |
 | Customer    | natürliche Person, die Kunde bei der von der Anwendung verwalteten Autoversicherung ist | Kunden schließen einen Vertrag bei der Autoversicherung ab. Die Nutzer der Anwendung sind Mitarbeiter der Autoversicherung und tragen die Daten für die jeweiligen Kunden in das System ein.                                                                         |
-| Premium     | die monatlichen Kosten einer Policy, um diese aktiv zu halten                           | Im Rahmen einer Versicherung wird Premium als der monatlich zu entrichtende Betrag definiert                                                                                                                                                                         |
-|             |                                                                                         |                                                                                                                                                                                                                                                                      |
-|             |                                                                                         |                                                                                                                                                                                                                                                                      |
-|             |                                                                                         |                                                                                                                                                                                                                                                                      |
- 
-
-- Policy
-	- eine Versicherung, die ein Kunde für ein Auto abgeschlossen hat
-	- Policystatus, entweder aktiv oder nicht aktiv
-	- Policyprogram: Verweis auf ein Programm
-	- CarValue
-	- Premium (vielleicht als VO)
+| Premium     | die monatlichen Kosten einer Policy, um diese aktiv zu halten                           | Im Rahmen einer Versicherung wird Premium als der monatlich zu entrichtende Betrag definiert                                                                                                                                
 ## UML zu Entity
-```mermaid
---- 
-title: Klassendiagramm für Policy
----
-classDiagram
-	class Policy {
-		-status: PolicyStatus
-		-program: PolicyProgram
-		-carValue: int
-		-premium: double
-		
-	}
-```
 
 ## Entities
 
@@ -182,17 +155,26 @@ classDiagram
 ```mermaid
 classDiagram
 class Policy {
-  -id: UUID
+  -id: int
   -status: PolicyStatus
   -program: PolicyProgram
-  -carValue: double 
-  -premium: Premium 
-  -customerId: UUID 
-  +activate()
-  +deactivate()
-  +updatePremium(Premium newPremium)
+  -carValue: double
+  -premium: Premium  
+  +setId(int id) void
+  +getId() int
+  +getStatus() PolicyStatus
+  +setStatus(PolicyStatus status) void
+  +getProgram() PolicyProgram
+  +setProgram(PolicyProgram program) void
+  +getCarValue() double
+  +setCarValue(double carValue) void
+  +getPremium() Premium
+  +setPremium(Premium premium) void
+  +getCustomerId() int
 }
+
 ```
+
 
 **Beschreibung**  
 Die Entität *Policy* repräsentiert eine Versicherungspolice, die ein Kunde für ein spezifisches Auto abgeschlossen hat. Sie enthält wesentliche Informationen wie den Status der Police, das gewählte Versicherungsprogramm, den Wert des versicherten Autos und die monatlichen Kosten.
@@ -200,7 +182,7 @@ Die Entität *Policy* repräsentiert eine Versicherungspolice, die ein Kunde fü
 **Begründung des Einsatzes:**  
 Policy wird als Entity modelliert, weil:  
 1. Sie eine eindeutige Identität hat (durch die id).  
-2. Sie einen Lebenszyklus hat (kann aktiviert oder deaktiviert werden).  
+2. Sie einen Lebenszyklus hat (der Status kann verändert werden).  
 3. Sie sich im Laufe der Zeit ändern kann (z. B. Änderung der Kosten), behält aber ihre Identität.  
 4. Sie eine zentrale Rolle im Modell spielt und mit anderen Entitäten (wie Customer) in Beziehung steht.  
 
@@ -215,7 +197,8 @@ classDiagram
 class Premium {
   -amount: double 
   -currency: String 
-  +getValue() double
+  +getAmount() double
+  +getCurrency() String
   +add(Premium other) Premium
   +subtract(Premium other) Premium
 }
@@ -240,23 +223,39 @@ Premium wird als Value Object modelliert, weil:
 ```mermaid
 classDiagram
 class Customer {
-  -id: UUID 
-  -name: String 
+  -id: int 
+  -firstName: String 
+  -lastName: String
+  -dateOfBirth: LocalDate
+  -email: String
+  -address: Address
   -policies: List~Policy~
   -accidents: List~Accident~
   -tickets: List~Ticket~ 
+  +addPolicy(Policy p) void
+  +addAccident(Accident a) void
+  +addTicket(Ticket t) void
+  +removePolicy(Policy p) void
+  +removeAccident(Accident a) void
+  +removeTicket(Ticket t) void
 }
 class Policy {
-  -id: UUID 
-  -status: PolicyStatus 
+  -id: int
+  -status: PolicyStatus
+  -program: PolicyProgram
+  -carValue: double
+  -premium: Premium
 }
 class Accident {
-  -id: UUID 
+  -id: int 
   -cost: double 
+  -date: LocalDate
+  -policyId: int
 }
 class Ticket {
-  -id: UUID
+  -id: int
   -speedExcess: double 
+  -date: LocalDate  
 }
 Customer "1" -- "*" Policy
 Customer "1" -- "*" Accident
@@ -281,13 +280,15 @@ Ein Aggregat wird hier eingesetzt, weil:
 ```mermaid
 classDiagram
 class CustomerRepository {
-  +findById(UUID id) Customer
-  +save(Customer customer) void
-  +update(Customer customer) void
-  +delete(UUID id) void
+  +findById(int id) Customer
+  +save(Customer customer) void  
+  +delete(int id) void
   +findAll() List~Customer~
-  +findByName(String name) List~Customer~
+  +findByPolicyStatus(PolicyStatus status) List~Customer~
+  +findByAccidentCostGreaterThan(double cost) List~Customer~
+  +findByTicketSpeedExcessGreaterThan(double speedExcess) List~Customer~
 }
+<<interface>>CustomerRepository
 ```
 
 **Beschreibung:**  
