@@ -1291,6 +1291,10 @@ private boolean handleChoice(int choice) throws BaseDomainException {
 
 # 8. Design Patterns
 ## Strategy Pattern
+### Begründung
+Das Strategy Pattern wird verwendet, um verschiedene Berechnungsstrategien für Premiums zu kapseln. Dies ermöglicht es, die Berechnungslogik für verschiedene Policy-Programme (BASIC, STANDARD, DELUXE) zu variieren, ohne den Code der PolicyManagementImpl-Klasse zu ändern.
+
+### UML
 ```mermaid
 classDiagram
     class PremiumCalculationStrategy {
@@ -1339,6 +1343,11 @@ classDiagram
 ```
 
 ## Builder Pattern
+
+### Begründung
+Das Builder Pattern wird verwendet, um die Erstellung komplexer Customer-Objekte zu vereinfachen. Der CustomerDirector nutzt den Builder, um verschiedene Arten von Customer-Objekten zu erstellen, was die Lesbarkeit und Wartbarkeit des Codes verbessert.
+
+### UML
 ```mermaid
 classDiagram    
     class Customer {
