@@ -1,11 +1,11 @@
 # 1. Einführung
 ## Übersicht über die Applikation
-Die Applikation SRI (_Simon Stefan Insuranci_) ist eine Software zur Verwaltung von Autoversicherungen. Sie ermöglicht es, Versicherungspolicen für Kunden zu erstellen und zu verwalten. Die Applikation berechnet die Versicherungskosten basierend auf verschiedenen Faktoren wie dem Wert des Autos, dem Alter des Kunden, Verkehrsverstößen wie Tickets und Unfällen.
+Die Applikation SRI (_Simon Stefan Insuranci_) ist eine Software zur Verwaltung von Autoversicherungen. Sie ermöglicht es, VersicherungsPolicies für Kunden zu erstellen und zu verwalten. Die Applikation berechnet die Versicherungskosten basierend auf verschiedenen Faktoren wie dem Wert des Autos, dem Alter des Kunden, Verkehrsverstößen wie Tickets und Unfällen.
  
 **Funktionsweise:**
 1. **Kostenberechnung:** Die Applikation verwendet verschiedene Strategien zur Berechnung der Versicherungsprämien (z.B. Basic, Standard, Deluxe).
 2. **Regeln:** Es gibt spezifische Regeln, die die Prämien beeinflussen, wie zusätzliche Gebühren für junge oder ältere Fahrer, erhöhte Prämien bei Verkehrsverstößen und Unfällen, sowie Ausschlusskriterien für sehr teure Autos.
-3. **Verwaltung:** Mitarbeiter der Versicherungsfirma können Kunden und deren Policen verwalten, Unfälle und Tickets hinzufügen und die Auswirkungen auf die Prämien sehen.
+3. **Verwaltung:** Mitarbeiter der Versicherungsfirma können Kunden und deren Policies verwalten, Unfälle und Tickets hinzufügen und die Auswirkungen auf die Prämien sehen.
  
 **Zweck:**
 Die Applikation soll den Prozess der Verwaltung von Autoversicherungen effizienter und transparenter gestalten, indem sie automatisierte Berechnungen und klare Regeln zur Prämienbestimmung bietet.
@@ -495,9 +495,185 @@ classDiagram
 **Beschreibung:**
 Durch die Aufteilung des `CustomerRepository`-Interfaces in `BasicCustomerRepository` und `AdvancedCustomerRepository` wird das ISP erfüllt, da Implementierungen nur die Methoden implementieren müssen, die sie tatsächlich benötigen.
 
-# 4 Weitere Prinzipien 
+# 4. Weitere Prinzipien  
+TODO
 
-# 7. Domain-Driven-Design (DDD)
+# 5. Unit Tests
+## 10 Unit Tests
+Die folgenden aufgeführten Tests befinden sich in der `PolicyManagementImplTest` Klasse. 
+ 
+| Unit Test | Beschreibung |
+|-----------|--------------|
+| `add_basic_policy` | Testet das Hinzufügen einer BASIC-Policy zu einem Kunden und überprüft die Prämienberechnung und die Anzahl der Policies des Kunden. |
+| `add_policy_basic_with_young_driver` | Testet das Hinzufügen einer BASIC-Policy zu einem jungen Fahrer und überprüft die Prämienberechnung und die Anzahl der Policies des Kunden. |
+| `add_policy_basic_with_senior_driver` | Testet das Hinzufügen einer BASIC-Policy zu einem älteren Fahrer und überprüft die Prämienberechnung und die Anzahl der Policies des Kunden. |
+| `add_basic_policy_with_car_value_fee` | Testet das Hinzufügen einer BASIC-Policy mit einem hohen Autowert und überprüft die Prämienberechnung und die Anzahl der Policies des Kunden. |
+| `add_standard_policy` | Testet das Hinzufügen einer STANDARD-Policy zu einem Kunden und überprüft die Prämienberechnung und die Anzahl der Policies des Kunden. |
+| `add_deluxe_policy` | Testet das Hinzufügen einer DELUXE-Policy zu einem Kunden und überprüft die Prämienberechnung und die Anzahl der Policies des Kunden. |
+| `add_policy_with_too_high_car_value` | Testet das Hinzufügen einer Policy mit einem zu hohen Autowert und überprüft, ob eine `CarTooExpensiveException` geworfen wird. |
+| `add_policy_with_customer_under_18_years_old` | Testet das Hinzufügen einer Policy zu einem Kunden unter 18 Jahren und überprüft, ob eine `CustomerTooYoungException` geworfen wird. |
+| `increase_all_policies_premium` | Testet die Erhöhung der Prämien aller Policies eines Kunden und überprüft die neue Prämienhöhe. |
+| `add_policy_with_customer_not_found` | Testet das Hinzufügen einer Policy zu einem nicht existierenden Kunden und überprüft, ob eine `CustomerNotFoundException` geworfen wird. |
+ 
+### ATRIP: Automatic
+ 
+**Begründung für automatisches Testen**
+
+JUnit-Tests werden in einem Maven-Projekt automatisch während der Test-Phase ausgeführt, weil Maven das `maven-surefire-plugin` standardmäßig verwendet. Dieses Plugin ist darauf ausgelegt, JUnit-Tests zu erkennen und auszuführen.
+ 
+### ATRIP: Thorough
+ 
+**Positiv-Beispiel: Thorough**
+ 
+**Code-Beispiel:**
+
+```java
+@Test
+void add_basic_policy() throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException {
+    Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
+    when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
+ 
+    Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000);
+    policyManagement.addPolicyToCustomer(1, policy);
+ 
+    assertEquals(500, policy.getPremium().getAmount());
+    assertEquals(1, customer.getPolicies().size());
+    assertEquals(policy, customer.getPolicies().get(0));
+}
+```
+ 
+**Analyse und Begründung:**
+
+Dieser Test ist gründlich, da er die Berechnung der Prämie für eine BASIC-Policy überprüft und sicherstellt, dass die Policy korrekt zum Kunden hinzugefügt wird. Es werden mehrere Assertions verwendet, um verschiedene Aspekte des Ergebnisses zu validieren.
+ 
+**Positiv-Beispiel: Thorough**
+ 
+**Code-Beispiel:**
+```java
+@Test
+void add_policy_with_customer_not_found() throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException {
+    when(customerRepository.findById(1)).thenReturn(Optional.empty());
+
+    Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000);
+
+    CustomerNotFoundException exception = assertThrows(CustomerNotFoundException.class,() -> policyManagement.addPolicyToCustomer(1, policy));
+    assertEquals("The user with id 1 was not found.", exception.getMessage());
+}
+```
+ 
+**Analyse und Begründung:**
+
+Dieser Test ist gründlich, da er nur überprüft, ob eine `CustomerNotFoundException` geworfen wird, wenn eine Policy für einen nicht existierenden Customer hinzugefügt werden soll.
+ 
+### ATRIP: Professional
+ 
+**Positiv-Beispiel: Professional**
+ 
+**Code-Beispiel:**
+
+```java
+@Test
+void add_policy_with_too_high_car_value() {
+    Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
+    when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
+ 
+    Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 120000);
+    CarTooExpensiveException exception = assertThrows(CarTooExpensiveException.class, () -> policyManagement.addPolicyToCustomer(1, policy));
+
+    assertEquals("Car value cannot be more than 100000!", exception.getMessage());
+}
+```
+ 
+**Analyse und Begründung:**
+
+Dieser Test ist professionell, da er sicherstellt, dass die richtige Ausnahme geworfen wird, wenn der Autowert zu hoch ist. Er verwendet klare und verständliche Assertions und überprüft die Fehlermeldung der Ausnahme. Die Verwendung der Hilfsklasse `TestCustomerDirector` zur Erstellung von Customer-Objekten trägt zur Übersichtlichkeit bei, da sie es ermöglicht, auf einfache Weise unterschiedliche Customer-Objekte für diverse Testszenarien zu generieren.
+ 
+**Negativ-Beispiel: Professional**
+ 
+**Code-Beispiel:**
+
+```java
+@Test
+void save_policy() {    
+    Customer customer = this.repository.findById(1).get();
+    Policy policy = new Policy(0, PolicyStatus.ACTIVE, PolicyProgram.DELUXE, 30000.0);
+
+    customer.addPolicy(policy);
+    Customer savedCustomer = repository.save(customer);
+
+    assertNotNull(savedCustomer.getId());
+    assertEquals(2, this.repository.findById(savedCustomer.getId()).get().getPolicies().size());
+}
+```
+ 
+**Analyse und Begründung:**
+
+Dieser Test ist nicht professionell, da das Policy Objekt manuell erstellt und somit nicht wiederverwendt werden kann. Dadurch müssen bei Änderungen der Policy Klasse sämtliche Tests angepasst werden.
+ 
+### Code Coverage
+ 
+
+Die Code Coverage in diesem Projekt wird mit dem Tool **JaCoCo** gemessen. Eine hohe Code Coverage ist ein Indikator dafür, dass ein substantieller Teil des Codes durch automatisierte Tests abgedeckt ist, was potenziell die Fehlerwahrscheinlichkeit reduziert. Es ist jedoch wichtig zu betonen, dass eine hohe Testabdeckung allein keine Garantie für die Fehlerfreiheit darstellt. Fehlerhaft formulierte Assertions können dazu führen, dass bestehende Fehler nicht erkannt werden. Um die Robustheit des Codes zu gewährleisten, ist es unerlässlich, sowohl positive Tests (die das erwartete Verhalten verifizieren) als auch negative Tests (die die Fehlerbehandlung prüfen) zu implementieren.
+
+**Analyse und Begründung:**
+ 
+### Fakes und Mocks
+ 
+#### Mock-Objekt: `CustomerRepository`
+ 
+**UML:**
+
+```mermaid
+
+classDiagram
+    class PolicyManagementImpl {
+      +addPolicyToCustomer(int customerId, Policy policy)
+    }
+
+    class CustomerRepository {
+      +findById(int id) Optional~Customer~
+      <<interface>>
+    }
+
+    PolicyManagementImpl --> CustomerRepository
+``` 
+ 
+**Code-Beispiel:**
+
+```java
+@ExtendWith(MockitoExtension.class)
+class PolicyManagementImplTest {
+  
+  @Mock
+  private CustomerRepository customerRepository;
+
+  @InjectMocks
+  private PolicyManagementImpl policyManagement;
+
+  @Test
+  void add_policy_basic_with_senior_driver() throws Exception {
+    // Create a customer with age > 80
+      Customer customer = new TestCustomerDirector(new Customer.Builder()).createSeniorDriver();
+      when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
+
+      Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000);
+
+      policyManagement.addPolicyToCustomer(1, policy);
+
+      assertEquals(550, policy.getPremium().getAmount());
+      assertEquals(1, customer.getPolicies().size());
+      assertEquals(policy, customer.getPolicies().get(0));
+  } 
+}
+```
+**Beschreibung:**
+
+Das Mock-Objekt *customerRepository* simuliert das Verhalten des `CustomerRepository`-Interfaces. Es wird verwendet, um die Abhängigkeit von der realen Implementierung zu isolieren und die Geschäftslogik von `PolicyManagementImpl` unabhängig zu testen. In diesem Test wird das Verhalten der `findById()`-Methode simuliert, sodass ein Senior-Customer zurückgegeben wird, ohne dass eine tatsächliche Datenbankabfrage durch den echten CustomerRepository stattfindet.
+
+#### Mock-Objekt: `CustomerRepository`
+
+
+# 6. Domain-Driven-Design (DDD)
 ## Entities
 - Customer
 	- natürliche Person, die Kunde bei der von der Anwendung verwalteten Autoversicherung ist
@@ -576,7 +752,7 @@ class Policy {
 
 
 **Beschreibung**  
-Die Entität *Policy* repräsentiert eine Versicherungspolice, die ein Kunde für ein spezifisches Auto abgeschlossen hat. Sie enthält wesentliche Informationen wie den Status der Police, das gewählte Versicherungsprogramm, den Wert des versicherten Autos und die monatlichen Kosten.
+Die Entität *Policy* repräsentiert eine VersicherungsPolicy, die ein Kunde für ein spezifisches Auto abgeschlossen hat. Sie enthält wesentliche Informationen wie den Status der Policy, das gewählte Versicherungsprogramm, den Wert des versicherten Autos und die monatlichen Kosten.
 
 **Begründung des Einsatzes:**  
 Policy wird als Entity modelliert, weil:  
@@ -604,7 +780,7 @@ class Premium {
 ```
 
 **Beschreibung:**  
-Das Value Object *Premium* repräsentiert den Geldbetrag, den ein Kunde monatlich für seine Versicherungspolice zahlt. Es kapselt den Betrag und die Währung.
+Das Value Object *Premium* repräsentiert den Geldbetrag, den ein Kunde monatlich für seine VersicherungsPolicy zahlt. Es kapselt den Betrag und die Währung.
 
 **Begründung des Einsatzes:**  
 Premium wird als Value Object modelliert, weil:  
