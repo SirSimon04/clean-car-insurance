@@ -2,11 +2,19 @@ package de.sri.domain.valueobjects;
 
 import java.util.Objects;
 
+import de.sri.domain.exceptions.PropertyNotNullException;
+
 public final class PersonName {
     private final String firstName;
     private final String lastName;
 
-    public PersonName(String firstName, String lastName) {
+    public PersonName(String firstName, String lastName) throws PropertyNotNullException {       
+        if (firstName == null) {
+            throw new PropertyNotNullException("firstName");
+        }
+        if (lastName == null) {
+            throw new PropertyNotNullException("lastName");
+        }
         this.firstName = firstName.trim();
         this.lastName = lastName.trim();
     }

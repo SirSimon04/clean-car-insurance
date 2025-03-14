@@ -2,17 +2,23 @@ package de.sri.domain.valueobjects;
 
 import java.util.Objects;
 
+import de.sri.domain.exceptions.InvalidEmailAddress;
+import de.sri.domain.exceptions.PropertyNotNullException;
+
 public final class EmailAddress {
     private final String address;
 
-    public EmailAddress(String address) {
+    public EmailAddress(String address) throws InvalidEmailAddress, PropertyNotNullException {
+        if(address == null) {
+            throw new PropertyNotNullException("EmailAddress.address");
+        }
         if (!isValid(address)) {
-            throw new IllegalArgumentException("Invalid email address format!");
+            throw new InvalidEmailAddress(address);
         }
         this.address = address.toLowerCase();
     }
 
-    public String getAddress() {
+    public String getEmailAddress() {
         return address;
     }
 

@@ -1,14 +1,21 @@
 package de.sri.domain.valueobjects;
 
+import de.sri.domain.exceptions.IncompatibleCurrencyException;
+import de.sri.domain.exceptions.InvalidPremiumAmountException;
+import de.sri.domain.exceptions.PropertyNotNullException;
+
 public class Premium {
     private final double amount;
     private final String currency;
 
-    public Premium(double amount, String currency) {
+    public Premium(double amount, String currency) throws InvalidPremiumAmountException, PropertyNotNullException {
         if (amount <= 0) {
-            throw new IllegalArgumentException("Amount must be positive");
+            throw new InvalidPremiumAmountException();
         }
         this.amount = amount;
+        if(currency == null) {
+            throw new PropertyNotNullException("currency");
+        }
         this.currency = currency;
     }
 
@@ -20,16 +27,16 @@ public class Premium {
         return currency;
     }
 
-    public Premium add(Premium other) {
+    public Premium add(Premium other) throws IncompatibleCurrencyException, InvalidPremiumAmountException, PropertyNotNullException {
         if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException("Currencies must match");
+            throw new IncompatibleCurrencyException(this.getCurrency(), other.getCurrency());
         }
         return new Premium(this.amount + other.amount, this.currency);
     }
 
-    public Premium subtract(Premium other) {
+    public Premium subtract(Premium other) throws IncompatibleCurrencyException, InvalidPremiumAmountException, PropertyNotNullException {
         if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException("Currencies must match");
+            throw new IncompatibleCurrencyException(this.getCurrency(), other.getCurrency());
         }
         return new Premium(this.amount - other.amount, this.currency);
     }

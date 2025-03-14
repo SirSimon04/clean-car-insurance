@@ -1,5 +1,7 @@
 package de.sri.domain.valueobjects;
 
+import de.sri.domain.exceptions.PropertyNotNullException;
+
 public class Address {
     private final String street;
     private final String city;
@@ -7,7 +9,22 @@ public class Address {
     private final String zipCode;
     private final String country;
 
-    public Address(String street, String city, String state, String zipCode, String country) {
+    public Address(String street, String city, String state, String zipCode, String country) throws PropertyNotNullException {
+        if (street == null) {
+            throw new PropertyNotNullException("street");
+        }
+        if (city == null) {
+            throw new PropertyNotNullException("city");
+        }
+        if (state == null) {
+            throw new PropertyNotNullException("state");
+        }
+        if (zipCode == null) {
+            throw new PropertyNotNullException("zipCode");
+        }
+        if (country == null) {
+            throw new PropertyNotNullException("country");
+        }
         this.street = street;
         this.city = city;
         this.state = state;
