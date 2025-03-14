@@ -1080,7 +1080,8 @@ public class CustomerHelper {
 #### Begründung:
 Das Refactoring "Replace Conditional with Polymorphism" wird angewendet, um die Wartbarkeit und Erweiterbarkeit des Codes zu verbessern. Anstatt eine lange `switch`-Anweisung zu verwenden, um die Premium-Berechnung basierend auf dem `PolicyProgram` zu bestimmen, wird das Strategy-Pattern verwendet. Dies ermöglicht es, neue Berechnungsstrategien hinzuzufügen, ohne den bestehenden Code zu ändern.
 
-Commit: `d8729c9c1f914fe12341021ee10d92481abb4f7b`
+Commit (ursprünglich eingeführt): `d8729c9c1f914fe12341021ee10d92481abb4f7b`
+Commit (Switch der Factory mit HashMap ersetzt): `18a713665a859cbaaeead7b04785788d18e5752d`
 
 #### UML Vorher:
 ```mermaid
