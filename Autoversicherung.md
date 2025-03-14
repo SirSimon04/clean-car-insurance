@@ -1,3 +1,71 @@
+<!--toc:start-->
+- [1. Einführung](#1-einführung)
+  - [Übersicht über die Applikation](#übersicht-über-die-applikation)
+  - [Wie startet man die Applikation?](#wie-startet-man-die-applikation)
+  - [Wie testet man die Applikation?](#wie-testet-man-die-applikation)
+- [2. Clean Architecture](#2-clean-architecture)
+  - [Was ist Clean Architecture?](#was-ist-clean-architecture)
+  - [Analyse der Dependency Rule](#analyse-der-dependency-rule)
+    - [(a) Positiv-Beispiel: Dependency Rule](#a-positiv-beispiel-dependency-rule)
+    - [(b) Positiv-Beispiel: Dependency Rule](#b-positiv-beispiel-dependency-rule)
+  - [Analyse der Schichten](#analyse-der-schichten)
+    - [Schicht: Applikations-Schicht](#schicht-applikations-schicht)
+    - [Schicht: Domain-Schicht](#schicht-domain-schicht)
+- [Kapitel 3: SOLID](#kapitel-3-solid)
+  - [Analyse Single-Responsibility-Principle (SRP)](#analyse-single-responsibility-principle-srp)
+  - [Analyse Open-Closed-Principle (OCP)](#analyse-open-closed-principle-ocp)
+    - [Positiv-Beispiel](#positiv-beispiel)
+    - [Negativ-Beispiel](#negativ-beispiel)
+  - [Analyse Interface-Segregation-Principle (ISP)](#analyse-interface-segregation-principle-isp)
+    - [Positiv-Beispiel](#positiv-beispiel)
+      - [Interface: `ReadCustomerManagement`](#interface-readcustomermanagement)
+      - [Interface: `WriteCustomerManagement`](#interface-writecustomermanagement)
+    - [Negativ-Beispiel](#negativ-beispiel)
+- [4. Weitere Prinzipien](#4-weitere-prinzipien)
+- [5. Unit Tests](#5-unit-tests)
+  - [10 Unit Tests](#10-unit-tests)
+    - [ATRIP: Automatic](#atrip-automatic)
+    - [ATRIP: Thorough](#atrip-thorough)
+    - [ATRIP: Professional](#atrip-professional)
+    - [Code Coverage](#code-coverage)
+    - [Fakes und Mocks](#fakes-und-mocks)
+      - [Mock-Objekt: `CustomerRepository`](#mock-objekt-customerrepository)
+      - [Mock-Objekt: `WriteCustomerManagement`](#mock-objekt-writecustomermanagement)
+- [6. Domain-Driven-Design (DDD)](#6-domain-driven-design-ddd)
+  - [Entities](#entities)
+  - [Nutzer](#nutzer)
+  - [UML zu Entity](#uml-zu-entity)
+  - [Entities](#entities)
+    - [Policy Entity](#policy-entity)
+  - [Value Objects](#value-objects)
+    - [Premium Value Object](#premium-value-object)
+  - [Aggregates](#aggregates)
+    - [Customer Aggregate](#customer-aggregate)
+  - [Repositories](#repositories)
+    - [Customer Repository](#customer-repository)
+- [7. Refactoring](#7-refactoring)
+  - [Code Smells](#code-smells)
+    - [Long Method](#long-method)
+      - [Code-Beispiel:](#code-beispiel)
+      - [Möglicher Lösungsweg:](#möglicher-lösungsweg)
+    - [Duplicated Code](#duplicated-code)
+      - [Code-Beispiel:](#code-beispiel)
+      - [Möglicher Lösungsweg:](#möglicher-lösungsweg)
+  - [Refactorings](#refactorings)
+    - [Refactoring: Replace Conditional with Polymorphism](#refactoring-replace-conditional-with-polymorphism)
+      - [Begründung:](#begründung)
+      - [UML Vorher:](#uml-vorher)
+      - [UML Nachher:](#uml-nachher)
+    - [Refactoring: Extract Method](#refactoring-extract-method)
+      - [Begründung:](#begründung)
+      - [UML Vorher:](#uml-vorher)
+      - [UML Nachher:](#uml-nachher)
+      - [Code Vorher:](#code-vorher)
+      - [Code Nachher:](#code-nachher)
+- [8. Design Patterns](#8-design-patterns)
+  - [Strategy Pattern](#strategy-pattern)
+  - [Builder Pattern](#builder-pattern)
+<!--toc:end-->
 # 1. Einführung
 ## Übersicht über die Applikation
 Die Applikation SRI (_Simon Stefan Insuranci_) ist eine Software zur Verwaltung von Autoversicherungen. Sie ermöglicht es, VersicherungsPolicies für Kunden zu erstellen und zu verwalten. Die Applikation berechnet die Versicherungskosten basierend auf verschiedenen Faktoren wie dem Wert des Autos, dem Alter des Kunden, Verkehrsverstößen wie Tickets und Unfällen.
@@ -1134,6 +1202,92 @@ classDiagram
     PremiumCalculationStrategy <|.. DeluxePremiumCalculationStrategy
 ```
 
+### Refactoring: Extract Method
+
+#### Begründung:
+Das Refactoring "Extract Method" wurde angewendet, um die Lesbarkeit und Wartbarkeit des Codes zu verbessern. Durch das Extrahieren der Menüauswahl-Logik in eine separate Methode `handleChoice` wird die `start`-Methode vereinfacht und die Verantwortlichkeiten klarer getrennt.
+
+Commit: 9a478dff365058233dde2b14bad25be8f8b1495c
+
+#### UML Vorher:
+```mermaid
+classDiagram
+    class ConsoleAdapter {
+        +start()
+    }
+```
+
+#### UML Nachher:
+```mermaid
+classDiagram
+    class ConsoleAdapter {
+        +start()
+        +handleChoice(int choice) boolean
+    }
+```
+
+#### Code Vorher:
+```java
+public void start() {
+    boolean running = true;
+    while (running) {
+        try {
+            printMainMenu();
+            int choice = getIntInput("Choose an option: ");
+
+            switch (choice) {
+                case 1:
+                    createCustomer();
+                    break;
+                // ...
+                case 12:
+                    running = false;
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        } catch (BaseDomainException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (Exception e) {
+            // In einem realen Beispiel sollte man hier loggen.
+            System.out.println("An unexpected error occurred. Try again or contact support.");
+        }
+    }
+}
+```
+
+#### Code Nachher:
+```java
+public void start() {
+    boolean running = true;
+    while (running) {
+        try {
+            printMainMenu();
+            int choice = getIntInput("Choose an option: ");
+            running = handleChoice(choice);
+        } catch (BaseDomainException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (Exception e) {
+            // In einem realen Beispiel sollte man hier loggen.
+            System.out.println("An unexpected error occurred. Try again or contact support.");
+        }
+    }
+}
+
+private boolean handleChoice(int choice) throws BaseDomainException {
+    switch (choice) {
+        case 1:
+            createCustomer();
+            break;
+        // ...
+        case 12:
+            return false;
+        default:
+            System.out.println("Invalid option. Please try again.");
+    }
+    return true;
+}
+```
 
 # 8. Design Patterns
 ## Strategy Pattern
