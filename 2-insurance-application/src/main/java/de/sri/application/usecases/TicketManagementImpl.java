@@ -7,6 +7,7 @@ import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.PolicyManagement;
 import de.sri.domain.usecases.TicketManagement;
 import de.sri.domain.exceptions.CustomerNotFoundException;
+import de.sri.domain.exceptions.InvalidEmailAddress;
 import de.sri.domain.exceptions.InvalidPremiumAmountException;
 import de.sri.domain.exceptions.PropertyNotNullException;
 
@@ -27,8 +28,8 @@ public class TicketManagementImpl implements TicketManagement {
     }
 
     @Override
-    public void createTicketForCustomer(int customerId, Ticket ticket)
-            throws CustomerNotFoundException, InvalidPremiumAmountException, PropertyNotNullException {
+    public void createTicketForCustomer(int customerId, Ticket ticket) throws CustomerNotFoundException,
+            InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
         Customer customer = getCustomer(customerId);
         customer.addTicket(ticket);
         if (customer.getTickets().size() >= 5) {

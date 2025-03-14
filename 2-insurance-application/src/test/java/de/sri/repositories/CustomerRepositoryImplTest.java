@@ -2,8 +2,11 @@ package de.sri.repositories;
 
 import de.sri.application.repositories.CustomerRepositoryImpl;
 import de.sri.domain.entities.*;
+import de.sri.domain.exceptions.InvalidEmailAddress;
 import de.sri.domain.exceptions.PropertyNotNullException;
 import de.sri.domain.valueobjects.Address;
+import de.sri.domain.valueobjects.EmailAddress;
+import de.sri.domain.valueobjects.PersonName;
 import de.sri.domain.directors.CustomerDirector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,23 +22,26 @@ class CustomerRepositoryImplTest {
     private CustomerRepositoryImpl repository;
 
     @BeforeEach
-    void setUp() throws PropertyNotNullException {
+    void setUp() throws PropertyNotNullException, InvalidEmailAddress {
         repository = new CustomerRepositoryImpl();
     }
 
     @Test
-    void testSave() throws PropertyNotNullException {
+    void testSave() throws PropertyNotNullException, InvalidEmailAddress {
         // Arrange
         Address address = new Address("Teststraße 42", "Hamburg", "HH", "20457", "Deutschland");
-        Customer customer = new CustomerDirector(new Customer.Builder()).buildNew(0, "Anna", "Schmidt",
-                LocalDate.of(1987, 6, 15), "anna.schmidt@example.de", address);
+        PersonName name = new PersonName("Anna", "Schmidt");
+        EmailAddress email = new EmailAddress("anna.schmidt@example.de");
+
+        Customer customer = new CustomerDirector(new Customer.Builder()).buildNew(0, name, LocalDate.of(1987, 6, 15),
+                email, address);
 
         // Act
         Customer savedCustomer = repository.save(customer);
 
         // Assert
         assertNotNull(savedCustomer.getId());
-        assertEquals("Anna", savedCustomer.getFirstName());
+        assertEquals("Anna", savedCustomer.getName().getFirstName());
         assertTrue(repository.findById(savedCustomer.getId()).isPresent());
     }
 
@@ -49,7 +55,7 @@ class CustomerRepositoryImplTest {
 
         // Assert
         assertTrue(customer.isPresent());
-        assertEquals("Max", customer.get().getFirstName());
+        assertEquals("Max", customer.get().getName().getFirstName());
     }
 
     @Test
@@ -83,7 +89,7 @@ class CustomerRepositoryImplTest {
 
         // Assert
         assertEquals(1, customers.size());
-        assertEquals("Max", customers.get(0).getFirstName());
+        assertEquals("Max", customers.get(0).getName().getFirstName());
     }
 
     @Test
@@ -96,7 +102,7 @@ class CustomerRepositoryImplTest {
 
         // Assert
         assertEquals(1, customers.size());
-        assertEquals("Max", customers.get(0).getFirstName());
+        assertEquals("Max", customers.get(0).getName().getFirstName());
     }
 
     @Test
@@ -109,11 +115,11 @@ class CustomerRepositoryImplTest {
 
         // Assert
         assertEquals(1, customers.size());
-        assertEquals("Erika", customers.get(0).getFirstName());
+        assertEquals("Erika", customers.get(0).getName().getFirstName());
     }
 
     @Test
-    void testSavePolicy() {
+    void testSavePolicy() throws PropertyNotNullException, InvalidEmailAddress {
         // Arrange
         Customer customer = this.repository.findById(1).get();
         Policy policy = new Policy(0, PolicyStatus.ACTIVE, PolicyProgram.DELUXE, 30000.0);

@@ -7,6 +7,8 @@ import de.sri.domain.usecases.TicketManagement;
 import de.sri.domain.entities.Customer;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.valueobjects.Address;
+import de.sri.domain.valueobjects.EmailAddress;
+import de.sri.domain.valueobjects.PersonName;
 import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.Accident;
 import de.sri.domain.entities.Ticket;
@@ -16,6 +18,7 @@ import de.sri.domain.directors.CustomerDirector;
 import de.sri.domain.directors.TestCustomerDirector;
 import de.sri.domain.exceptions.CarTooExpensiveException;
 import de.sri.domain.exceptions.CustomerTooYoungException;
+import de.sri.domain.exceptions.InvalidEmailAddress;
 import de.sri.domain.exceptions.InvalidPremiumAmountException;
 import de.sri.domain.exceptions.PropertyNotNullException;
 
@@ -70,7 +73,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void createCustomer_success() throws PropertyNotNullException {
+    void createCustomer_success() throws PropertyNotNullException, InvalidEmailAddress {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -84,8 +87,8 @@ class ConsoleAdapterTest {
         doReturn("12345").when(consoleAdapter).getStringInput(eq("Zip Code: "));
         doReturn("Country").when(consoleAdapter).getStringInput(eq("Country: "));
 
-        Customer createdCustomer = new CustomerDirector(new Customer.Builder()).buildNew(1, "John", "Doe",
-                LocalDate.of(2000, 1, 1), "john.doe@example.com",
+        Customer createdCustomer = new CustomerDirector(new Customer.Builder()).buildNew(1,
+                new PersonName("John", "Doe"), LocalDate.of(2000, 1, 1), new EmailAddress("john.doe@example.com"),
                 new Address("Street", "City", "State", "12345", "Country"));
         when(writeCustomerManagement.createCustomer(any(Customer.class))).thenReturn(createdCustomer);
 
@@ -98,13 +101,13 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void getCustomer_success() throws CustomerNotFoundException, PropertyNotNullException {
+    void getCustomer_success() throws CustomerNotFoundException, PropertyNotNullException, InvalidEmailAddress {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(2).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
 
-        Customer customer = new CustomerDirector(new Customer.Builder()).buildNew(1, "John", "Doe",
-                LocalDate.of(2000, 1, 1), "john.doe@example.com",
+        Customer customer = new CustomerDirector(new Customer.Builder()).buildNew(1, new PersonName("John", "Doe"),
+                LocalDate.of(2000, 1, 1), new EmailAddress("john.doe@example.com"),
                 new Address("Street", "City", "State", "12345", "Country"));
         when(readCustomerManagement.getCustomer(1)).thenReturn(customer);
 
@@ -119,17 +122,17 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void listAllCustomers_success() throws PropertyNotNullException {
+    void listAllCustomers_success() throws PropertyNotNullException, InvalidEmailAddress {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(3).doReturn(12).when(consoleAdapter).getIntInput(anyString());
 
         List<Customer> customers = new ArrayList<>();
-        Customer customer1 = new CustomerDirector(new Customer.Builder()).buildNew(1, "John", "Doe",
-                LocalDate.of(2000, 1, 1), "john.doe@example.com",
+        Customer customer1 = new CustomerDirector(new Customer.Builder()).buildNew(1, new PersonName("John", "Doe"),
+                LocalDate.of(2000, 1, 1), new EmailAddress("john.doe@example.com"),
                 new Address("Street", "City", "State", "12345", "Country"));
-        Customer customer2 = new CustomerDirector(new Customer.Builder()).buildNew(2, "Jane", "Smith",
-                LocalDate.of(1995, 5, 15), "jane.smith@example.com",
+        Customer customer2 = new CustomerDirector(new Customer.Builder()).buildNew(2, new PersonName("Jane", "Smith"),
+                LocalDate.of(1995, 5, 15), new EmailAddress("jane.smith@example.com"),
                 new Address("Another Street", "Another City", "Another State", "54321", "Another Country"));
         customers.add(customer1);
         customers.add(customer2);
@@ -148,7 +151,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void updateCustomer_success() throws CustomerNotFoundException, PropertyNotNullException {
+    void updateCustomer_success() throws CustomerNotFoundException, PropertyNotNullException, InvalidEmailAddress {
         consoleAdapter = Mockito.spy(consoleAdapter);
         doReturn(4).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
         doReturn("Jane").when(consoleAdapter).getStringInputWithDefault(eq("Enter new first name"), eq("John"));
@@ -163,11 +166,11 @@ class ConsoleAdapterTest {
         doReturn("54321").when(consoleAdapter).getStringInputWithDefault(eq("Enter new zip code"), eq("12345"));
         doReturn("NewCountry").when(consoleAdapter).getStringInputWithDefault(eq("Enter new country"), eq("Country"));
 
-        Customer existingCustomer = new CustomerDirector(new Customer.Builder()).buildNew(1, "John", "Doe",
-                LocalDate.of(2000, 1, 1), "john.doe@example.com",
+        Customer existingCustomer = new CustomerDirector(new Customer.Builder()).buildNew(1,
+                new PersonName("John", "Doe"), LocalDate.of(2000, 1, 1), new EmailAddress("john.doe@example.com"),
                 new Address("Street", "City", "State", "12345", "Country"));
-        Customer updatedCustomer = new CustomerDirector(new Customer.Builder()).buildNew(1, "Jane", "Smith",
-                LocalDate.of(2001, 1, 1), "jane.smith@example.com",
+        Customer updatedCustomer = new CustomerDirector(new Customer.Builder()).buildNew(1,
+                new PersonName("Jane", "Smith"), LocalDate.of(2001, 1, 1), new EmailAddress("jane.smith@example.com"),
                 new Address("NewStreet", "NewCity", "NewState", "54321", "NewCountry"));
 
         when(readCustomerManagement.getCustomer(1)).thenReturn(existingCustomer);
@@ -197,7 +200,7 @@ class ConsoleAdapterTest {
 
     @Test
     void addPolicyToCustomer_success() throws CustomerNotFoundException, CarTooExpensiveException,
-            CustomerTooYoungException, InvalidPremiumAmountException, PropertyNotNullException {
+            CustomerTooYoungException, InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(6).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -214,7 +217,8 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void createAccidentForCustomer_success() throws CustomerNotFoundException {
+    void createAccidentForCustomer_success()
+            throws CustomerNotFoundException, PropertyNotNullException, InvalidEmailAddress {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(7).doReturn(1).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -229,8 +233,8 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void createTicketForCustomer_success()
-            throws CustomerNotFoundException, InvalidPremiumAmountException, PropertyNotNullException {
+    void createTicketForCustomer_success() throws CustomerNotFoundException, InvalidPremiumAmountException,
+            PropertyNotNullException, InvalidEmailAddress {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(8).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -245,18 +249,18 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void getCustomersByPolicyStatus_success() throws PropertyNotNullException {
+    void getCustomersByPolicyStatus_success() throws PropertyNotNullException, InvalidEmailAddress {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(9).doReturn(12).when(consoleAdapter).getIntInput(anyString());
         doReturn("ACTIVE").when(consoleAdapter).getStringInput(eq("Enter policy status (ACTIVE/INACTIVE): "));
 
         List<Customer> customers = new ArrayList<>();
-        Customer customer1 = new CustomerDirector(new Customer.Builder()).buildNew(1, "John", "Doe",
-                LocalDate.of(2000, 1, 1), "john.doe@example.com",
+        Customer customer1 = new CustomerDirector(new Customer.Builder()).buildNew(1, new PersonName("John", "Doe"),
+                LocalDate.of(2000, 1, 1), new EmailAddress("john.doe@example.com"),
                 new Address("Street", "City", "State", "12345", "Country"));
-        Customer customer2 = new CustomerDirector(new Customer.Builder()).buildNew(2, "Jane", "Smith",
-                LocalDate.of(1995, 5, 15), "jane.smith@example.com",
+        Customer customer2 = new CustomerDirector(new Customer.Builder()).buildNew(2, new PersonName("Jane", "Smith"),
+                LocalDate.of(1995, 5, 15), new EmailAddress("jane.smith@example.com"),
                 new Address("Another Street", "Another City", "Another State", "54321", "Another Country"));
         customers.add(customer1);
         customers.add(customer2);
@@ -275,18 +279,18 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void getCustomersByAccidentCostGreaterThan_success() throws PropertyNotNullException {
+    void getCustomersByAccidentCostGreaterThan_success() throws PropertyNotNullException, InvalidEmailAddress {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(10).doReturn(12).when(consoleAdapter).getIntInput(anyString());
         doReturn(1000.0).when(consoleAdapter).getDoubleInput(eq("Enter accident cost threshold: "));
 
         List<Customer> customers = new ArrayList<>();
-        Customer customer1 = new CustomerDirector(new Customer.Builder()).buildNew(1, "John", "Doe",
-                LocalDate.of(2000, 1, 1), "john.doe@example.com",
+        Customer customer1 = new CustomerDirector(new Customer.Builder()).buildNew(1, new PersonName("John", "Doe"),
+                LocalDate.of(2000, 1, 1), new EmailAddress("john.doe@example.com"),
                 new Address("Street", "City", "State", "12345", "Country"));
-        Customer customer2 = new CustomerDirector(new Customer.Builder()).buildNew(2, "Jane", "Smith",
-                LocalDate.of(1995, 5, 15), "jane.smith@example.com",
+        Customer customer2 = new CustomerDirector(new Customer.Builder()).buildNew(2, new PersonName("Jane", "Smith"),
+                LocalDate.of(1995, 5, 15), new EmailAddress("jane.smith@example.com"),
                 new Address("Another Street", "Another City", "Another State", "54321", "Another Country"));
         customers.add(customer1);
         customers.add(customer2);
@@ -305,18 +309,18 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void getCustomersByTicketSpeedExcessGreaterThan_success() throws PropertyNotNullException {
+    void getCustomersByTicketSpeedExcessGreaterThan_success() throws PropertyNotNullException, InvalidEmailAddress {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(11).doReturn(12).when(consoleAdapter).getIntInput(anyString());
         doReturn(50.0).when(consoleAdapter).getDoubleInput(eq("Enter speed excess threshold: "));
 
         List<Customer> customers = new ArrayList<>();
-        Customer customer1 = new CustomerDirector(new Customer.Builder()).buildNew(1, "John", "Doe",
-                LocalDate.of(2000, 1, 1), "john.doe@example.com",
+        Customer customer1 = new CustomerDirector(new Customer.Builder()).buildNew(1, new PersonName("John", "Doe"),
+                LocalDate.of(2000, 1, 1), new EmailAddress("john.doe@example.com"),
                 new Address("Street", "City", "State", "12345", "Country"));
-        Customer customer2 = new CustomerDirector(new Customer.Builder()).buildNew(2, "Jane", "Smith",
-                LocalDate.of(1995, 5, 15), "jane.smith@example.com",
+        Customer customer2 = new CustomerDirector(new Customer.Builder()).buildNew(2, new PersonName("Jane", "Smith"),
+                LocalDate.of(1995, 5, 15), new EmailAddress("jane.smith@example.com"),
                 new Address("Another Street", "Another City", "Another State", "54321", "Another Country"));
         customers.add(customer1);
         customers.add(customer2);

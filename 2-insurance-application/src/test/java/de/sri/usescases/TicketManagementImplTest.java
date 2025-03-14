@@ -16,6 +16,7 @@ import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.entities.Ticket;
 import de.sri.domain.exceptions.CustomerNotFoundException;
 import de.sri.domain.exceptions.CustomerTooYoungException;
+import de.sri.domain.exceptions.InvalidEmailAddress;
 import de.sri.domain.exceptions.InvalidPremiumAmountException;
 import de.sri.domain.exceptions.PropertyNotNullException;
 import de.sri.domain.exceptions.CarTooExpensiveException;
@@ -28,7 +29,7 @@ public class TicketManagementImplTest {
     private TicketManagementImpl ticketManagement;
     private PolicyManagementImpl policyManagementImpl;
 
-    public TicketManagementImplTest() throws PropertyNotNullException {
+    public TicketManagementImplTest() throws PropertyNotNullException, InvalidEmailAddress {
         this.customerRepository = new CustomerRepositoryImpl();
         this.policyManagementImpl = new PolicyManagementImpl(customerRepository);
         this.ticketManagement = new TicketManagementImpl(customerRepository, policyManagementImpl);
@@ -36,7 +37,7 @@ public class TicketManagementImplTest {
 
     @Test
     void create_ticket_for_customer() throws CustomerNotFoundException, CustomerTooYoungException,
-            CarTooExpensiveException, PropertyNotNullException, InvalidPremiumAmountException {
+            CarTooExpensiveException, PropertyNotNullException, InvalidPremiumAmountException, InvalidEmailAddress {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         customerRepository.save(customer);
 
@@ -49,7 +50,7 @@ public class TicketManagementImplTest {
 
     @Test
     void increase_policy_premium_per_ticket() throws CustomerNotFoundException, CustomerTooYoungException,
-            CarTooExpensiveException, InvalidPremiumAmountException, PropertyNotNullException {
+            CarTooExpensiveException, InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         customerRepository.save(customer);
 
@@ -67,7 +68,7 @@ public class TicketManagementImplTest {
 
     @Test
     void decline_policy_when_ticket_amount_reaches_5() throws CustomerNotFoundException, CustomerTooYoungException,
-            CarTooExpensiveException, InvalidPremiumAmountException, PropertyNotNullException {
+            CarTooExpensiveException, InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         customerRepository.save(customer);
 
@@ -85,7 +86,7 @@ public class TicketManagementImplTest {
     @Test
     void increase_all_policy_premiums_based_on_highest_carValue_when_speeding_over_20()
             throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException,
-            InvalidPremiumAmountException, PropertyNotNullException {
+            InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         customerRepository.save(customer);
 
@@ -109,7 +110,7 @@ public class TicketManagementImplTest {
     @Test
     void decline_all_policy_premiums_when_speeding_over_50()
             throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException,
-            InvalidPremiumAmountException, PropertyNotNullException {
+            InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         customerRepository.save(customer);
 

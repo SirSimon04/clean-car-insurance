@@ -7,6 +7,8 @@ import de.sri.domain.usecases.TicketManagement;
 import de.sri.domain.entities.Customer;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.valueobjects.Address;
+import de.sri.domain.valueobjects.EmailAddress;
+import de.sri.domain.valueobjects.PersonName;
 import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.Accident;
 import de.sri.domain.entities.Ticket;
@@ -15,6 +17,7 @@ import de.sri.domain.exceptions.BaseDomainException;
 import de.sri.domain.exceptions.CustomerNotFoundException;
 import de.sri.domain.exceptions.CarTooExpensiveException;
 import de.sri.domain.exceptions.CustomerTooYoungException;
+import de.sri.domain.exceptions.InvalidEmailAddress;
 import de.sri.domain.exceptions.InvalidPremiumAmountException;
 import de.sri.domain.exceptions.PropertyNotNullException;
 import de.sri.domain.directors.CustomerDirector;
@@ -116,7 +119,7 @@ public class ConsoleAdapter {
         System.out.println("12. Exit");
     }
 
-    protected void createCustomer() throws PropertyNotNullException {
+    protected void createCustomer() throws PropertyNotNullException, InvalidEmailAddress {
         System.out.println("\n--- Create New Customer ---");
         String firstName = getStringInput("Enter first name: ");
         String lastName = getStringInput("Enter last name: ");
@@ -130,9 +133,11 @@ public class ConsoleAdapter {
         String zipCode = getStringInput("Zip Code: ");
         String country = getStringInput("Country: ");
 
+        PersonName name = new PersonName(firstName, lastName);
+        EmailAddress emailAddr = new EmailAddress(email);
         Address address = new Address(street, city, state, zipCode, country);
-        Customer customer = new CustomerDirector(new Customer.Builder()).buildNew(0, firstName, lastName, dateOfBirth,
-                email, address);
+        Customer customer = new CustomerDirector(new Customer.Builder()).buildNew(0, name, dateOfBirth, emailAddr,
+                address);
 
         customer = writeCustomerManagement.createCustomer(customer);
         System.out.println("Customer created successfully with ID: " + customer.getId());
@@ -149,18 +154,18 @@ public class ConsoleAdapter {
         readCustomerManagement.getAllCustomers().forEach(this::printCustomerDetails);
     }
 
-    protected void updateCustomer() throws CustomerNotFoundException, PropertyNotNullException {
+    protected void updateCustomer() throws CustomerNotFoundException, PropertyNotNullException, InvalidEmailAddress {
         int id = getIntInput("Enter customer ID to update: ");
         Customer customer = readCustomerManagement.getCustomer(id);
 
         System.out.println("\n--- Update Customer ---");
         System.out.println("Press Enter to keep the current value.");
 
-        String firstName = getStringInputWithDefault("Enter new first name", customer.getFirstName());
-        String lastName = getStringInputWithDefault("Enter new last name", customer.getLastName());
+        String firstName = getStringInputWithDefault("Enter new first name", customer.getName().getFirstName());
+        String lastName = getStringInputWithDefault("Enter new last name", customer.getName().getLastName());
         LocalDate dateOfBirth = getDateInputWithDefault("Enter new date of birth (YYYY-MM-DD)",
                 customer.getDateOfBirth());
-        String email = getStringInputWithDefault("Enter new email", customer.getEmail());
+        String email = getStringInputWithDefault("Enter new email", customer.getEmail().getEmailAddress());
 
         Address currentAddress = customer.getAddress();
         String street = getStringInputWithDefault("Enter new street", currentAddress.getStreet());
@@ -169,9 +174,11 @@ public class ConsoleAdapter {
         String zipCode = getStringInputWithDefault("Enter new zip code", currentAddress.getZipCode());
         String country = getStringInputWithDefault("Enter new country", currentAddress.getCountry());
 
+        PersonName name = new PersonName(firstName, lastName);
+        EmailAddress emailAddr = new EmailAddress(email);
         Address newAddress = new Address(street, city, state, zipCode, country);
-        Customer updatedCustomer = new CustomerDirector(new Customer.Builder()).buildNew(id, firstName, lastName,
-                dateOfBirth, email, newAddress);
+        Customer updatedCustomer = new CustomerDirector(new Customer.Builder()).buildNew(id, name, dateOfBirth,
+                emailAddr, newAddress);
 
         writeCustomerManagement.updateCustomer(updatedCustomer);
         System.out.println("Customer updated successfully.");
@@ -184,7 +191,7 @@ public class ConsoleAdapter {
     }
 
     protected void addPolicyToCustomer() throws CustomerNotFoundException, CarTooExpensiveException,
-            CustomerTooYoungException, InvalidPremiumAmountException, PropertyNotNullException {
+            CustomerTooYoungException, InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Add New Policy ---");
         String program = getStringInput("Enter policy program (BASIC/STANDARD/DELUXE): ");
@@ -196,7 +203,8 @@ public class ConsoleAdapter {
         System.out.println("Policy added successfully to customer.");
     }
 
-    protected void createAccidentForCustomer() throws CustomerNotFoundException {
+    protected void createAccidentForCustomer()
+            throws CustomerNotFoundException, PropertyNotNullException, InvalidEmailAddress {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Create New Accident ---");
         double cost = getDoubleInput("Enter accident cost: ");
@@ -208,8 +216,8 @@ public class ConsoleAdapter {
         System.out.println("Accident created successfully for customer.");
     }
 
-    protected void createTicketForCustomer()
-            throws CustomerNotFoundException, InvalidPremiumAmountException, PropertyNotNullException {
+    protected void createTicketForCustomer() throws CustomerNotFoundException, InvalidPremiumAmountException,
+            PropertyNotNullException, InvalidEmailAddress {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Create New Ticket ---");
         LocalDate date = getDateInput("Enter ticket date (YYYY-MM-DD): ");
@@ -248,7 +256,7 @@ public class ConsoleAdapter {
     protected void printCustomerDetails(Customer customer) {
         System.out.println("\nCustomer Details:");
         System.out.println("ID: " + customer.getId());
-        System.out.println("Name: " + customer.getFirstName() + " " + customer.getLastName());
+        System.out.println("Name: " + customer.getName().getFirstName() + " " + customer.getName().getLastName());
         System.out.println("Date of Birth: " + customer.getDateOfBirth());
         System.out.println("Email: " + customer.getEmail());
         System.out.println("Address: " + customer.getAddress());

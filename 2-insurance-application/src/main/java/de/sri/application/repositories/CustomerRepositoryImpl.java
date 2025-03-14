@@ -7,9 +7,12 @@ import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.entities.Ticket;
 import de.sri.domain.exceptions.CustomerNotFoundException;
+import de.sri.domain.exceptions.InvalidEmailAddress;
 import de.sri.domain.exceptions.PropertyNotNullException;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.valueobjects.Address;
+import de.sri.domain.valueobjects.EmailAddress;
+import de.sri.domain.valueobjects.PersonName;
 import de.sri.domain.directors.CustomerDirector;
 
 import java.time.LocalDate;
@@ -21,12 +24,12 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     private final Map<Integer, Customer> customers = new HashMap<>();
     private final AtomicInteger idGenerator = new AtomicInteger(0);
 
-    public CustomerRepositoryImpl() throws PropertyNotNullException {
+    public CustomerRepositoryImpl() throws PropertyNotNullException, InvalidEmailAddress {
         this.addSampleData();
     }
 
     @Override
-    public Customer save(Customer customer) {
+    public Customer save(Customer customer) throws PropertyNotNullException, InvalidEmailAddress {
         customer = this.checkAndSetIds(customer);
         this.customers.remove(customer.getId());
         this.customers.put(customer.getId(), customer);
@@ -73,7 +76,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 .collect(Collectors.toList());
     }
 
-    private Customer checkAndSetIds(Customer customer) {
+    private Customer checkAndSetIds(Customer customer) throws PropertyNotNullException, InvalidEmailAddress {
         if (customer.getId() == 0) {
             int newId = idGenerator.incrementAndGet();
             customer = new CustomerDirector(new Customer.Builder()).buildNewFromObject(newId, customer);
@@ -103,14 +106,16 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         return customer;
     }
 
-    private void addSampleData() throws PropertyNotNullException {
+    private void addSampleData() throws PropertyNotNullException, InvalidEmailAddress {
         Address address1 = new Address("Musterstraße 1", "Berlin", "BE", "10115", "Deutschland");
         Address address2 = new Address("Hauptstraße 23", "München", "BY", "80331", "Deutschland");
 
-        Customer customer1 = new CustomerDirector(new Customer.Builder()).buildNew(idGenerator.incrementAndGet(), "Max",
-                "Mustermann", LocalDate.of(1990, 1, 10), "max.mustermann@example.de", address1);
+        Customer customer1 = new CustomerDirector(new Customer.Builder()).buildNew(idGenerator.incrementAndGet(),
+                new PersonName("Max", "Mustermann"), LocalDate.of(1990, 1, 10),
+                new EmailAddress("max.mustermann@example.de"), address1);
         Customer customer2 = new CustomerDirector(new Customer.Builder()).buildNew(idGenerator.incrementAndGet(),
-                "Erika", "Mustermann", LocalDate.of(1995, 2, 20), "erika.mustermann@example.de", address2);
+                new PersonName("Erika", "Mustermann"), LocalDate.of(1995, 2, 20),
+                new EmailAddress("erika.mustermann@example.de"), address2);
 
         Policy policy1 = new Policy(idGenerator.incrementAndGet(), PolicyStatus.ACTIVE, PolicyProgram.STANDARD,
                 25000.0);

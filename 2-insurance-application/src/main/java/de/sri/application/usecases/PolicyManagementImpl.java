@@ -7,6 +7,7 @@ import de.sri.domain.usecases.PolicyManagement;
 import de.sri.domain.valueobjects.Premium;
 import de.sri.domain.exceptions.CustomerNotFoundException;
 import de.sri.domain.exceptions.CustomerTooYoungException;
+import de.sri.domain.exceptions.InvalidEmailAddress;
 import de.sri.domain.exceptions.InvalidPremiumAmountException;
 import de.sri.domain.exceptions.PropertyNotNullException;
 import de.sri.domain.exceptions.CarTooExpensiveException;
@@ -28,7 +29,7 @@ public class PolicyManagementImpl implements PolicyManagement {
     @Override
     public void addPolicyToCustomer(int customerId, Policy policy)
             throws CustomerTooYoungException, CustomerNotFoundException, CarTooExpensiveException,
-            InvalidPremiumAmountException, PropertyNotNullException {
+            InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
         Customer customer = getCustomer(customerId);
         // Customers has to be 18 years old to craete a policy
         if (customer.getAge() < 18) {
@@ -61,15 +62,16 @@ public class PolicyManagementImpl implements PolicyManagement {
     }
 
     @Override
-    public void removePolicyFromCustomer(int customerId, Policy policy) throws CustomerNotFoundException {
+    public void removePolicyFromCustomer(int customerId, Policy policy)
+            throws CustomerNotFoundException, PropertyNotNullException, InvalidEmailAddress {
         Customer customer = getCustomer(customerId);
         customer.removePolicy(policy.getId());
         customerRepository.save(customer);
     }
 
     @Override
-    public void increaseAllPoliciesPremiumBy(double value, int customerId)
-            throws CustomerNotFoundException, InvalidPremiumAmountException, PropertyNotNullException {
+    public void increaseAllPoliciesPremiumBy(double value, int customerId) throws CustomerNotFoundException,
+            InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
         Customer customer = getCustomer(customerId);
 
         customer.getPolicies().forEach(policy -> {

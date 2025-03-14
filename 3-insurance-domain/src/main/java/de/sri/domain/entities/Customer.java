@@ -1,6 +1,9 @@
 package de.sri.domain.entities;
 
 import de.sri.domain.valueobjects.Address;
+import de.sri.domain.valueobjects.EmailAddress;
+import de.sri.domain.valueobjects.PersonName;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,19 +11,17 @@ import java.util.Objects;
 
 public class Customer {
     private final int id;
-    private String firstName;
-    private String lastName;
+    private PersonName name;
     private LocalDate dateOfBirth;
-    private String email;
+    private EmailAddress email;
     private Address address;
     private List<Policy> policies;
     private List<Accident> accidents;
     private List<Ticket> tickets;
 
-    private Customer(int id, String firstName, String lastName, LocalDate dateOfBirth, String email, Address address) {
+    private Customer(int id, PersonName name, LocalDate dateOfBirth, EmailAddress email, Address address) {
         this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.email = email;
         this.address = address;
@@ -33,12 +34,8 @@ public class Customer {
         return id;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
+    public PersonName getName() {
+        return name;
     }
 
     public LocalDate getDateOfBirth() {
@@ -54,7 +51,7 @@ public class Customer {
         return age;
     }
 
-    public String getEmail() {
+    public EmailAddress getEmail() {
         return email;
     }
 
@@ -100,16 +97,16 @@ public class Customer {
 
     @Override
     public String toString() {
-        return "Customer{" + "id=" + id + ", firstName='" + firstName + '\'' + ", lastName='" + lastName + '\''
-                + ", dateOfBirth=" + dateOfBirth + ", email='" + email + '\'' + ", address=" + address + '}';
+        return "Customer{" + "id=" + id + ", firstName='" + name.getFirstName() + '\'' + ", lastName='"
+                + name.getLastName() + '\'' + ", dateOfBirth=" + dateOfBirth + ", email='" + email + '\'' + ", address="
+                + address + '}';
     }
 
     public static class Builder {
         private int id;
-        private String firstName;
-        private String lastName;
+        private PersonName name;
         private LocalDate dateOfBirth;
-        private String email;
+        private EmailAddress email;
         private Address address;
         private List<Policy> policies = new ArrayList<>();
         private List<Accident> accidents = new ArrayList<>();
@@ -120,13 +117,8 @@ public class Customer {
             return this;
         }
 
-        public Builder withFirstName(String firstName) {
-            this.firstName = firstName;
-            return this;
-        }
-
-        public Builder withLastName(String lastName) {
-            this.lastName = lastName;
+        public Builder withName(PersonName name) {
+            this.name = name;
             return this;
         }
 
@@ -135,7 +127,7 @@ public class Customer {
             return this;
         }
 
-        public Builder withEmail(String email) {
+        public Builder withEmail(EmailAddress email) {
             this.email = email;
             return this;
         }
@@ -161,7 +153,7 @@ public class Customer {
         }
 
         public Customer build() {
-            Customer customer = new Customer(id, firstName, lastName, dateOfBirth, email, address);
+            Customer customer = new Customer(id, name, dateOfBirth, email, address);
             customer.policies = this.policies;
             customer.accidents = this.accidents;
             customer.tickets = this.tickets;
@@ -176,15 +168,14 @@ public class Customer {
         if (o == null || getClass() != o.getClass())
             return false;
         Customer customer = (Customer) o;
-        return id == customer.id && Objects.equals(firstName, customer.firstName)
-                && Objects.equals(lastName, customer.lastName) && Objects.equals(dateOfBirth, customer.dateOfBirth)
-                && Objects.equals(email, customer.email) && Objects.equals(address, customer.address)
-                && Objects.equals(policies, customer.policies) && Objects.equals(accidents, customer.accidents)
-                && Objects.equals(tickets, customer.tickets);
+        return id == customer.id && Objects.equals(name, customer.name)
+                && Objects.equals(dateOfBirth, customer.dateOfBirth) && Objects.equals(email, customer.email)
+                && Objects.equals(address, customer.address) && Objects.equals(policies, customer.policies)
+                && Objects.equals(accidents, customer.accidents) && Objects.equals(tickets, customer.tickets);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, dateOfBirth, email, address, policies, accidents, tickets);
+        return Objects.hash(id, name, dateOfBirth, email, address, policies, accidents, tickets);
     }
 }

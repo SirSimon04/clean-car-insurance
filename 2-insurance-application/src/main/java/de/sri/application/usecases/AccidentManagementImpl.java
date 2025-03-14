@@ -8,6 +8,7 @@ import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.AccidentManagement;
 import de.sri.domain.valueobjects.Premium;
 import de.sri.domain.exceptions.CustomerNotFoundException;
+import de.sri.domain.exceptions.InvalidEmailAddress;
 import de.sri.domain.exceptions.InvalidPremiumAmountException;
 import de.sri.domain.exceptions.PolicyNotFoundException;
 import de.sri.domain.exceptions.PropertyNotNullException;
@@ -28,7 +29,7 @@ public class AccidentManagementImpl implements AccidentManagement {
 
     @Override
     public void createAccidentForCustomer(int customerId, Accident accident) throws CustomerNotFoundException,
-            PolicyNotFoundException, InvalidPremiumAmountException, PropertyNotNullException {
+            PolicyNotFoundException, InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
         Customer customer = getCustomer(customerId);
         customer.addAccident(accident);
         if (customer.getAccidents().size() >= 3) {
