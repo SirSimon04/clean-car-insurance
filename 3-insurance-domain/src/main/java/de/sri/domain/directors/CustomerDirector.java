@@ -33,7 +33,7 @@ public class CustomerDirector {
 				.build();
 	}
 
-	public Customer buildNewWithId(int id, Customer customer) {
+	public Customer buildNewFromObject(int id, Customer customer) {
 		return builder.withId(id)
 				.withFirstName(customer.getFirstName())
 				.withLastName(customer.getLastName())

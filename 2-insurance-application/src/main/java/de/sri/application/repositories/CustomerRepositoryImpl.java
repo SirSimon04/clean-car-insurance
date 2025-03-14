@@ -78,7 +78,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 	private Customer checkAndSetIds(Customer customer) {
 		if (customer.getId() == 0) {
 			int newId = idGenerator.incrementAndGet();
-			customer = new CustomerDirector(new Customer.Builder()).buildNewWithId(newId, customer);
+			customer = new CustomerDirector(new Customer.Builder()).buildNewFromObject(newId, customer);
 		}
 		for (Policy policy : customer.getPolicies()) {
 			if (policy.getId() == 0) {
