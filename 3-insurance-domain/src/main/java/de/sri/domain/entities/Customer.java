@@ -4,6 +4,7 @@ import de.sri.domain.valueobjects.Address;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Customer {
     private final int id;
@@ -166,5 +167,24 @@ public class Customer {
             customer.tickets = this.tickets;
             return customer;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Customer customer = (Customer) o;
+        return id == customer.id && Objects.equals(firstName, customer.firstName)
+                && Objects.equals(lastName, customer.lastName) && Objects.equals(dateOfBirth, customer.dateOfBirth)
+                && Objects.equals(email, customer.email) && Objects.equals(address, customer.address)
+                && Objects.equals(policies, customer.policies) && Objects.equals(accidents, customer.accidents)
+                && Objects.equals(tickets, customer.tickets);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, dateOfBirth, email, address, policies, accidents, tickets);
     }
 }
