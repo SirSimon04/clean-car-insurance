@@ -2,6 +2,7 @@ package de.sri.repositories;
 
 import de.sri.application.repositories.CustomerRepositoryImpl;
 import de.sri.domain.entities.*;
+import de.sri.domain.exceptions.PropertyNotNullException;
 import de.sri.domain.valueobjects.Address;
 import de.sri.domain.directors.CustomerDirector;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +19,12 @@ class CustomerRepositoryImplTest {
     private CustomerRepositoryImpl repository;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws PropertyNotNullException {
         repository = new CustomerRepositoryImpl();
     }
 
     @Test
-    void testSave() {
+    void testSave() throws PropertyNotNullException {
         // Arrange
         Address address = new Address("Teststraße 42", "Hamburg", "HH", "20457", "Deutschland");
         Customer customer = new CustomerDirector(new Customer.Builder()).buildNew(0, "Anna", "Schmidt",

@@ -23,8 +23,10 @@ import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.exceptions.CustomerNotFoundException;
 import de.sri.domain.exceptions.CustomerTooYoungException;
+import de.sri.domain.exceptions.InvalidPremiumAmountException;
 import de.sri.domain.exceptions.CarTooExpensiveException;
 import de.sri.domain.exceptions.PolicyNotFoundException;
+import de.sri.domain.exceptions.PropertyNotNullException;
 import de.sri.domain.directors.TestCustomerDirector;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,7 +42,7 @@ public class AccidentManagementImplTest {
 
     @Test
     void create_accident_for_customer() throws CustomerNotFoundException, CustomerTooYoungException,
-            CarTooExpensiveException, PolicyNotFoundException {
+            CarTooExpensiveException, PolicyNotFoundException, PropertyNotNullException, InvalidPremiumAmountException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -56,7 +58,7 @@ public class AccidentManagementImplTest {
 
     @Test
     void increase_policy_premium_per_accident() throws CustomerNotFoundException, CustomerTooYoungException,
-            CarTooExpensiveException, PolicyNotFoundException {
+            CarTooExpensiveException, PolicyNotFoundException, PropertyNotNullException, InvalidPremiumAmountException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -74,7 +76,7 @@ public class AccidentManagementImplTest {
 
     @Test
     void decline_policy_when_accidents_amount_reaches_3() throws CustomerNotFoundException, CustomerTooYoungException,
-            CarTooExpensiveException, PolicyNotFoundException {
+            CarTooExpensiveException, PolicyNotFoundException, PropertyNotNullException, InvalidPremiumAmountException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -90,8 +92,9 @@ public class AccidentManagementImplTest {
     }
 
     @Test
-    void not_decline_policy_when_accident_cost_is_under_60000() throws CustomerNotFoundException,
-            CustomerTooYoungException, CarTooExpensiveException, PolicyNotFoundException {
+    void not_decline_policy_when_accident_cost_is_under_60000()
+            throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException,
+            PolicyNotFoundException, InvalidPremiumAmountException, PropertyNotNullException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -106,7 +109,7 @@ public class AccidentManagementImplTest {
 
     @Test
     void decline_policy_when_accident_cost_is_over_60000() throws CustomerNotFoundException, CustomerTooYoungException,
-            CarTooExpensiveException, PolicyNotFoundException {
+            CarTooExpensiveException, PolicyNotFoundException, InvalidPremiumAmountException, PropertyNotNullException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -120,8 +123,9 @@ public class AccidentManagementImplTest {
     }
 
     @Test
-    void decline_policy_when_accident_cost_is_over_car_value() throws CustomerNotFoundException,
-            CustomerTooYoungException, CarTooExpensiveException, PolicyNotFoundException {
+    void decline_policy_when_accident_cost_is_over_car_value()
+            throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException,
+            PolicyNotFoundException, InvalidPremiumAmountException, PropertyNotNullException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 

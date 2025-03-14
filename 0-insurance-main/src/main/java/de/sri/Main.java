@@ -6,6 +6,7 @@ import de.sri.application.usecases.WriteCustomerManagementImpl;
 import de.sri.application.usecases.PolicyManagementImpl;
 import de.sri.application.usecases.TicketManagementImpl;
 import de.sri.application.repositories.CustomerRepositoryImpl;
+import de.sri.domain.exceptions.PropertyNotNullException;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.ReadCustomerManagement;
 import de.sri.domain.usecases.WriteCustomerManagement;
@@ -13,7 +14,7 @@ import de.sri.domain.usecases.PolicyManagement;
 import de.sri.domain.usecases.TicketManagement;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws PropertyNotNullException {
         CustomerRepository customerRepository = new CustomerRepositoryImpl();
 
         ReadCustomerManagement readCustomerManagement = new ReadCustomerManagementImpl(customerRepository);

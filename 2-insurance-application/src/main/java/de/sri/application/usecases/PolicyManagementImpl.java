@@ -7,6 +7,8 @@ import de.sri.domain.usecases.PolicyManagement;
 import de.sri.domain.valueobjects.Premium;
 import de.sri.domain.exceptions.CustomerNotFoundException;
 import de.sri.domain.exceptions.CustomerTooYoungException;
+import de.sri.domain.exceptions.InvalidPremiumAmountException;
+import de.sri.domain.exceptions.PropertyNotNullException;
 import de.sri.domain.exceptions.CarTooExpensiveException;
 import de.sri.application.premiumcalculator.PremiumCalculationStrategyFactory;
 import de.sri.application.premiumcalculator.PremiumCalculationStrategy;
@@ -25,7 +27,8 @@ public class PolicyManagementImpl implements PolicyManagement {
 
     @Override
     public void addPolicyToCustomer(int customerId, Policy policy)
-            throws CustomerTooYoungException, CustomerNotFoundException, CarTooExpensiveException {
+            throws CustomerTooYoungException, CustomerNotFoundException, CarTooExpensiveException,
+            InvalidPremiumAmountException, PropertyNotNullException {
         Customer customer = getCustomer(customerId);
         // Customers has to be 18 years old to craete a policy
         if (customer.getAge() < 18) {
@@ -65,12 +68,17 @@ public class PolicyManagementImpl implements PolicyManagement {
     }
 
     @Override
-    public void increaseAllPoliciesPremiumBy(double value, int customerId) throws CustomerNotFoundException {
+    public void increaseAllPoliciesPremiumBy(double value, int customerId)
+            throws CustomerNotFoundException, InvalidPremiumAmountException, PropertyNotNullException {
         Customer customer = getCustomer(customerId);
 
         customer.getPolicies().forEach(policy -> {
             double newPremium = policy.getPremium().getAmount() + value;
-            policy.setPremium(new Premium(newPremium, policy.getPremium().getCurrency()));
+            try {
+                policy.setPremium(new Premium(newPremium, policy.getPremium().getCurrency()));
+            } catch (InvalidPremiumAmountException | PropertyNotNullException e) {
+                e.printStackTrace();
+            }
         });
 
         customerRepository.save(customer);

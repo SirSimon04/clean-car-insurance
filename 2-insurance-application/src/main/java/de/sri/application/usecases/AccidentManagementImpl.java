@@ -8,7 +8,9 @@ import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.AccidentManagement;
 import de.sri.domain.valueobjects.Premium;
 import de.sri.domain.exceptions.CustomerNotFoundException;
+import de.sri.domain.exceptions.InvalidPremiumAmountException;
 import de.sri.domain.exceptions.PolicyNotFoundException;
+import de.sri.domain.exceptions.PropertyNotNullException;
 
 public class AccidentManagementImpl implements AccidentManagement {
 
@@ -25,8 +27,8 @@ public class AccidentManagementImpl implements AccidentManagement {
     }
 
     @Override
-    public void createAccidentForCustomer(int customerId, Accident accident)
-            throws CustomerNotFoundException, PolicyNotFoundException {
+    public void createAccidentForCustomer(int customerId, Accident accident) throws CustomerNotFoundException,
+            PolicyNotFoundException, InvalidPremiumAmountException, PropertyNotNullException {
         Customer customer = getCustomer(customerId);
         customer.addAccident(accident);
         if (customer.getAccidents().size() >= 3) {
@@ -39,8 +41,9 @@ public class AccidentManagementImpl implements AccidentManagement {
         Policy policy = customer.getPolicies().stream().filter(p -> p.getId() == accident.getPolicyId()).findFirst()
                 .orElseThrow(() -> new PolicyNotFoundException(accident.getPolicyId()));
 
-        policy.setPremium(
-                new Premium(policy.getPremium().getAmount() + INCREASE_PREMIUM, policy.getPremium().getCurrency()));
+        double newPremiumAmount = policy.getPremium().getAmount() + INCREASE_PREMIUM;
+        Premium premium = new Premium(newPremiumAmount, policy.getPremium().getCurrency());
+        policy.setPremium(premium);
 
         if (accident.getCost() > 60000 || accident.getCost() > policy.getCarValue()) {
             policy.setStatus(PolicyStatus.DECLINED);

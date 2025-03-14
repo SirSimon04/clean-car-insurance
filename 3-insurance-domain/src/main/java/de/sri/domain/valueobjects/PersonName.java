@@ -8,7 +8,7 @@ public final class PersonName {
     private final String firstName;
     private final String lastName;
 
-    public PersonName(String firstName, String lastName) throws PropertyNotNullException {       
+    public PersonName(String firstName, String lastName) throws PropertyNotNullException {
         if (firstName == null) {
             throw new PropertyNotNullException("firstName");
         }

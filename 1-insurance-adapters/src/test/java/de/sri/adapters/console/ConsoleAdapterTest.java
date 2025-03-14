@@ -16,6 +16,9 @@ import de.sri.domain.directors.CustomerDirector;
 import de.sri.domain.directors.TestCustomerDirector;
 import de.sri.domain.exceptions.CarTooExpensiveException;
 import de.sri.domain.exceptions.CustomerTooYoungException;
+import de.sri.domain.exceptions.InvalidPremiumAmountException;
+import de.sri.domain.exceptions.PropertyNotNullException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,7 +70,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void createCustomer_success() {
+    void createCustomer_success() throws PropertyNotNullException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -96,7 +99,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void getCustomer_success() throws CustomerNotFoundException {
+    void getCustomer_success() throws CustomerNotFoundException, PropertyNotNullException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         // Mocking the menu selection and customer retrieval inputs
@@ -120,7 +123,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void listAllCustomers_success() {
+    void listAllCustomers_success() throws PropertyNotNullException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(3).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -149,7 +152,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void updateCustomer_success() throws CustomerNotFoundException {
+    void updateCustomer_success() throws CustomerNotFoundException, PropertyNotNullException {
         consoleAdapter = Mockito.spy(consoleAdapter);
         doReturn(4).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
         doReturn("Jane").when(consoleAdapter).getStringInputWithDefault(eq("Enter new first name"), eq("John"));
@@ -197,8 +200,8 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void addPolicyToCustomer_success()
-            throws CustomerNotFoundException, CarTooExpensiveException, CustomerTooYoungException {
+    void addPolicyToCustomer_success() throws CustomerNotFoundException, CarTooExpensiveException,
+            CustomerTooYoungException, InvalidPremiumAmountException, PropertyNotNullException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(6).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -230,7 +233,8 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void createTicketForCustomer_success() throws CustomerNotFoundException {
+    void createTicketForCustomer_success()
+            throws CustomerNotFoundException, InvalidPremiumAmountException, PropertyNotNullException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(8).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -245,7 +249,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void getCustomersByPolicyStatus_success() {
+    void getCustomersByPolicyStatus_success() throws PropertyNotNullException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(9).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -275,7 +279,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void getCustomersByAccidentCostGreaterThan_success() {
+    void getCustomersByAccidentCostGreaterThan_success() throws PropertyNotNullException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(10).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -305,7 +309,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void getCustomersByTicketSpeedExcessGreaterThan_success() {
+    void getCustomersByTicketSpeedExcessGreaterThan_success() throws PropertyNotNullException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(11).doReturn(12).when(consoleAdapter).getIntInput(anyString());

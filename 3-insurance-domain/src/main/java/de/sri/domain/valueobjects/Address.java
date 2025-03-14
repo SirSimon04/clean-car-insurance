@@ -10,7 +10,8 @@ public class Address {
     private final String zipCode;
     private final String country;
 
-    public Address(String street, String city, String state, String zipCode, String country) throws PropertyNotNullException {
+    public Address(String street, String city, String state, String zipCode, String country)
+            throws PropertyNotNullException {
         if (street == null) {
             throw new PropertyNotNullException("street");
         }

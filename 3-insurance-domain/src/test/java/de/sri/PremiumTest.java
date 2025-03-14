@@ -32,7 +32,8 @@ class PremiumTest {
     }
 
     @Test
-    void add_premiums_with_same_currency() throws IncompatibleCurrencyException, InvalidPremiumAmountException, PropertyNotNullException {
+    void add_premiums_with_same_currency()
+            throws IncompatibleCurrencyException, InvalidPremiumAmountException, PropertyNotNullException {
         Premium premium1 = new Premium(100.0, "EUR");
         Premium premium2 = new Premium(50.0, "EUR");
         Premium result = premium1.add(premium2);
@@ -48,7 +49,8 @@ class PremiumTest {
     }
 
     @Test
-    void subtract_premiums_with_same_currency() throws IncompatibleCurrencyException, InvalidPremiumAmountException, PropertyNotNullException {
+    void subtract_premiums_with_same_currency()
+            throws IncompatibleCurrencyException, InvalidPremiumAmountException, PropertyNotNullException {
         Premium premium1 = new Premium(100.0, "EUR");
         Premium premium2 = new Premium(50.0, "EUR");
         Premium result = premium1.subtract(premium2);

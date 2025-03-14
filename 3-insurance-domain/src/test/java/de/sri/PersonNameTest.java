@@ -27,17 +27,16 @@ public class PersonNameTest {
         PersonName personName = new PersonName("Max", "Mustermann");
         assertEquals("Max Mustermann", personName.getFullName());
     }
-    
+
     @Test
     void create_invalid_person_name_object_null_first_name() {
         assertThrows(PropertyNotNullException.class, () -> new PersonName(null, null));
     }
-    
+
     @Test
     void to_string_method() throws PropertyNotNullException {
         PersonName personName = new PersonName("Max", "Mustermann");
         assertEquals("Max Mustermann", personName.toString());
     }
 
-    
 }

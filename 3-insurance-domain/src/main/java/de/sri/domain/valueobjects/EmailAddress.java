@@ -9,7 +9,7 @@ public final class EmailAddress {
     private final String address;
 
     public EmailAddress(String address) throws InvalidEmailAddress, PropertyNotNullException {
-        if(address == null) {
+        if (address == null) {
             throw new PropertyNotNullException("EmailAddress.address");
         }
         if (!isValid(address)) {

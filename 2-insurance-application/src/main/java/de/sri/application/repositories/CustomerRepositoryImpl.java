@@ -7,6 +7,7 @@ import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.entities.Ticket;
 import de.sri.domain.exceptions.CustomerNotFoundException;
+import de.sri.domain.exceptions.PropertyNotNullException;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.valueobjects.Address;
 import de.sri.domain.directors.CustomerDirector;
@@ -20,7 +21,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     private final Map<Integer, Customer> customers = new HashMap<>();
     private final AtomicInteger idGenerator = new AtomicInteger(0);
 
-    public CustomerRepositoryImpl() {
+    public CustomerRepositoryImpl() throws PropertyNotNullException {
         this.addSampleData();
     }
 
@@ -102,7 +103,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         return customer;
     }
 
-    private void addSampleData() {
+    private void addSampleData() throws PropertyNotNullException {
         Address address1 = new Address("Musterstraße 1", "Berlin", "BE", "10115", "Deutschland");
         Address address2 = new Address("Hauptstraße 23", "München", "BY", "80331", "Deutschland");
 

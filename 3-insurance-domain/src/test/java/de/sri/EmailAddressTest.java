@@ -18,12 +18,12 @@ public class EmailAddressTest {
 
     @Test
     void create_invalid_email_address_object() throws InvalidEmailAddress, PropertyNotNullException {
-        assertThrows(InvalidEmailAddress.class, () -> new EmailAddress("testtest"));        
+        assertThrows(InvalidEmailAddress.class, () -> new EmailAddress("testtest"));
     }
 
     @Test
     void create_invalid_email_address_object_with_null() {
-        assertThrows(PropertyNotNullException.class, () -> new EmailAddress(null));        
+        assertThrows(PropertyNotNullException.class, () -> new EmailAddress(null));
     }
 
     @Test

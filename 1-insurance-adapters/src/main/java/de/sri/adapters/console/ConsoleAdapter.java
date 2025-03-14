@@ -15,6 +15,8 @@ import de.sri.domain.exceptions.BaseDomainException;
 import de.sri.domain.exceptions.CustomerNotFoundException;
 import de.sri.domain.exceptions.CarTooExpensiveException;
 import de.sri.domain.exceptions.CustomerTooYoungException;
+import de.sri.domain.exceptions.InvalidPremiumAmountException;
+import de.sri.domain.exceptions.PropertyNotNullException;
 import de.sri.domain.directors.CustomerDirector;
 
 import java.util.List;
@@ -114,7 +116,7 @@ public class ConsoleAdapter {
         System.out.println("12. Exit");
     }
 
-    protected void createCustomer() {
+    protected void createCustomer() throws PropertyNotNullException {
         System.out.println("\n--- Create New Customer ---");
         String firstName = getStringInput("Enter first name: ");
         String lastName = getStringInput("Enter last name: ");
@@ -147,7 +149,7 @@ public class ConsoleAdapter {
         readCustomerManagement.getAllCustomers().forEach(this::printCustomerDetails);
     }
 
-    protected void updateCustomer() throws CustomerNotFoundException {
+    protected void updateCustomer() throws CustomerNotFoundException, PropertyNotNullException {
         int id = getIntInput("Enter customer ID to update: ");
         Customer customer = readCustomerManagement.getCustomer(id);
 
@@ -181,8 +183,8 @@ public class ConsoleAdapter {
         System.out.println("Customer deleted successfully.");
     }
 
-    protected void addPolicyToCustomer()
-            throws CustomerNotFoundException, CarTooExpensiveException, CustomerTooYoungException {
+    protected void addPolicyToCustomer() throws CustomerNotFoundException, CarTooExpensiveException,
+            CustomerTooYoungException, InvalidPremiumAmountException, PropertyNotNullException {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Add New Policy ---");
         String program = getStringInput("Enter policy program (BASIC/STANDARD/DELUXE): ");
@@ -206,7 +208,8 @@ public class ConsoleAdapter {
         System.out.println("Accident created successfully for customer.");
     }
 
-    protected void createTicketForCustomer() throws CustomerNotFoundException {
+    protected void createTicketForCustomer()
+            throws CustomerNotFoundException, InvalidPremiumAmountException, PropertyNotNullException {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Create New Ticket ---");
         LocalDate date = getDateInput("Enter ticket date (YYYY-MM-DD): ");
