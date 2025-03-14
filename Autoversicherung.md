@@ -218,7 +218,284 @@ Die Klasse `Customer` repräsentiert einen Kunden der Autoversicherung. Sie enth
 
 Die Klasse gehört zur Domain-Schicht, da sie eine zentrale Rolle in der Domäne der Applikation spielt und die wesentlichen Daten eines Kunden kapselt. Sie ist unabhängig von anderen Schichten und kann in verschiedenen Klassen der Applikations-Schicht konsumiert werden.
 
+# Kapitel 3: SOLID
+ 
+## Analyse Single-Responsibility-Principle (SRP)
+ 
+**Positiv-Beispiel:**
+ 
+**Klasse: `BasicPremiumCalculationStrategy`**
+ 
+**UML:**
+```mermaid
+classDiagram
+    class BasicPremiumCalculationStrategy {
+        -percentage: double
+        +calculatePremium(double carValue) double
+    }
+```
+ 
+**Beschreibung der Aufgabe:**
+Die Klasse `BasicPremiumCalculationStrategy` hat nur eine einzige Verantwortung: die Berechnung des Premiums basierend auf einem festen Prozentsatz des Autowertes. Sie erfüllt das SRP, da sie nur eine Aufgabe hat und diese klar definiert ist.
+ 
+**Negativ-Beispiel:**
+ 
+**Klasse: `WriteCustomerManagementImpl`**
+ 
+**UML:**
+```mermaid
+classDiagram
+    class WriteCustomerManagementImpl {
+        -customerRepository: CustomerRepository
+        -readCustomerManagement: ReadCustomerManagement
+        +WriteCustomerManagementImpl(CustomerRepository customerRepository, ReadCustomerManagement readCustomerManagement)
+        +createCustomer(Customer customer) Customer
+        +updateCustomer(Customer customer) void
+        +deleteCustomer(int customerId) void
+        +createAccidentForCustomer(int customerId, Accident accident) void
+    }
+    class WriteCustomerManagement{
+      <<interface>>
+    }
+    class CustomerRepository{
+      <<interface>>
+    }
+    class ReadCustomerManagement{
+      <<interface>>
+    }
+    WriteCustomerManagementImpl --> CustomerRepository
+    WriteCustomerManagementImpl --> ReadCustomerManagement
+    WriteCustomerManagementImpl --> Customer
+    WriteCustomerManagementImpl --> Accident    
+    WriteCustomerManagementImpl ..|> WriteCustomerManagement    
+```
+ 
+**Beschreibung der Aufgaben:**
+Die Klasse `WriteCustomerManagementImpl` hat mehrere Verantwortlichkeiten: das Erstellen, Aktualisieren und Löschen von Kunden sowie das Hinzufügen von Unfällen zu Kunden. Dies verletzt das SRP, da die Klasse mehrere Aufgaben hat.
+ 
+**Möglicher Lösungsweg:**
+Aufteilung der Klasse `WriteCustomerManagementImpl` in einen `CustomerCreationService`, `CustomerUpdateService`, `CustomerDeletionService` und `AccidentManagementService`. Dadurch werden die mehreren Verantwortlichkeiten in mehrere einzelnen Klassen gekapselt. 
+ 
+**UML:**
+```mermaid
+classDiagram
+direction LR
+    class CustomerCreationService {
+        -customerRepository: CustomerRepository
+        +CustomerCreationService(CustomerRepository customerRepository)
+        +createCustomer(Customer customer) Customer
+    }
+ 
+    class CustomerUpdateService {
+        -customerRepository: CustomerRepository
+        +CustomerUpdateService(CustomerRepository customerRepository)
+        +updateCustomer(Customer customer) void
+    }
+ 
+    class CustomerDeletionService {
+        -customerRepository: CustomerRepository
+        +CustomerDeletionService(CustomerRepository customerRepository)
+        +deleteCustomer(int customerId) void
+    }
+ 
+    class AccidentManagementService {
+        -customerRepository: CustomerRepository
+        -readCustomerManagement: ReadCustomerManagement
+        +AccidentManagementService(CustomerRepository customerRepository, ReadCustomerManagement readCustomerManagement)
+        +createAccidentForCustomer(int customerId, Accident accident) void
+    }
 
+    class CustomerRepository{
+      <<interface>>
+    }
+    class ReadCustomerManagement{
+      <<interface>>
+    }
+ 
+    CustomerCreationService --> CustomerRepository
+    CustomerUpdateService --> CustomerRepository
+    CustomerDeletionService --> CustomerRepository
+    AccidentManagementService --> CustomerRepository
+    AccidentManagementService --> ReadCustomerManagement      
+```
+ 
+## Analyse Open-Closed-Principle (OCP)
+ 
+### Positiv-Beispiel
+ 
+**Klasse: `PremiumCalculationStrategyFactory`**
+ 
+**UML:**
+```mermaid
+classDiagram
+    class PremiumCalculationStrategyFactory {
+        +getStrategy(PolicyProgram program) PremiumCalculationStrategy
+    }
+
+    class PremiumCalculationStrategy{
+      <<interface>>
+    }
+
+    class PolicyProgram {
+        <<enumeration>>
+        BASIC
+        STANDARD
+        DELUXE
+    }
+    PremiumCalculationStrategyFactory --> PremiumCalculationStrategy
+    PremiumCalculationStrategyFactory --> PolicyProgram
+    PremiumCalculationStrategyFactory --> BasicPremiumCalculationStrategy
+    PremiumCalculationStrategyFactory --> StandardPremiumCalculationStrategy
+    PremiumCalculationStrategyFactory --> DeluxePremiumCalculationStrategy
+    PremiumCalculationStrategy <|.. BasicPremiumCalculationStrategy
+    PremiumCalculationStrategy <|.. StandardPremiumCalculationStrategy
+    PremiumCalculationStrategy <|.. DeluxePremiumCalculationStrategy
+```
+ 
+**Analyse:**
+Die Klasse `PremiumCalculationStrategyFactory` ist offen für Erweiterungen, da neue Berechnungsstrategien für das Premium hinzugefügt werden können, ohne die bestehende Klasse zu ändern. Dies wird durch die Verwendung eines Enums und eines Switch-Statements erreicht, das leicht erweitert werden kann ([repo](https://github.com/SirSimon04/clean-car-insurance/blob/main/2-insurance-application/src/main/java/de/sri/application/premiumcalculator/PremiumCalculationStrategyFactory.java)).
+ 
+### Negativ-Beispiel
+ 
+**Klasse: `WriteCustomerManagementImpl`**
+ 
+**UML:**
+```mermaid
+classDiagram
+    class WriteCustomerManagementImpl {
+        -customerRepository: CustomerRepository
+        -readCustomerManagement: ReadCustomerManagement
+        +WriteCustomerManagementImpl(CustomerRepository customerRepository, ReadCustomerManagement readCustomerManagement)
+        +createCustomer(Customer customer) Customer
+        +updateCustomer(Customer customer) void
+        +deleteCustomer(int customerId) void
+        +createAccidentForCustomer(int customerId, Accident accident) void
+    }
+    class CustomerRepository {
+      <<interface>>
+    }
+    class ReadCustomerManagement {
+      <<interface>>
+    }
+    class WriteCustomerManagement{
+      <<interface>>
+    }
+    WriteCustomerManagementImpl --> CustomerRepository
+    WriteCustomerManagementImpl --> ReadCustomerManagement    
+    WriteCustomerManagementImpl ..|> WriteCustomerManagement
+```
+ 
+**Analyse:**
+Die Klasse `WriteCustomerManagementImpl` ist nicht offen für Erweiterungen, da jede neue Funktionalität (z.B. das Hinzufügen neuer Methoden) Änderungen an der bestehenden Klasse erfordert. Dies verletzt das OCP.
+ 
+**Möglicher Lösungsweg:**
+ 
+**UML:**
+```mermaid
+classDiagram
+    class CustomerManagement {
+        +createCustomer(Customer customer) Customer
+        +updateCustomer(Customer customer) void
+        +deleteCustomer(int customerId) void
+    }
+ 
+    class AccidentManagement {
+        +createAccidentForCustomer(int customerId, Accident accident) void
+    }
+
+    class CustomerRepository {
+      <<interface>>
+    }
+    class ReadCustomerManagement {
+      <<interface>>
+    }    
+ 
+    CustomerManagement <|.. WriteCustomerManagementImpl
+    AccidentManagement <|.. WriteCustomerManagementImpl
+    WriteCustomerManagementImpl --> CustomerRepository
+    WriteCustomerManagementImpl --> ReadCustomerManagement    
+```
+ 
+## Analyse Interface-Segregation-Principle (ISP)
+ 
+### Positiv-Beispiel
+
+**Analyse:**
+Die Interfaces `ReadCustomerManagement` und `WriteCustomerManagement` sind nach Funktionalität (Lese- und Schreibzugriff) aufgeteilt. Dies erfüllt das ISP, da die Implementierungen nicht gezwungen sind, unnötige Methoden zu implementieren. Dadurch kann verhindert werden, dass ungewollte Schreibzugriffe ausgeführt werden.
+ 
+#### Interface: `ReadCustomerManagement`
+ 
+**UML:**
+```mermaid
+classDiagram
+    class ReadCustomerManagement {
+        +findCustomerById(int customerId) Optional~Customer~
+        +findAllCustomers() List~Customer~
+        <<interface>>
+    }    
+```
+ 
+#### Interface: `WriteCustomerManagement`
+ 
+**UML:**
+```mermaid
+classDiagram
+    class WriteCustomerManagement {
+        +createCustomer(Customer customer) Customer
+        +updateCustomer(Customer customer) void
+        +deleteCustomer(int customerId) void
+        +createAccidentForCustomer(int customerId, Accident accident) void
+        <<interface>>
+    }    
+```
+ 
+ 
+### Negativ-Beispiel
+ 
+**Klasse: `CustomerRepository`**
+ 
+**UML:**
+```mermaid
+classDiagram
+    class CustomerRepository {
+        +findById(int id) Customer
+        +save(Customer customer) void
+        +delete(int id) void
+        +findAll() List~Customer~
+        +findByPolicyStatus(PolicyStatus status) List~Customer~
+        +findByAccidentCostGreaterThan(double cost) List~Customer~
+        +findByTicketSpeedExcessGreaterThan(double speedExcess) List~Customer~
+    }
+```
+ 
+**Analyse:**
+Das Interface `CustomerRepository` hat viele Methoden, die möglicherweise nicht von allen Implementierungen benötigt werden. Dies verletzt das ISP, da Implementierungen gezwungen sind, Methoden zu implementieren, die sie nicht benötigen.
+ 
+**Möglicher Lösungsweg:**
+ 
+**UML:**
+```mermaid
+classDiagram
+    class BasicCustomerRepository {
+        +findById(int id) Customer
+        +save(Customer customer) void
+        +delete(int id) void
+        <<interface>>
+    }
+ 
+    class AdvancedCustomerRepository {
+        +findAll() List~Customer~
+        +findByPolicyStatus(PolicyStatus status) List~Customer~
+        +findByAccidentCostGreaterThan(double cost) List~Customer~
+        +findByTicketSpeedExcessGreaterThan(double speedExcess) List~Customer~
+        <<interface>>
+    }
+```
+ 
+**Beschreibung:**
+Durch die Aufteilung des `CustomerRepository`-Interfaces in `BasicCustomerRepository` und `AdvancedCustomerRepository` wird das ISP erfüllt, da Implementierungen nur die Methoden implementieren müssen, die sie tatsächlich benötigen.
+
+# 4 Weitere Prinzipien 
 
 # 7. Domain-Driven-Design (DDD)
 ## Entities
