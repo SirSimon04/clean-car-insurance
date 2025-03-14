@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public final class PersonName {
     private final String firstName;
-    private final String lastName;    
+    private final String lastName;
 
     public PersonName(String firstName, String lastName) {
         this.firstName = firstName.trim();
@@ -26,11 +26,12 @@ public final class PersonName {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         PersonName that = (PersonName) o;
-        return Objects.equals(firstName, that.firstName) &&
-                Objects.equals(lastName, that.lastName);                
+        return Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName);
     }
 
     @Override

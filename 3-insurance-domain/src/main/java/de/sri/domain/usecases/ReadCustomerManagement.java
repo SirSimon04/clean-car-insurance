@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface ReadCustomerManagement {
 
-	Customer getCustomer(int customerId) throws CustomerNotFoundException;
+    Customer getCustomer(int customerId) throws CustomerNotFoundException;
 
-	List<Customer> getAllCustomers();
+    List<Customer> getAllCustomers();
 
-	List<Customer> getCustomersByPolicyStatus(PolicyStatus status);
+    List<Customer> getCustomersByPolicyStatus(PolicyStatus status);
 
-	List<Customer> getCustomersByAccidentCostGreaterThan(double cost);
+    List<Customer> getCustomersByAccidentCostGreaterThan(double cost);
 
-	List<Customer> getCustomersByTicketSpeedExcessGreaterThan(double speedExcess);
+    List<Customer> getCustomersByTicketSpeedExcessGreaterThan(double speedExcess);
 }

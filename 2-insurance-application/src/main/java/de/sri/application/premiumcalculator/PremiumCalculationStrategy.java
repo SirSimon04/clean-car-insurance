@@ -1,5 +1,5 @@
 package de.sri.application.premiumcalculator;
 
 public interface PremiumCalculationStrategy {
-	double calculatePremium(double carValue);
+    double calculatePremium(double carValue);
 }

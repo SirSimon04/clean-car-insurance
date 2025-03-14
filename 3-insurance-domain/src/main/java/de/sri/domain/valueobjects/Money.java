@@ -67,11 +67,12 @@ public final class Money {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Money money = (Money) o;
-        return Objects.equals(amount, money.amount) &&
-                Objects.equals(currency, money.currency);
+        return Objects.equals(amount, money.amount) && Objects.equals(currency, money.currency);
     }
 
     @Override

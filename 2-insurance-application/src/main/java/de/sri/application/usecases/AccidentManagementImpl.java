@@ -21,8 +21,7 @@ public class AccidentManagementImpl implements AccidentManagement {
     }
 
     private Customer getCustomer(int customerId) throws CustomerNotFoundException {
-        return customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException(customerId));
+        return customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException(customerId));
     }
 
     @Override
@@ -41,9 +40,7 @@ public class AccidentManagementImpl implements AccidentManagement {
                 .orElseThrow(() -> new PolicyNotFoundException(accident.getPolicyId()));
 
         policy.setPremium(
-                new Premium(
-                        policy.getPremium().getAmount() + INCREASE_PREMIUM,
-                        policy.getPremium().getCurrency()));
+                new Premium(policy.getPremium().getAmount() + INCREASE_PREMIUM, policy.getPremium().getCurrency()));
 
         if (accident.getCost() > 60000 || accident.getCost() > policy.getCarValue()) {
             policy.setStatus(PolicyStatus.DECLINED);

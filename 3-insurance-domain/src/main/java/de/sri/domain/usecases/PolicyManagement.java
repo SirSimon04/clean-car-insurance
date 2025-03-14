@@ -6,12 +6,11 @@ import de.sri.domain.exceptions.CustomerTooYoungException;
 import de.sri.domain.exceptions.CarTooExpensiveException;
 
 public interface PolicyManagement {
-	void addPolicyToCustomer(int customerId, Policy policy)
-			throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException;
+    void addPolicyToCustomer(int customerId, Policy policy)
+            throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException;
 
-	void removePolicyFromCustomer(int customerId, Policy policy)
-			throws CustomerNotFoundException, CustomerTooYoungException;
+    void removePolicyFromCustomer(int customerId, Policy policy)
+            throws CustomerNotFoundException, CustomerTooYoungException;
 
-	void increaseAllPoliciesPremiumBy(double value, int customerId)
-			throws CustomerNotFoundException;
+    void increaseAllPoliciesPremiumBy(double value, int customerId) throws CustomerNotFoundException;
 }

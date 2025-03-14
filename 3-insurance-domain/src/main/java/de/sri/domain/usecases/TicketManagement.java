@@ -5,5 +5,5 @@ import de.sri.domain.exceptions.CustomerNotFoundException;
 
 public interface TicketManagement {
 
-	void createTicketForCustomer(int customerId, Ticket ticket) throws CustomerNotFoundException;
+    void createTicketForCustomer(int customerId, Ticket ticket) throws CustomerNotFoundException;
 }

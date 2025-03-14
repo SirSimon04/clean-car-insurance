@@ -21,8 +21,7 @@ public class TicketManagementImpl implements TicketManagement {
     }
 
     private Customer getCustomer(int customerId) throws CustomerNotFoundException {
-        return customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException(customerId));
+        return customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException(customerId));
     }
 
     @Override

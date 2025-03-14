@@ -8,17 +8,17 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CustomerRepository {
-	Customer save(Customer customer);
+    Customer save(Customer customer);
 
-	Optional<Customer> findById(int id);
+    Optional<Customer> findById(int id);
 
-	List<Customer> findAll();
+    List<Customer> findAll();
 
-	void delete(int id) throws CustomerNotFoundException;
+    void delete(int id) throws CustomerNotFoundException;
 
-	List<Customer> findByPolicyStatus(PolicyStatus status);
+    List<Customer> findByPolicyStatus(PolicyStatus status);
 
-	List<Customer> findByAccidentCostGreaterThan(double cost);
+    List<Customer> findByAccidentCostGreaterThan(double cost);
 
-	List<Customer> findByTicketSpeedExcessGreaterThan(double speedExcess);
+    List<Customer> findByTicketSpeedExcessGreaterThan(double speedExcess);
 }
