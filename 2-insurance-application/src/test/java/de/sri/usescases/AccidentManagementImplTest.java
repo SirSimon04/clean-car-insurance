@@ -1,10 +1,16 @@
 package de.sri.usescases;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import de.sri.application.repositories.CustomerRepositoryImpl;
 import de.sri.application.usecases.AccidentManagementImpl;
@@ -21,22 +27,22 @@ import de.sri.domain.exceptions.CarTooExpensiveException;
 import de.sri.domain.exceptions.PolicyNotFoundException;
 import de.sri.domain.directors.TestCustomerDirector;
 
+@ExtendWith(MockitoExtension.class)
 public class AccidentManagementImplTest {
+    @Mock
     private CustomerRepository customerRepository;
-    private AccidentManagementImpl accidentManagement;
-    private PolicyManagementImpl policyManagementImpl;
 
-    public AccidentManagementImplTest() {
-        this.customerRepository = new CustomerRepositoryImpl();
-        this.accidentManagement = new AccidentManagementImpl(customerRepository);
-        this.policyManagementImpl = new PolicyManagementImpl(customerRepository);
-    }
+    @InjectMocks
+    private AccidentManagementImpl accidentManagement;
+
+    @InjectMocks
+    private PolicyManagementImpl policyManagementImpl;
 
     @Test
     void create_accident_for_customer() throws CustomerNotFoundException, CustomerTooYoungException,
             CarTooExpensiveException, PolicyNotFoundException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
-        customerRepository.save(customer);
+        when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000);
         policyManagementImpl.addPolicyToCustomer(1, policy);
@@ -52,7 +58,7 @@ public class AccidentManagementImplTest {
     void increase_policy_premium_per_accident() throws CustomerNotFoundException, CustomerTooYoungException,
             CarTooExpensiveException, PolicyNotFoundException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
-        customerRepository.save(customer);
+        when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000);
         policyManagementImpl.addPolicyToCustomer(1, policy);
@@ -70,7 +76,7 @@ public class AccidentManagementImplTest {
     void decline_policy_when_accidents_amount_reaches_3() throws CustomerNotFoundException, CustomerTooYoungException,
             CarTooExpensiveException, PolicyNotFoundException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
-        customerRepository.save(customer);
+        when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 10000);
         policyManagementImpl.addPolicyToCustomer(1, policy);
@@ -87,7 +93,7 @@ public class AccidentManagementImplTest {
     void not_decline_policy_when_accident_cost_is_under_60000() throws CustomerNotFoundException,
             CustomerTooYoungException, CarTooExpensiveException, PolicyNotFoundException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
-        customerRepository.save(customer);
+        when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 100000);
         policyManagementImpl.addPolicyToCustomer(1, policy);
@@ -102,7 +108,7 @@ public class AccidentManagementImplTest {
     void decline_policy_when_accident_cost_is_over_60000() throws CustomerNotFoundException, CustomerTooYoungException,
             CarTooExpensiveException, PolicyNotFoundException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
-        customerRepository.save(customer);
+        when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 100000);
         policyManagementImpl.addPolicyToCustomer(1, policy);
@@ -117,7 +123,7 @@ public class AccidentManagementImplTest {
     void decline_policy_when_accident_cost_is_over_car_value() throws CustomerNotFoundException,
             CustomerTooYoungException, CarTooExpensiveException, PolicyNotFoundException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
-        customerRepository.save(customer);
+        when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
         Policy policy = new Policy(1, PolicyStatus.ACTIVE, PolicyProgram.BASIC, 100000);
         policyManagementImpl.addPolicyToCustomer(1, policy);

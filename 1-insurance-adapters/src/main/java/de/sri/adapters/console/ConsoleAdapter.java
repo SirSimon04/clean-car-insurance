@@ -23,12 +23,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class ConsoleAdapter {
-    private final ReadCustomerManagement readCustomerManagement;
-    private final WriteCustomerManagement writeCustomerManagement;
-    private final PolicyManagement policyManagement;
-    private final TicketManagement ticketManagement;
-    private final Scanner scanner;
-    private final DateTimeFormatter dateFormatter;
+    protected final ReadCustomerManagement readCustomerManagement;
+    protected final WriteCustomerManagement writeCustomerManagement;
+    protected final PolicyManagement policyManagement;
+    protected final TicketManagement ticketManagement;
+    protected final Scanner scanner;
+    protected final DateTimeFormatter dateFormatter;
 
     public ConsoleAdapter(ReadCustomerManagement readCustomerManagement,
             WriteCustomerManagement writeCustomerManagement, PolicyManagement policyManagement,
@@ -98,7 +98,7 @@ public class ConsoleAdapter {
 
     }
 
-    private void printMainMenu() {
+    protected void printMainMenu() {
         System.out.println("\n--- Insurance Management System ---");
         System.out.println("1. Create Customer");
         System.out.println("2. Get Customer");
@@ -114,7 +114,7 @@ public class ConsoleAdapter {
         System.out.println("12. Exit");
     }
 
-    private void createCustomer() {
+    protected void createCustomer() {
         System.out.println("\n--- Create New Customer ---");
         String firstName = getStringInput("Enter first name: ");
         String lastName = getStringInput("Enter last name: ");
@@ -136,18 +136,18 @@ public class ConsoleAdapter {
         System.out.println("Customer created successfully with ID: " + customer.getId());
     }
 
-    private void getCustomer() throws CustomerNotFoundException {
+    protected void getCustomer() throws CustomerNotFoundException {
         int id = getIntInput("Enter customer ID: ");
         Customer customer = readCustomerManagement.getCustomer(id);
         printCustomerDetails(customer);
     }
 
-    private void listAllCustomers() {
+    protected void listAllCustomers() {
         System.out.println("\n--- All Customers ---");
         readCustomerManagement.getAllCustomers().forEach(this::printCustomerDetails);
     }
 
-    private void updateCustomer() throws CustomerNotFoundException {
+    protected void updateCustomer() throws CustomerNotFoundException {
         int id = getIntInput("Enter customer ID to update: ");
         Customer customer = readCustomerManagement.getCustomer(id);
 
@@ -175,13 +175,13 @@ public class ConsoleAdapter {
         System.out.println("Customer updated successfully.");
     }
 
-    private void deleteCustomer() throws CustomerNotFoundException {
+    protected void deleteCustomer() throws CustomerNotFoundException {
         int id = getIntInput("Enter customer ID to delete: ");
         writeCustomerManagement.deleteCustomer(id);
         System.out.println("Customer deleted successfully.");
     }
 
-    private void addPolicyToCustomer()
+    protected void addPolicyToCustomer()
             throws CustomerNotFoundException, CarTooExpensiveException, CustomerTooYoungException {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Add New Policy ---");
@@ -194,7 +194,7 @@ public class ConsoleAdapter {
         System.out.println("Policy added successfully to customer.");
     }
 
-    private void createAccidentForCustomer() throws CustomerNotFoundException {
+    protected void createAccidentForCustomer() throws CustomerNotFoundException {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Create New Accident ---");
         double cost = getDoubleInput("Enter accident cost: ");
@@ -206,7 +206,7 @@ public class ConsoleAdapter {
         System.out.println("Accident created successfully for customer.");
     }
 
-    private void createTicketForCustomer() throws CustomerNotFoundException {
+    protected void createTicketForCustomer() throws CustomerNotFoundException {
         int customerId = getIntInput("Enter customer ID: ");
         System.out.println("\n--- Create New Ticket ---");
         LocalDate date = getDateInput("Enter ticket date (YYYY-MM-DD): ");
@@ -217,7 +217,7 @@ public class ConsoleAdapter {
         System.out.println("Ticket created successfully for customer.");
     }
 
-    private void getCustomersByPolicyStatus() {
+    protected void getCustomersByPolicyStatus() {
         String statusInput = getStringInput("Enter policy status (ACTIVE/INACTIVE): ");
         PolicyStatus status = PolicyStatus.valueOf(statusInput.toUpperCase());
         List<Customer> customers = readCustomerManagement.getCustomersByPolicyStatus(status);
@@ -226,7 +226,7 @@ public class ConsoleAdapter {
         customers.forEach(this::printCustomerDetails);
     }
 
-    private void getCustomersByAccidentCostGreaterThan() {
+    protected void getCustomersByAccidentCostGreaterThan() {
         double cost = getDoubleInput("Enter accident cost threshold: ");
         List<Customer> customers = readCustomerManagement.getCustomersByAccidentCostGreaterThan(cost);
 
@@ -234,7 +234,7 @@ public class ConsoleAdapter {
         customers.forEach(this::printCustomerDetails);
     }
 
-    private void getCustomersByTicketSpeedExcessGreaterThan() {
+    protected void getCustomersByTicketSpeedExcessGreaterThan() {
         double speedExcess = getDoubleInput("Enter speed excess threshold: ");
         List<Customer> customers = readCustomerManagement.getCustomersByTicketSpeedExcessGreaterThan(speedExcess);
 
@@ -242,7 +242,7 @@ public class ConsoleAdapter {
         customers.forEach(this::printCustomerDetails);
     }
 
-    private void printCustomerDetails(Customer customer) {
+    protected void printCustomerDetails(Customer customer) {
         System.out.println("\nCustomer Details:");
         System.out.println("ID: " + customer.getId());
         System.out.println("Name: " + customer.getFirstName() + " " + customer.getLastName());
@@ -260,18 +260,18 @@ public class ConsoleAdapter {
         customer.getTickets().forEach(System.out::println);
     }
 
-    private String getStringInput(String prompt) {
+    protected String getStringInput(String prompt) {
         System.out.print(prompt);
         return scanner.nextLine().trim();
     }
 
-    private String getStringInputWithDefault(String prompt, String defaultValue) {
+    protected String getStringInputWithDefault(String prompt, String defaultValue) {
         System.out.print(prompt + " [" + defaultValue + "]: ");
         String input = scanner.nextLine().trim();
         return input.isEmpty() ? defaultValue : input;
     }
 
-    private int getIntInput(String prompt) {
+    protected int getIntInput(String prompt) {
         while (true) {
             try {
                 System.out.print(prompt);
@@ -282,7 +282,7 @@ public class ConsoleAdapter {
         }
     }
 
-    private double getDoubleInput(String prompt) {
+    protected double getDoubleInput(String prompt) {
         while (true) {
             try {
                 System.out.print(prompt);
@@ -293,7 +293,7 @@ public class ConsoleAdapter {
         }
     }
 
-    private LocalDate getDateInput(String prompt) {
+    protected LocalDate getDateInput(String prompt) {
         while (true) {
             try {
                 System.out.print(prompt);
@@ -304,7 +304,7 @@ public class ConsoleAdapter {
         }
     }
 
-    private LocalDate getDateInputWithDefault(String prompt, LocalDate defaultValue) {
+    protected LocalDate getDateInputWithDefault(String prompt, LocalDate defaultValue) {
         while (true) {
             try {
                 System.out.print(prompt + " [" + defaultValue.format(dateFormatter) + "]: ");
