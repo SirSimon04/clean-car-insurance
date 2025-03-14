@@ -189,7 +189,7 @@ public class ConsoleAdapter {
         double carValue = getDoubleInput("Enter car value: ");
 
         Policy policy = new Policy(0, PolicyStatus.ACTIVE,
-                PolicyProgram.valueOf(program.toUpperCase()), carValue, customerId);
+                PolicyProgram.valueOf(program.toUpperCase()), carValue);
 
         policyManagement.addPolicyToCustomer(customerId, policy);
         System.out.println("Policy added successfully to customer.");
@@ -202,7 +202,7 @@ public class ConsoleAdapter {
         LocalDate date = getDateInput("Enter accident date (YYYY-MM-DD): ");
         int policyId = getIntInput("Enter policy ID: ");
 
-        Accident accident = new Accident(0, cost, date, customerId, policyId);
+        Accident accident = new Accident(0, cost, date, policyId);
         writeCustomerManagement.createAccidentForCustomer(customerId, accident);
         System.out.println("Accident created successfully for customer.");
     }
