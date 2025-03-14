@@ -616,9 +616,14 @@ Dieser Test ist nicht professionell, da das Policy Objekt manuell erstellt und s
 Die Code Coverage in diesem Projekt wird mit dem Tool **JaCoCo** gemessen. Eine hohe Code Coverage ist ein Indikator dafür, dass ein substantieller Teil des Codes durch automatisierte Tests abgedeckt ist, was potenziell die Fehlerwahrscheinlichkeit reduziert. Es ist jedoch wichtig zu betonen, dass eine hohe Testabdeckung allein keine Garantie für die Fehlerfreiheit darstellt. Fehlerhaft formulierte Assertions können dazu führen, dass bestehende Fehler nicht erkannt werden. Um die Robustheit des Codes zu gewährleisten, ist es unerlässlich, sowohl positive Tests (die das erwartete Verhalten verifizieren) als auch negative Tests (die die Fehlerbehandlung prüfen) zu implementieren.
 
 **Analyse und Begründung:**
+Der Schwerpunkt der Testaktivitäten lag auf der Applikations-Schicht, da diese die zentrale Geschäftslogik des Systems implementiert. Die Testsuite umfasst sowohl Unit-Tests als auch Integrationstests. 
+In der Domain-Schicht wurden primär die Value Objects durch Tests validiert. Die übrigen Klassen in dieser Schicht bestehen hauptsächlich aus Entitäten mit einfachen Getter- und Setter-Methoden, die kein zusätzliches Testen erfodern. 
+In der Adapter-Schicht wurde der Console-Adapter gezielt getestet, um dessen Funktionalität sicherzustellen.
+
+![](/testCoverage.png)
  
 ### Fakes und Mocks
- 
+In der Anwendung wird ausschließlich das `CustomerRepository` gemockt. Dies geschieht aber in mehreren Test Klassen, um die Geschäftslogik isuliert von der realen Implementierung des `CustomerRepository`zu trennen. Eine weitere Möglichkeit wäre das Schreiben von Test für den `ConsoleAdapter`und das Mocken dieses. Dies wird aber nicht getätigt.
 #### Mock-Objekt: `CustomerRepository`
  
 **UML:**
