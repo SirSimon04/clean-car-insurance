@@ -606,11 +606,84 @@ Die Klasse `PolicyManagementImpl` weist eine geringe Kopplung auf, da sie vom In
 Die Abstraktion der Datenzugriffslogik durch das Interface reduziert die direkten Abhängigkeiten, was das System wartbarer und anpassungsfähiger macht.
 
 ### Negatives-Beispiel
+
 **UML:**
+```mermaid
+classDiagram
+    class TicketManagementImplTest {
+        -customerRepository: CustomerRepositoryImpl
+        -ticketManagement: TicketManagementImpl
+        -policyManagementImpl: PolicyManagementImpl
+        +TicketManagementImplTest() throws BaseDomainException
+        +create_ticket_for_customer() void
+        +increase_policy_premium_per_ticket() void
+        +decline_policy_when_ticket_amount_reaches_5() void
+        +increase_all_policy_premiums_based_on_highest_carValue_when_speeding_over_20() void
+        +decline_all_policy_premiums_when_speeding_over_50() void
+    }
+
+    class CustomerRepositoryImpl {
+        +save(Customer customer) Customer
+        +findById(int id) Optional~Customer~
+        +findAll() List~Customer~
+        +delete(int id) void
+        +findByPolicyStatus(PolicyStatus status) List~Customer~
+        +findByAccidentCostGreaterThan(double cost) List~Customer~
+        +findByTicketSpeedExcessGreaterThan(double speedExcess) List~Customer~
+    }
+
+    class TicketManagementImpl {
+        +createTicketForCustomer(int customerId, Ticket ticket) void
+    }
+
+    class PolicyManagementImpl {
+        +addPolicyToCustomer(int customerId, Policy policy) void
+    }
+
+    TicketManagementImplTest --> CustomerRepositoryImpl
+    TicketManagementImplTest --> TicketManagementImpl
+    TicketManagementImplTest --> PolicyManagementImpl
+```
 
 **Analyse:**
+Die Klasse `TicketManagementImplTest` ist verantwortlich für das Testen der `TicketManagementImpl`-Klasse. Sie erstellt Instanzen von `CustomerRepositoryImpl`, `PolicyManagementImpl` und `TicketManagementImpl` im Konstruktor und verwendet diese in den Testmethoden. Dabei hängt sie nicht von den Interfaces `CustomerRepository` und `PolicyManagement` ab, sondern von den konkreten Implementierungen `CustomerRepositoryImpl` und `PolicyManagementImpl`. Dies führt zu einer hohen Kopplung und macht die Tests anfällig für Änderungen in den Implementierungen von `CustomerRepositoryImpl` und `PolicyManagementImpl`. Werden Änderungen an der Funktionalität an diesen beiden Komponenten vorgenommen, müssen auch die Tests in `TicketManagementImplTest` angepasst werden, wobei die Tests diese nicht durch Änderungen an diesen Komponeneten beeinflusst werden sollen.
 
-**Möglicher Lösungweg:**
+**Möglicher Lösungsweg:**
+Um die Kopplung zu reduzieren, sollten `CustomerRepositoryImpl` und `PolicyManagementImpl` gemockt werden.
+
+#### UML Diagramm nach Refactoring
+```mermaid
+classDiagram
+    class TicketManagementImplTest {
+        -customerRepository: CustomerRepository
+        -ticketManagement: TicketManagementImpl
+        -policyManagementImpl: PolicyManagementImpl
+        +TicketManagementImplTest() throws BaseDomainException
+        +create_ticket_for_customer() void
+        +increase_policy_premium_per_ticket() void
+        +decline_policy_when_ticket_amount_reaches_5() void
+        +increase_all_policy_premiums_based_on_highest_carValue_when_speeding_over_20() void
+        +decline_all_policy_premiums_when_speeding_over_50() void
+    }
+
+    class CustomerRepository {
+        <<interface>>
+    }
+
+    class TicketManagementImpl {
+        +createTicketForCustomer(int customerId, Ticket ticket) void
+    }
+
+    class PolicyManagement {
+        <<interface>>
+    }
+
+    TicketManagementImplTest --> CustomerRepository
+    TicketManagementImplTest --> TicketManagementImpl
+    TicketManagementImplTest --> PolicyManagement
+```
+
+Durch das Mocken von `CustomerRepository` und `PolicyManagement` wird die Kopplung reduziert, da die `TicketManagementImplTest`-Klasse nun von den Interfaces `CustomerRepository` und `PolicyManagement` abhängt, anstatt von der konkreten Implementierung `CustomerRepositoryImpl`. Dies ermöglicht eine einfachere Austauschbarkeit der Implementierungen und erhöht die Flexibilität und Wartbarkeit der Tests.
 
 ## Analyse GRASP: Hohe Kohäsion
 
