@@ -572,7 +572,37 @@ classDiagram
 Durch die Aufteilung des `CustomerRepository`-Interfaces in `BasicCustomerRepository` und `AdvancedCustomerRepository` wird das ISP erfüllt, da Implementierungen nur die Methoden implementieren müssen, die sie tatsächlich benötigen.
 
 # 4. Weitere Prinzipien  
-TODO
+
+## Analyse GRASP: Hohe Kohäsion
+
+### Klasse: Premium
+
+#### UML Diagramm
+```mermaid
+classDiagram
+    class Premium {
+        -double amount
+        -String currency
+        +Premium(double amount, String currency)
+        +getAmount() double
+        +getCurrency() String
+        +add(Premium other) Premium
+        +subtract(Premium other) Premium
+        +toString() String
+    }
+```
+
+#### Begründung
+Die Klasse `Premium` weist eine hohe Kohäsion auf, da alle Attribute und Methoden semantisch eng miteinander verbunden sind und sich auf die Verwaltung einer Versicherungsprämie konzentrieren. Die Attribute `amount` und `currency` beschreiben die wesentlichen Eigenschaften der Kosten einer Versicherung. Die Methoden der Klasse (`getAmount`, `getCurrency`, `add`, `subtract`, `toString`) arbeiten direkt mit diesen Attributen und bieten eine klare und verständliche Schnittstelle zur Manipulation und Abfrage der Premium-Daten.
+
+#### Vorteile hoher Kohäsion
+Die Klasse `Premium` hat ein einfaches und verständliches Design, da sie sich auf eine einzige Verantwortlichkeit konzentriert: die Verwaltung der Kosten einer Versicherung.
+Durch die klare Trennung der Verantwortlichkeiten und die enge semantische Verbindung der Attribute und Methoden kann die Klasse `Premium` in verschiedenen Kontexten wiederverwendet werden, ohne dass Änderungen erforderlich sind.
+
+#### Technische Metriken
+Die Klasse `Premium` hat eine überschaubare Anzahl von Attributen und Methoden, was zur Übersichtlichkeit beiträgt.
+Die Methoden der Klasse `Premium` nutzen die Attribute der Klasse intensiv, was auf eine hohe Kohäsion hinweist.
+
 
 # 5. Unit Tests
 ## 10 Unit Tests
