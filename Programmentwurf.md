@@ -578,6 +578,7 @@ Durch die Aufteilung des `CustomerRepository`-Interfaces in `BasicCustomerReposi
 ## Analyse GRASP: Geringe Kopplung
 
 ### Positives-Beispiel
+**Klasse:** `PolicyManagementImpl`
 **UML:**
 ```mermaid
 classDiagram
@@ -612,9 +613,35 @@ Die Abstraktion der Datenzugriffslogik durch das Interface reduziert die direkte
 **Möglicher Lösungweg:**
 
 ## Analyse GRASP: Hohe Kohäsion
-**Positives Beispiel:**
+
+**Klasse:** `Premium`
+
 **UML:**
-**Analyse / Begründung:**
+```mermaid
+classDiagram
+    class Premium {
+        -double amount
+        -String currency
+        +Premium(double amount, String currency)
+        +getAmount() double
+        +getCurrency() String
+        +add(Premium other) Premium
+        +subtract(Premium other) Premium
+        +toString() String
+    }
+```
+
+**Begründung:**
+Die Klasse `Premium` weist eine hohe Kohäsion auf, da alle Attribute und Methoden semantisch eng miteinander verbunden sind und sich auf die Verwaltung einer Versicherungsprämie konzentrieren. Die Attribute `amount` und `currency` beschreiben die wesentlichen Eigenschaften der Kosten einer Versicherung. Die Methoden der Klasse (`getAmount`, `getCurrency`, `add`, `subtract`, `toString`) arbeiten direkt mit diesen Attributen und bieten eine klare und verständliche Schnittstelle zur Manipulation und Abfrage der Premium-Daten.
+
+**Vorteile hoher Kohäsion:**
+Die Klasse `Premium` hat ein einfaches und verständliches Design, da sie sich auf eine einzige Verantwortlichkeit konzentriert: die Verwaltung der Kosten einer Versicherung.
+Durch die klare Trennung der Verantwortlichkeiten und die enge semantische Verbindung der Attribute und Methoden kann die Klasse `Premium` in verschiedenen Kontexten wiederverwendet werden, ohne dass Änderungen erforderlich sind.
+
+**Technische Metriken:**
+Die Klasse `Premium` hat eine überschaubare Anzahl von Attributen und Methoden, was zur Übersichtlichkeit beiträgt.
+Die Methoden der Klasse `Premium` nutzen die Attribute der Klasse intensiv, was auf eine hohe Kohäsion hinweist.
+
 
 ## Don’t Repeat Yourself (DRY)
 **Commit Hash:**
