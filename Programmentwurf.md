@@ -1,3 +1,5 @@
+# Programmentwurf
+# Gliederung
 <!--toc:start-->
 - [1. Einführung](#1-einführung)
   - [Übersicht über die Applikation](#übersicht-über-die-applikation)
@@ -66,6 +68,8 @@
   - [Strategy Pattern](#strategy-pattern)
   - [Builder Pattern](#builder-pattern)
 <!--toc:end-->
+---
+
 # 1. Einführung
 ## Übersicht über die Applikation
 Die Applikation SRI (_Simon Stefan Insuranci_) ist eine Software zur Verwaltung von Autoversicherungen. Sie ermöglicht es, VersicherungsPolicies für Kunden zu erstellen und zu verwalten. Die Applikation berechnet die Versicherungskosten basierend auf verschiedenen Faktoren wie dem Wert des Autos, dem Alter des Kunden, Verkehrsverstößen wie Tickets und Unfällen.
@@ -74,7 +78,7 @@ Die Applikation SRI (_Simon Stefan Insuranci_) ist eine Software zur Verwaltung 
 1. **Kostenberechnung:** Die Applikation verwendet verschiedene Strategien zur Berechnung der Versicherungsprämien (z.B. Basic, Standard, Deluxe).
 2. **Regeln:** Es gibt spezifische Regeln, die die Prämien beeinflussen, wie zusätzliche Gebühren für junge oder ältere Fahrer, erhöhte Prämien bei Verkehrsverstößen und Unfällen, sowie Ausschlusskriterien für sehr teure Autos.
 3. **Verwaltung:** Mitarbeiter der Versicherungsfirma können Kunden und deren Policies verwalten, Unfälle und Tickets hinzufügen und die Auswirkungen auf die Prämien sehen.
- 
+
 **Zweck:**
 Die Applikation soll den Prozess der Verwaltung von Autoversicherungen effizienter und transparenter gestalten, indem sie automatisierte Berechnungen und klare Regeln zur Prämienbestimmung bietet.
 
@@ -102,14 +106,17 @@ Die Applikation soll den Prozess der Verwaltung von Autoversicherungen effizient
    cd 0-insurance-main
    mvn exec:java -Dexec.mainClass="de.sri.Main"
    ```
+4. **Applikation über die Konsole verwenden:**
+![](/console_output.png)
  
 ## Wie testet man die Applikation?
 ```sh
+cd clean-car-insurance
 mvn test
 ```
 
-Die Testergebnisse werden im Terminal angezeigt. Stelle sicher, dass alle Tests erfolgreich sind.
-
+Die Testergebnisse werden im Terminal angezeigt. 
+![](/console_test_ergebnisse.png)
 # 2. Clean Architecture
 
 ## Was ist Clean Architecture?
@@ -124,7 +131,7 @@ Aufgrund der Projektstruktur wird die Dependency Rule der Clean Architecture imm
 ├── 1-insurance-adapters
 ├── 2-insurance-application
 ├── 3-insurance-domain
-├── Autoversicherung.md
+├── Programmentwurf.md
 ├── README.md
 └── pom.xml
 ```
@@ -161,6 +168,8 @@ classDiagram
     CustomerRepositoryImpl --> PolicyStatus    
     CustomerRepositoryImpl ..|> CustomerRepository
     CustomerRepositoryImpl --> Address    
+    CustomerRepositoryImpl --> PersonName    
+    CustomerRepositoryImpl --> EmailAddress    
 ```
 
 **Analyse:**
@@ -258,10 +267,9 @@ Die Klasse gehört zu der Applikations-Schicht, da sie die Geschäftslogik für 
 classDiagram
     class Customer {
       -id: int 
-      -firstName: String 
-      -lastName: String
+      -name: PersonName   
       -dateOfBirth: LocalDate
-      -email: String
+      -email: EmailAddress
       -address: Address
       -policies: List~Policy~
       -accidents: List~Accident~
@@ -290,7 +298,7 @@ Die Klasse gehört zur Domain-Schicht, da sie eine zentrale Rolle in der Domäne
  
 ## Analyse Single-Responsibility-Principle (SRP)
  
-**Positiv-Beispiel:**
+### Positiv-Beispiel
  
 **Klasse: `BasicPremiumCalculationStrategy`**
  
@@ -306,7 +314,7 @@ classDiagram
 **Beschreibung der Aufgabe:**
 Die Klasse `BasicPremiumCalculationStrategy` hat nur eine einzige Verantwortung: die Berechnung des Premiums basierend auf einem festen Prozentsatz des Autowertes. Sie erfüllt das SRP, da sie nur eine Aufgabe hat und diese klar definiert ist.
  
-**Negativ-Beispiel:**
+### Negativ-Beispiel
  
 **Klasse: `WriteCustomerManagementImpl`**
  
@@ -503,7 +511,7 @@ classDiagram
     }    
 ```
  
-#### Interface: `WriteCustomerManagement`
+**Interface:** `WriteCustomerManagement`
  
 **UML:**
 ```mermaid
@@ -591,7 +599,7 @@ JUnit-Tests werden in einem Maven-Projekt automatisch während der Test-Phase au
  
 ### ATRIP: Thorough
  
-**Positiv-Beispiel: Thorough**
+#### (1) Positiv-Beispiel
  
 **Code-Beispiel:**
 
@@ -614,7 +622,7 @@ void add_basic_policy() throws CustomerNotFoundException, CustomerTooYoungExcept
 
 Dieser Test ist gründlich, da er die Berechnung der Prämie für eine BASIC-Policy überprüft und sicherstellt, dass die Policy korrekt zum Kunden hinzugefügt wird. Es werden mehrere Assertions verwendet, um verschiedene Aspekte des Ergebnisses zu validieren.
  
-**Positiv-Beispiel: Thorough**
+#### (2) Positiv-Beispiel
  
 **Code-Beispiel:**
 ```java
@@ -635,7 +643,7 @@ Dieser Test ist gründlich, da er nur überprüft, ob eine `CustomerNotFoundExce
  
 ### ATRIP: Professional
  
-**Positiv-Beispiel: Professional**
+#### Positiv-Beispiel
  
 **Code-Beispiel:**
 
@@ -656,7 +664,7 @@ void add_policy_with_too_high_car_value() {
 
 Dieser Test ist professionell, da er sicherstellt, dass die richtige Ausnahme geworfen wird, wenn der Autowert zu hoch ist. Er verwendet klare und verständliche Assertions und überprüft die Fehlermeldung der Ausnahme. Die Verwendung der Hilfsklasse `TestCustomerDirector` zur Erstellung von Customer-Objekten trägt zur Übersichtlichkeit bei, da sie es ermöglicht, auf einfache Weise unterschiedliche Customer-Objekte für diverse Testszenarien zu generieren.
  
-**Negativ-Beispiel: Professional**
+#### Negativ-Beispiel
  
 **Code-Beispiel:**
 
@@ -840,7 +848,8 @@ Das Mock-Objekt *writeCustomerManagement* simuliert das Verhalten des `WriteCust
 
 
 # 6. Domain-Driven-Design (DDD)
-## Entities
+## Ubiquitous Language
+### Entities
 - Customer
 	- natürliche Person, die Kunde bei der von der Anwendung verwalteten Autoversicherung ist
 	- Vor- und Nachname, PersonId, Geburtsdatum (vielleicht als VO), Mail, Adresse
@@ -865,7 +874,7 @@ Das Mock-Objekt *writeCustomerManagement* simuliert das Verhalten des `WriteCust
 	- Id, Datum, Geschwindigkeitsüberschreitung
 
 
-## Nutzer
+### Nutzer
 - Mitarbeiter der Versicherungsfirma
 	- Kundenverwaltung
 		- neuen Kunden im System anlegen
@@ -882,16 +891,12 @@ Das Mock-Objekt *writeCustomerManagement* simuliert das Verhalten des `WriteCust
 
 
 | Bezeichnung | Bedeutung                                                                               | Begründung                                                                                                                                                                                                                                                           |
-| ----------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|-------------|-----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Policy      | eine Versicherung, die ein Kunde für ein Auto abgeschlossen hat                         | Ein Kunde schließt einen Vertrag für jede seiner Versicherungen ab (Insurance Policy). Bei einer Autoversicherung werden nur diese Art von Verträgen verwaltet, deswegen die kürzere Bezeichnung.                                                                    |
 | Ticket      | Verkehrsverstöße von Kunden für zu schnelles Fahren                                     | Bei einer einer Autoversicherung sind für die Kostenberechnung einer Policy Geschwindigkeitsüberschreitungen releveant, da dadurch das Risiko eines Schadens erhöht wird. Andere Arten von Verkehrsvergehen, wie falsches Parken, werden dabei nicht berücksichtigt. |
 | Customer    | natürliche Person, die Kunde bei der von der Anwendung verwalteten Autoversicherung ist | Kunden schließen einen Vertrag bei der Autoversicherung ab. Die Nutzer der Anwendung sind Mitarbeiter der Autoversicherung und tragen die Daten für die jeweiligen Kunden in das System ein.                                                                         |
 | Premium     | die monatlichen Kosten einer Policy, um diese aktiv zu halten                           | Im Rahmen einer Versicherung wird Premium als der monatlich zu entrichtende Betrag definiert                                                                                                                                
-## UML zu Entity
-
-## Entities
-
-### Policy Entity
+## Entities - Policy Entity
 
 ```mermaid
 classDiagram
@@ -929,9 +934,7 @@ Policy wird als Entity modelliert, weil:
 
 ---
 
-## Value Objects
-
-### Premium Value Object
+## Value Objects - Premium Value Object
 
 ```mermaid
 classDiagram
@@ -957,18 +960,15 @@ Premium wird als Value Object modelliert, weil:
 
 ---
 
-## Aggregates
-
-### Customer Aggregate
+## Aggregates - Customer Aggregate
 
 ```mermaid
 classDiagram
 class Customer {
   -id: int 
-  -firstName: String 
-  -lastName: String
+  -name: PersonName   
   -dateOfBirth: LocalDate
-  -email: String
+  -email: EmailAddress
   -address: Address
   -policies: List~Policy~
   -accidents: List~Accident~
@@ -1046,7 +1046,7 @@ Ein Repository für Customer wird eingesetzt, weil:
 ## Code Smells
 ### Long Method
 
-#### Code-Beispiel:
+**Code-Beispiel:**
 Die Methode `addPolicyToCustomer` in `PolicyManagementImpl` ist zu lang und enthält zu viele Verantwortlichkeiten.
 
 ```java
@@ -1068,7 +1068,7 @@ public void addPolicyToCustomer(int customerId, Policy policy)
 }
 ```
 
-#### Möglicher Lösungsweg:
+**Möglicher Lösungsweg:**
 Aufteilung der Methode in kleinere Methoden, die jeweils eine einzelne Verantwortung haben.
 
 ```java
@@ -1105,7 +1105,7 @@ private void addPolicyAndSaveCustomer(Customer customer, Policy policy) {
 
 ### Duplicated Code
 
-#### Code-Beispiel:
+**Code-Beispiel:**
 In der `PolicyManagementImpl` und `TicketManagementImpl` gibt es ähnliche Logik für das Abrufen und Überprüfen von Kunden.
 
 ```java
@@ -1126,7 +1126,7 @@ class TicketManagementImpl {
 }
 ```
 
-#### Möglicher Lösungsweg:
+**Möglicher Lösungsweg:**
 Extrahieren der gemeinsamen Logik in eine Hilfsklasse.
 
 ```java
@@ -1145,13 +1145,13 @@ public class CustomerHelper {
 
 ### Refactoring: Replace Conditional with Polymorphism
 
-#### Begründung:
+**Begründung:**
 Das Refactoring "Replace Conditional with Polymorphism" wird angewendet, um die Wartbarkeit und Erweiterbarkeit des Codes zu verbessern. Anstatt eine lange `switch`-Anweisung zu verwenden, um die Premium-Berechnung basierend auf dem `PolicyProgram` zu bestimmen, wird das Strategy-Pattern verwendet. Dies ermöglicht es, neue Berechnungsstrategien hinzuzufügen, ohne den bestehenden Code zu ändern.
 
 Commit (ursprünglich eingeführt): `d8729c9c1f914fe12341021ee10d92481abb4f7b`
 Commit (Switch der Factory mit HashMap ersetzt): `18a713665a859cbaaeead7b04785788d18e5752d`
 
-#### UML Vorher:
+**UML Vorher:**
 ```mermaid
 classDiagram
     class PolicyManagementImpl {
@@ -1166,7 +1166,7 @@ classDiagram
     PolicyManagementImpl --> PolicyProgram
 ```
 
-#### UML Nachher:
+**UML Nachher:**
 ```mermaid
 classDiagram
     class PolicyManagementImpl {
@@ -1204,12 +1204,12 @@ classDiagram
 
 ### Refactoring: Extract Method
 
-#### Begründung:
+**Begründung:**
 Das Refactoring "Extract Method" wurde angewendet, um die Lesbarkeit und Wartbarkeit des Codes zu verbessern. Durch das Extrahieren der Menüauswahl-Logik in eine separate Methode `handleChoice` wird die `start`-Methode vereinfacht und die Verantwortlichkeiten klarer getrennt.
 
 Commit: 9a478dff365058233dde2b14bad25be8f8b1495c
 
-#### UML Vorher:
+**UML Vorher:**
 ```mermaid
 classDiagram
     class ConsoleAdapter {
@@ -1217,7 +1217,7 @@ classDiagram
     }
 ```
 
-#### UML Nachher:
+**UML Nachher:**
 ```mermaid
 classDiagram
     class ConsoleAdapter {
@@ -1226,7 +1226,7 @@ classDiagram
     }
 ```
 
-#### Code Vorher:
+**Code Vorher:**
 ```java
 public void start() {
     boolean running = true;
@@ -1256,7 +1256,7 @@ public void start() {
 }
 ```
 
-#### Code Nachher:
+**Code Nachher:**
 ```java
 public void start() {
     boolean running = true;
@@ -1291,10 +1291,10 @@ private boolean handleChoice(int choice) throws BaseDomainException {
 
 # 8. Design Patterns
 ## Strategy Pattern
-### Begründung
+**Begründung:**
 Das Strategy Pattern wird verwendet, um verschiedene Berechnungsstrategien für Premiums zu kapseln. Dies ermöglicht es, die Berechnungslogik für verschiedene Policy-Programme (BASIC, STANDARD, DELUXE) zu variieren, ohne den Code der PolicyManagementImpl-Klasse zu ändern.
 
-### UML
+**UML:**
 ```mermaid
 classDiagram
     class PremiumCalculationStrategy {
@@ -1344,22 +1344,21 @@ classDiagram
 
 ## Builder Pattern
 
-### Begründung
+**Begründung:**
 Das Builder Pattern wird verwendet, um die Erstellung komplexer Customer-Objekte zu vereinfachen. Der CustomerDirector nutzt den Builder, um verschiedene Arten von Customer-Objekten zu erstellen, was die Lesbarkeit und Wartbarkeit des Codes verbessert.
 
-### UML
+**UML:**
 ```mermaid
 classDiagram    
     class Customer {
-      -id: int 
-      -firstName: String 
-      -lastName: String
-      -dateOfBirth: LocalDate
-      -email: String
-      -address: Address
-      -policies: List~Policy~
-      -accidents: List~Accident~
-      -tickets: List~Ticket~       
+        -id: int 
+        -name: PersonName   
+        -dateOfBirth: LocalDate
+        -email: EmailAddress
+        -address: Address
+        -policies: List~Policy~
+        -accidents: List~Accident~
+        -tickets: List~Ticket~      
     }
 
     class Customer.Builder {
