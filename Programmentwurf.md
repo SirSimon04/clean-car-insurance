@@ -284,6 +284,9 @@ classDiagram
     Customer "1" -- "*" Policy
     Customer "1" -- "*" Accident
     Customer "1" -- "*" Ticket
+    Customer "1" -- "1" PersonName
+    Customer "1" -- "1" EmailAddress
+    Customer "1" -- "1" Address
 ```
 
 **Beschreibung der Aufgabe:**
@@ -572,7 +575,52 @@ classDiagram
 Durch die Aufteilung des `CustomerRepository`-Interfaces in `BasicCustomerRepository` und `AdvancedCustomerRepository` wird das ISP erfüllt, da Implementierungen nur die Methoden implementieren müssen, die sie tatsächlich benötigen.
 
 # 4. Weitere Prinzipien  
-TODO
+## Analyse GRASP: Geringe Kopplung
+
+### Positives-Beispiel
+**UML:**
+```mermaid
+classDiagram
+    class PolicyManagementImpl {
+        -customerRepository: CustomerRepository
+        +PolicyManagementImpl(CustomerRepository customerRepository)
+        +addPolicyToCustomer(int customerId, Policy policy) void
+    }
+    class CustomerRepository {
+        <<interface>>
+        +findById(int id) Optional~Customer~
+        +save(Customer customer) void
+    }
+    class Customer {
+        -id: int
+        -name: String
+        -policies: List~Policy~        
+    }
+    PolicyManagementImpl --> CustomerRepository
+    CustomerRepository --> Customer    
+```
+
+**Analyse:**
+Die Klasse `PolicyManagementImpl` weist eine geringe Kopplung auf, da sie vom Interface `CustomerRepository` und nicht von einer konkreten Implementierung abhängt. Dies ermöglicht Flexibilität und einfachere Tests, da verschiedene Implementierungen von `CustomerRepository` verwendet werden können, ohne die Klasse `PolicyManagementImpl` zu ändern. 
+Die Abstraktion der Datenzugriffslogik durch das Interface reduziert die direkten Abhängigkeiten, was das System wartbarer und anpassungsfähiger macht.
+
+### Negatives-Beispiel
+**UML:**
+
+**Analyse:**
+
+**Möglicher Lösungweg:**
+
+## Analyse GRASP: Hohe Kohäsion
+**Positives Beispiel:**
+**UML:**
+**Analyse / Begründung:**
+
+## Don’t Repeat Yourself (DRY)
+**Commit Hash:**
+**Code-Beispiel Vorher:**
+**Code-Beispiel Nachher:**
+**Begründung und Auswirkung:**
 
 # 5. Unit Tests
 ## 10 Unit Tests
