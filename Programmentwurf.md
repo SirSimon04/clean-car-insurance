@@ -71,7 +71,7 @@
 ---
 
 # 1. Einführung
-## Übersicht über die Applikation
+## 1.1 Übersicht über die Applikation
 Die Applikation SRI (_Simon Stefan Insuranci_) ist eine Software zur Verwaltung von Autoversicherungen. Sie ermöglicht es, VersicherungsPolicies für Kunden zu erstellen und zu verwalten. Die Applikation berechnet die Versicherungskosten basierend auf verschiedenen Faktoren wie dem Wert des Autos, dem Alter des Kunden, Verkehrsverstößen wie Tickets und Unfällen.
  
 **Funktionsweise:**
@@ -82,7 +82,7 @@ Die Applikation SRI (_Simon Stefan Insuranci_) ist eine Software zur Verwaltung 
 **Zweck:**
 Die Applikation soll den Prozess der Verwaltung von Autoversicherungen effizienter und transparenter gestalten, indem sie automatisierte Berechnungen und klare Regeln zur Prämienbestimmung bietet.
 
-## Wie startet man die Applikation?
+## 1.2 Wie startet man die Applikation?
 
 **Voraussetzungen:**
 - Java Development Kit (JDK) Version 21
@@ -107,23 +107,23 @@ Die Applikation soll den Prozess der Verwaltung von Autoversicherungen effizient
    mvn exec:java -Dexec.mainClass="de.sri.Main"
    ```
 4. **Applikation über die Konsole verwenden:**
-![](/console_output.png)
+![](/assets/console_output.png)
  
-## Wie testet man die Applikation?
+## 1.3 Wie testet man die Applikation?
 ```sh
 cd clean-car-insurance
 mvn test
 ```
 
 Die Testergebnisse werden im Terminal angezeigt. 
-![](/console_test_ergebnisse.png)
+![](/assets/console_test_ergebnisse.png)
 # 2. Clean Architecture
 
-## Was ist Clean Architecture?
+## 2.1 Was ist Clean Architecture?
 
 Clean Architecture ist ein Architekturstil für Software, der darauf abzielt, die Abhängigkeiten zwischen den verschiedenen Komponenten einer Anwendung zu minimieren und die Testbarkeit, Wartbarkeit und Flexibilität zu erhöhen. Die Hauptidee ist, dass die Geschäftslogik (Use Cases) unabhängig von Frameworks, Datenbanken, UI oder anderen externen Systemen bleibt. Dies wird durch die strikte Trennung der Verantwortlichkeiten und die Einhaltung der Dependency Rule erreicht.
 
-## Analyse der Dependency Rule
+## 2.2 Analyse der Dependency Rule
 Aufgrund der Projektstruktur wird die Dependency Rule der Clean Architecture immer befolgt und kann nicht dagegen verstoßen werden. Deswegen werden zwei positive Beispiele aufgeführt.
 
 ```shell
@@ -131,17 +131,13 @@ Aufgrund der Projektstruktur wird die Dependency Rule der Clean Architecture imm
 ├── 1-insurance-adapters
 ├── 2-insurance-application
 ├── 3-insurance-domain
-├── Programmentwurf.md
 ├── README.md
 └── pom.xml
 ```
 
 
-### (a) Positiv-Beispiel: Dependency Rule
+### 2.2.1 Positiv-Beispiel: `CustomerRepositoryImpl`
 
-**Klasse: `CustomerRepositoryImpl`**
-
-**UML:**
 ```mermaid
 classDiagram
     class CustomerRepositoryImpl {
@@ -175,13 +171,10 @@ classDiagram
 **Analyse:**
 
 - **Abhängigkeiten:** `CustomerRepositoryImpl` hängt von dem Interfaces `CustomerRepository` und sämtlichen Entity Klassen ab.
-- **Einhaltung der Dependency Rule:** Die Klasse `CustomerRepositoryImpl` befindet sich im Applikations-Schicht und die abhängenden Entitäten befinden sich in der Domain-Schicht. Dies entspricht der Dependency Rule, da die Abhängigkeiten von außen nach innen verlaufen und nicht umgekehrt.
+- **Einhaltung der Dependency Rule:** Die Klasse `CustomerRepositoryImpl` befindet sich in der Applikations-Schicht und die abhängenden Entitäten befinden sich in der Domain-Schicht. Dies entspricht der Dependency Rule, da die Abhängigkeiten von außen nach innen verlaufen und nicht umgekehrt.
 
-### (b) Positiv-Beispiel: Dependency Rule
+### 2.2.2 Positiv-Beispiel: `PolicyManagementImpl`
 
-**Klasse: `PolicyManagementImpl`**
-
-**UML:**
 
 ```mermaid
 classDiagram
@@ -215,15 +208,15 @@ classDiagram
 **Analyse:**
 
 - **Abhängigkeiten:** `TicketManagementImpl` implementiert das Interface `TicketManagement` und hängt von den Interfaces `CustomerRepository` und `PolicyManagement` sowie weiteren Entity-Klassen ab.
-- **Einhaltung der Dependency Rule:** Die Klasse `TicketManagementImpl` befindet sich im Applikations-Schicht und die Interfaces sowie die abhängenden Entitäten befinden sich in der Domain-Schicht. Dies entspricht der Dependency Rule, da die Abhängigkeiten von außen nach innen verlaufen und nicht umgekehrt.
+- **Einhaltung der Dependency Rule:** Die Klasse `TicketManagementImpl` befindet sich in der Applikations-Schicht und die Interfaces sowie die abhängenden Entitäten befinden sich in der Domain-Schicht. Dies entspricht der Dependency Rule, da die Abhängigkeiten von außen nach innen verlaufen und nicht umgekehrt.
 
-## Analyse der Schichten
+## 2.3 Analyse der Schichten
 
-### Schicht: Applikations-Schicht
+### 2.3.1 Schicht: Applikations-Schicht
 
 **Klasse: `CustomerManagementUseCase`**
 
-**UML:**
+
 
 ```mermaid
 classDiagram
@@ -257,11 +250,11 @@ Die Klasse `WriteCustomerManagementImpl` ist verantwortlich für die schreibende
 
 Die Klasse gehört zu der Applikations-Schicht, da sie die Geschäftslogik für die Verwaltung der Kunden kapselt. Sie stellt sicher, dass die Geschäftslogik unabhängig von der Datenpersistenz bleibt und nur über Abstraktionen (Interfaces) mit der Datenbank interagiert. Die Interfaces gehören alle zur Domain-Schicht.
 
-### Schicht: Domain-Schicht
+### 2.3.2 Schicht: Domain-Schicht
 
 **Klasse: `Customer`**
 
-**UML:**
+
 
 ```mermaid
 classDiagram
@@ -297,15 +290,13 @@ Die Klasse `Customer` repräsentiert einen Kunden der Autoversicherung. Sie enth
 
 Die Klasse gehört zur Domain-Schicht, da sie eine zentrale Rolle in der Domäne der Applikation spielt und die wesentlichen Daten eines Kunden kapselt. Sie ist unabhängig von anderen Schichten und kann in verschiedenen Klassen der Applikations-Schicht konsumiert werden.
 
-# Kapitel 3: SOLID
+# 3. SOLID
  
-## Analyse Single-Responsibility-Principle (SRP)
+## 3.1 Analyse Single-Responsibility-Principle (SRP)
  
-### Positiv-Beispiel
+### 3.1.1 Positiv-Beispiel: `BasicPremiumCalculationStrategy`
  
-**Klasse: `BasicPremiumCalculationStrategy`**
- 
-**UML:**
+
 ```mermaid
 classDiagram
     class BasicPremiumCalculationStrategy {
@@ -317,11 +308,9 @@ classDiagram
 **Beschreibung der Aufgabe:**
 Die Klasse `BasicPremiumCalculationStrategy` hat nur eine einzige Verantwortung: die Berechnung des Premiums basierend auf einem festen Prozentsatz des Autowertes. Sie erfüllt das SRP, da sie nur eine Aufgabe hat und diese klar definiert ist.
  
-### Negativ-Beispiel
+### 3.1.2 Negativ-Beispiel: `WriteCustomerManagementImpl`
  
-**Klasse: `WriteCustomerManagementImpl`**
- 
-**UML:**
+
 ```mermaid
 classDiagram
     class WriteCustomerManagementImpl {
@@ -355,7 +344,7 @@ Die Klasse `WriteCustomerManagementImpl` hat mehrere Verantwortlichkeiten: das E
 **Möglicher Lösungsweg:**
 Aufteilung der Klasse `WriteCustomerManagementImpl` in einen `CustomerCreationService`, `CustomerUpdateService`, `CustomerDeletionService` und `AccidentManagementService`. Dadurch werden die mehreren Verantwortlichkeiten in mehrere einzelnen Klassen gekapselt. 
  
-**UML:**
+
 ```mermaid
 classDiagram
 direction LR
@@ -398,13 +387,11 @@ direction LR
     AccidentManagementService --> ReadCustomerManagement      
 ```
  
-## Analyse Open-Closed-Principle (OCP)
+## 3.2 Analyse Open-Closed-Principle (OCP)
  
-### Positiv-Beispiel
+### 3.2.1 Positiv-Beispiel: `PremiumCalculationStrategyFactory`
  
-**Klasse: `PremiumCalculationStrategyFactory`**
- 
-**UML:**
+
 ```mermaid
 classDiagram
     class PremiumCalculationStrategyFactory {
@@ -432,13 +419,11 @@ classDiagram
 ```
  
 **Analyse:**
-Die Klasse `PremiumCalculationStrategyFactory` ist offen für Erweiterungen, da neue Berechnungsstrategien für das Premium hinzugefügt werden können, ohne die bestehende Klasse zu ändern. Dies wird durch die Verwendung eines Enums und eines Switch-Statements erreicht, das leicht erweitert werden kann ([repo](https://github.com/SirSimon04/clean-car-insurance/blob/main/2-insurance-application/src/main/java/de/sri/application/premiumcalculator/PremiumCalculationStrategyFactory.java)).
+Die Klasse `PremiumCalculationStrategyFactory` ist offen für Erweiterungen, da neue Berechnungsstrategien für das Premium hinzugefügt werden können, ohne die bestehende Klasse zu ändern. Dies wird durch die Verwendung eines Enums und eines Switch-Statements erreicht, das leicht erweitert werden kann.
  
-### Negativ-Beispiel
+### 3.2.2 Negativ-Beispiel: `WriteCustomerManagementImpl`
  
-**Klasse: `WriteCustomerManagementImpl`**
- 
-**UML:**
+
 ```mermaid
 classDiagram
     class WriteCustomerManagementImpl {
@@ -469,7 +454,7 @@ Die Klasse `WriteCustomerManagementImpl` ist nicht offen für Erweiterungen, da 
  
 **Möglicher Lösungsweg:**
  
-**UML:**
+
 ```mermaid
 classDiagram
     class CustomerManagement {
@@ -495,16 +480,14 @@ classDiagram
     WriteCustomerManagementImpl --> ReadCustomerManagement    
 ```
  
-## Analyse Interface-Segregation-Principle (ISP)
+## 3.3 Analyse Interface-Segregation-Principle (ISP)
  
-### Positiv-Beispiel
+### 3.3.1 Positiv-Beispiel: `ReadCustomerManagement`und `WriteCustomerManagement`
 
 **Analyse:**
 Die Interfaces `ReadCustomerManagement` und `WriteCustomerManagement` sind nach Funktionalität (Lese- und Schreibzugriff) aufgeteilt. Dies erfüllt das ISP, da die Implementierungen nicht gezwungen sind, unnötige Methoden zu implementieren. Dadurch kann verhindert werden, dass ungewollte Schreibzugriffe ausgeführt werden.
  
-#### Interface: `ReadCustomerManagement`
- 
-**UML:**
+**Interface:** `ReadCustomerManagement`
 ```mermaid
 classDiagram
     class ReadCustomerManagement {
@@ -515,8 +498,6 @@ classDiagram
 ```
  
 **Interface:** `WriteCustomerManagement`
- 
-**UML:**
 ```mermaid
 classDiagram
     class WriteCustomerManagement {
@@ -529,11 +510,7 @@ classDiagram
 ```
  
  
-### Negativ-Beispiel
- 
-**Klasse: `CustomerRepository`**
- 
-**UML:**
+### 3.3.2 Negativ-Beispiel: `CustomerRepository`
 ```mermaid
 classDiagram
     class CustomerRepository {
@@ -551,8 +528,6 @@ classDiagram
 Das Interface `CustomerRepository` hat viele Methoden, die möglicherweise nicht von allen Implementierungen benötigt werden. Dies verletzt das ISP, da Implementierungen gezwungen sind, Methoden zu implementieren, die sie nicht benötigen.
  
 **Möglicher Lösungsweg:**
- 
-**UML:**
 ```mermaid
 classDiagram
     class BasicCustomerRepository {
@@ -575,11 +550,9 @@ classDiagram
 Durch die Aufteilung des `CustomerRepository`-Interfaces in `BasicCustomerRepository` und `AdvancedCustomerRepository` wird das ISP erfüllt, da Implementierungen nur die Methoden implementieren müssen, die sie tatsächlich benötigen.
 
 # 4. Weitere Prinzipien  
-## Analyse GRASP: Geringe Kopplung
+## 4.1 Analyse GRASP: Geringe Kopplung
 
-### Positives-Beispiel
-**Klasse:** `PolicyManagementImpl`
-**UML:**
+### 4.1.1 Positives-Beispiel: `PolicyManagementImpl`
 ```mermaid
 classDiagram
     class PolicyManagementImpl {
@@ -602,14 +575,13 @@ classDiagram
 ```
 
 **Analyse:**
-Die Klasse `PolicyManagementImpl` weist eine geringe Kopplung auf, da sie vom Interface `CustomerRepository` und nicht von einer konkreten Implementierung abhängt. Dies ermöglicht Flexibilität und einfachere Tests, da verschiedene Implementierungen von `CustomerRepository` verwendet werden können, ohne die Klasse `PolicyManagementImpl` zu ändern. 
-Die Abstraktion der Datenzugriffslogik durch das Interface reduziert die direkten Abhängigkeiten, was das System wartbarer und anpassungsfähiger macht.
+Die Klasse `PolicyManagementImpl` weist eine geringe Kopplung auf, da sie vom Interface `CustomerRepository` und nicht von einer konkreten Implementierung abhängt. Dies ermöglicht Flexibilität und einfachere Tests, da verschiedene Implementierungen von `CustomerRepository` verwendet werden können, ohne die Klasse `PolicyManagementImpl` zu ändern. Die Abstraktion der Datenzugriffslogik durch das Interface reduziert die direkten Abhängigkeiten, wodurch das System wartbarer und anpassungsfähiger wird.
 
-### Negatives-Beispiel
+### 4.1.2 Negatives-Beispiel: `TicketManagementImplTest`
 
-**UML:**
 ```mermaid
 classDiagram
+direction LR
     class TicketManagementImplTest {
         -customerRepository: CustomerRepositoryImpl
         -ticketManagement: TicketManagementImpl
@@ -646,12 +618,12 @@ classDiagram
 ```
 
 **Analyse:**
-Die Klasse `TicketManagementImplTest` ist verantwortlich für das Testen der `TicketManagementImpl`-Klasse. Sie erstellt Instanzen von `CustomerRepositoryImpl`, `PolicyManagementImpl` und `TicketManagementImpl` im Konstruktor und verwendet diese in den Testmethoden. Dabei hängt sie nicht von den Interfaces `CustomerRepository` und `PolicyManagement` ab, sondern von den konkreten Implementierungen `CustomerRepositoryImpl` und `PolicyManagementImpl`. Dies führt zu einer hohen Kopplung und macht die Tests anfällig für Änderungen in den Implementierungen von `CustomerRepositoryImpl` und `PolicyManagementImpl`. Werden Änderungen an der Funktionalität an diesen beiden Komponenten vorgenommen, müssen auch die Tests in `TicketManagementImplTest` angepasst werden, wobei die Tests diese nicht durch Änderungen an diesen Komponeneten beeinflusst werden sollen.
+Die Klasse `TicketManagementImplTest` ist verantwortlich für das Testen der `TicketManagementImpl`-Klasse. Sie erstellt Instanzen von `CustomerRepositoryImpl`, `PolicyManagementImpl` und `TicketManagementImpl` im Konstruktor und verwendet diese in den Testmethoden. Dabei hängt sie nicht von den Interfaces `CustomerRepository` und `PolicyManagement` ab, sondern von den konkreten Implementierungen `CustomerRepositoryImpl` und `PolicyManagementImpl`. Dies führt zu einer hohen Kopplung und macht die Tests anfällig für Änderungen in den Implementierungen von `CustomerRepositoryImpl` und `PolicyManagementImpl`. Werden Änderungen an der Funktionalität an diesen beiden Komponenten vorgenommen, müssen auch die Tests in `TicketManagementImplTest` angepasst werden, wobei die Tests nicht durch Änderungen an diesen Komponeneten beeinflusst werden sollen.
 
 **Möglicher Lösungsweg:**
 Um die Kopplung zu reduzieren, sollten `CustomerRepositoryImpl` und `PolicyManagementImpl` gemockt werden.
 
-#### UML Diagramm nach Refactoring
+**UML Diagramm nach Refactoring:**
 ```mermaid
 classDiagram
     class TicketManagementImplTest {
@@ -685,11 +657,10 @@ classDiagram
 
 Durch das Mocken von `CustomerRepository` und `PolicyManagement` wird die Kopplung reduziert, da die `TicketManagementImplTest`-Klasse nun von den Interfaces `CustomerRepository` und `PolicyManagement` abhängt, anstatt von der konkreten Implementierung `CustomerRepositoryImpl`. Dies ermöglicht eine einfachere Austauschbarkeit der Implementierungen und erhöht die Flexibilität und Wartbarkeit der Tests.
 
-## Analyse GRASP: Hohe Kohäsion
+## 4.2 Analyse GRASP: Hohe Kohäsion
 
 **Klasse:** `Premium`
 
-**UML:**
 ```mermaid
 classDiagram
     class Premium {
@@ -705,7 +676,7 @@ classDiagram
 ```
 
 **Begründung:**
-Die Klasse `Premium` weist eine hohe Kohäsion auf, da alle Attribute und Methoden semantisch eng miteinander verbunden sind und sich auf die Verwaltung einer Versicherungsprämie konzentrieren. Die Attribute `amount` und `currency` beschreiben die wesentlichen Eigenschaften der Kosten einer Versicherung. Die Methoden der Klasse (`getAmount`, `getCurrency`, `add`, `subtract`, `toString`) arbeiten direkt mit diesen Attributen und bieten eine klare und verständliche Schnittstelle zur Manipulation und Abfrage der Premium-Daten.
+Die Klasse `Premium` weist eine hohe Kohäsion auf, da alle Attribute und Methoden semantisch eng miteinander verbunden sind und sich auf die Verwaltung der Kosten einer Versicherung konzentrieren. Die Attribute `amount` und `currency` beschreiben die wesentlichen Eigenschaften der Kosten einer Versicherung. Die Methoden der Klasse (`getAmount`, `getCurrency`, `add`, `subtract`, `toString`) arbeiten direkt mit diesen Attributen und bieten eine klare und verständliche Schnittstelle zur Manipulation und Abfrage der Premium-Daten.
 
 **Vorteile hoher Kohäsion:**
 Die Klasse `Premium` hat ein einfaches und verständliches Design, da sie sich auf eine einzige Verantwortlichkeit konzentriert: die Verwaltung der Kosten einer Versicherung.
@@ -716,7 +687,7 @@ Die Klasse `Premium` hat eine überschaubare Anzahl von Attributen und Methoden,
 Die Methoden der Klasse `Premium` nutzen die Attribute der Klasse intensiv, was auf eine hohe Kohäsion hinweist.
 
 
-## Don’t Repeat Yourself (DRY)
+## 4.3 Don’t Repeat Yourself (DRY)
 **Commit Hash:** 44667a8446d2a43913175c99e16068f6a90446eb
 
 **Code-Beispiel Vorher:**
@@ -740,7 +711,7 @@ Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockU
 Durch die Verwendung des `TestCustomerDirector` zur Erstellung von `Customer`-Objekten wird duplizierte Logik vermieden und die Erstellung von `Customer`-Objekten zentralisiert. In sämtlichen Tests wurden vorher die Customer Objekte manuell angelegt, diese Erstellung mit Mitgabe der Parameter war in jedem Test zi finden. Durch das Zusammenfassen dieser Erstellung in `TestCustomerDirector.createMockuser` ist diese Erstellung von `Customer-Objekten` nur noch einmal zu finden. Dies erhöht die Wartbarkeit und Lesbarkeit des Codes, da Änderungen an der Erstellung von `Customer`-Objekten nur an einer Stelle vorgenommen werden müssen. Außerdem werden die Tests deutlich kürzer.
 
 # 5. Unit Tests
-## 10 Unit Tests
+## 5.1 Zehn Unit Tests - Tabelle 
 Die folgenden aufgeführten Tests befinden sich in der `PolicyManagementImplTest` Klasse. 
  
 | Unit Test | Beschreibung |
@@ -756,15 +727,15 @@ Die folgenden aufgeführten Tests befinden sich in der `PolicyManagementImplTest
 | `increase_all_policies_premium` | Testet die Erhöhung der Prämien aller Policies eines Kunden und überprüft die neue Prämienhöhe. |
 | `add_policy_with_customer_not_found` | Testet das Hinzufügen einer Policy zu einem nicht existierenden Kunden und überprüft, ob eine `CustomerNotFoundException` geworfen wird. |
  
-### ATRIP: Automatic
+## 5.2 ATRIP
+### 5.2.1 ATRIP: Automatic
  
 **Begründung für automatisches Testen**
 
 JUnit-Tests werden in einem Maven-Projekt automatisch während der Test-Phase ausgeführt, weil Maven das `maven-surefire-plugin` standardmäßig verwendet. Dieses Plugin ist darauf ausgelegt, JUnit-Tests zu erkennen und auszuführen.
  
-### ATRIP: Thorough
- 
-#### (1) Positiv-Beispiel
+### 5.2.2 ATRIP: Thorough 
+#### 5.2.2.1 Positiv-Beispiel
  
 **Code-Beispiel:**
 
@@ -787,7 +758,7 @@ void add_basic_policy() throws CustomerNotFoundException, CustomerTooYoungExcept
 
 Dieser Test ist gründlich, da er die Berechnung der Prämie für eine BASIC-Policy überprüft und sicherstellt, dass die Policy korrekt zum Kunden hinzugefügt wird. Es werden mehrere Assertions verwendet, um verschiedene Aspekte des Ergebnisses zu validieren.
  
-#### (2) Positiv-Beispiel
+#### 5.2.2.2 Positiv-Beispiel
  
 **Code-Beispiel:**
 ```java
@@ -805,11 +776,10 @@ void add_policy_with_customer_not_found() throws CustomerNotFoundException, Cust
 **Analyse und Begründung:**
 
 Dieser Test ist gründlich, da er nur überprüft, ob eine `CustomerNotFoundException` geworfen wird, wenn eine Policy für einen nicht existierenden Customer hinzugefügt werden soll.
+
+### 5.2.3 ATRIP: Professional
  
-### ATRIP: Professional
- 
-#### Positiv-Beispiel
- 
+#### 5.2.3.1 Positiv-Beispiel
 **Code-Beispiel:**
 
 ```java
@@ -829,7 +799,7 @@ void add_policy_with_too_high_car_value() {
 
 Dieser Test ist professionell, da er sicherstellt, dass die richtige Ausnahme geworfen wird, wenn der Autowert zu hoch ist. Er verwendet klare und verständliche Assertions und überprüft die Fehlermeldung der Ausnahme. Die Verwendung der Hilfsklasse `TestCustomerDirector` zur Erstellung von Customer-Objekten trägt zur Übersichtlichkeit bei, da sie es ermöglicht, auf einfache Weise unterschiedliche Customer-Objekte für diverse Testszenarien zu generieren.
  
-#### Negativ-Beispiel
+#### 5.2.3.2 Negativ-Beispiel
  
 **Code-Beispiel:**
 
@@ -851,7 +821,7 @@ void save_policy() {
 
 Dieser Test ist nicht professionell, da das Policy Objekt manuell erstellt und somit nicht wiederverwendt werden kann. Dadurch müssen bei Änderungen der Policy Klasse sämtliche Tests angepasst werden.
  
-### Code Coverage
+## 5.3 Code Coverage
  
 
 Die Code Coverage in diesem Projekt wird mit dem Tool **JaCoCo** gemessen. Eine hohe Code Coverage ist ein Indikator dafür, dass ein substantieller Teil des Codes durch automatisierte Tests abgedeckt ist, was potenziell die Fehlerwahrscheinlichkeit reduziert. Es ist jedoch wichtig zu betonen, dass eine hohe Testabdeckung allein keine Garantie für die Fehlerfreiheit darstellt. Fehlerhaft formulierte Assertions können dazu führen, dass bestehende Fehler nicht erkannt werden. Um die Robustheit des Codes zu gewährleisten, ist es unerlässlich, sowohl positive Tests (die das erwartete Verhalten verifizieren) als auch negative Tests (die die Fehlerbehandlung prüfen) zu implementieren.
@@ -861,14 +831,20 @@ Der Schwerpunkt der Testaktivitäten lag auf der Applikations-Schicht, da diese 
 In der Domain-Schicht wurden primär die Value Objects durch Tests validiert. Die übrigen Klassen in dieser Schicht bestehen hauptsächlich aus Entitäten mit einfachen Getter- und Setter-Methoden, die kein zusätzliches Testen erfodern. 
 In der Adapter-Schicht wurde der Console-Adapter gezielt getestet, um dessen Funktionalität sicherzustellen.
 
-![](/testCoverage.png)
- 
-### Fakes und Mocks
+**Domain-Schicht:**
+![](/assets/test_vo.png)
 
-#### Mock-Objekt: `CustomerRepository`
+**Applikations-Schicht:**
+![](/assets/test_application.png)
+
+**Adapter-Schicht:**
+![](/assets/test_adapter.png)
+ 
+## 5.4 Fakes und Mocks
+
+### 5.4.1 Mock-Objekt: `CustomerRepository`
 In den Tests wird das `CustomerRepository` gemockt. Dies geschieht in mehreren Test Klassen, um die Geschäftslogik isoliert von der Implementierung des `CustomerRepository`zu trennen. 
 
-**UML:**
 
 ```mermaid
 
@@ -883,7 +859,6 @@ classDiagram
 ``` 
  
 **Code-Beispiel:**
-
 ```java
 @ExtendWith(MockitoExtension.class)
 class PolicyManagementImplTest {
@@ -911,16 +886,15 @@ class PolicyManagementImplTest {
 }
 ```
 **Beschreibung:**
-
 Das Mock-Objekt *customerRepository* simuliert das Verhalten des `CustomerRepository`-Interfaces. Es wird verwendet, um die Abhängigkeit von der realen Implementierung zu isolieren und die Geschäftslogik von `PolicyManagementImpl` unabhängig zu testen. In diesem Test wird das Verhalten der `findById()`-Methode simuliert, sodass ein Senior-Customer zurückgegeben wird, ohne dass eine tatsächliche Datenbankabfrage durch den echten CustomerRepository stattfindet.
 
-#### Mock-Objekt: `WriteCustomerManagement`
+### 5.4.2 Mock-Objekt: `WriteCustomerManagement`
 In den Tests des Adapters werden sämtliche Usecases gemockt. Dazu gehört das `WriteCustomerManagement`, aber auch `ReadCustomerManagement`, `PolicyManagement` und `TicketManagement`. Dies geschieht in der Testklasse `ConsoleAdapterTest`, um die Funktionsweise des Adapters unabhängig von der eigentlichen Geschäftlogik testen zu können. In den Tests des `ConsoleAdapter` werden außerdem die Methoden, die Nutzereingaben verlangen, gemockt, um automatisierte Tests zu ermöglichen, bei denen nicht manuell eine Eingabe erfolgen muss.
 
-**UML:**
 
 ```mermaid
 classDiagram
+direction LR
     class ReadCustomerManagement {
       +getCustomer(int id) Customer
       +getAllCustomers() List~Customer~
@@ -955,7 +929,6 @@ classDiagram
 ``` 
 
 **Code-Beispiel:**
-
 ```java
 @ExtendWith(MockitoExtension.class)
 class ConsoleAdapterTest {
@@ -1008,13 +981,13 @@ class ConsoleAdapterTest {
 ```
 
 **Beschreibung:**
-
 Das Mock-Objekt *writeCustomerManagement* simuliert das Verhalten des `WriteCustomerManagement`-Interfaces. Es wird verwendet, um die Abhängigkeit von der realen Implementierung zu isolieren und die Adapter-Logik des `ConsoleAdapter` unabhängig von der Implementierung der Use-Cases zu testen. In den Tests wird das Verhalten der Methoden wie `createCustomer()`, `updateCustomer()`, etc. simuliert, ohne dass die tatsächliche Implementierung der Usecases (Business Logic) aufgerufen wird.
 
 
 # 6. Domain-Driven-Design (DDD)
-## Ubiquitous Language
-### Entities
+## 6.1 Ubiquitous Language
+Bei den Unterabschnitten *6.1.1* und *6.1.2* handelt es sich um Vorarbeiten, die zu der **Ubiquitous Language** in *6.1.3* geführt haben.
+### 6.1.1 Entities
 - Customer
 	- natürliche Person, die Kunde bei der von der Anwendung verwalteten Autoversicherung ist
 	- Vor- und Nachname, PersonId, Geburtsdatum (vielleicht als VO), Mail, Adresse
@@ -1039,7 +1012,7 @@ Das Mock-Objekt *writeCustomerManagement* simuliert das Verhalten des `WriteCust
 	- Id, Datum, Geschwindigkeitsüberschreitung
 
 
-### Nutzer
+### 6.1.2 Nutzer
 - Mitarbeiter der Versicherungsfirma
 	- Kundenverwaltung
 		- neuen Kunden im System anlegen
@@ -1054,6 +1027,7 @@ Das Mock-Objekt *writeCustomerManagement* simuliert das Verhalten des `WriteCust
 		- Änderungen an allen Policys des Kunden sollen ersichtlich werden
 			- bis zu einer bestimmten Menge an Tickets oder ab einer bestimmten Geschwindigkeitsüberschreitung wird es teurer, die Policies können aber auch gekündigt werden
 
+### 6.1.3 Tabelle
 
 | Bezeichnung | Bedeutung                                                                               | Begründung                                                                                                                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1061,7 +1035,7 @@ Das Mock-Objekt *writeCustomerManagement* simuliert das Verhalten des `WriteCust
 | Ticket      | Verkehrsverstöße von Kunden für zu schnelles Fahren                                     | Bei einer einer Autoversicherung sind für die Kostenberechnung einer Policy Geschwindigkeitsüberschreitungen releveant, da dadurch das Risiko eines Schadens erhöht wird. Andere Arten von Verkehrsvergehen, wie falsches Parken, werden dabei nicht berücksichtigt. |
 | Customer    | natürliche Person, die Kunde bei der von der Anwendung verwalteten Autoversicherung ist | Kunden schließen einen Vertrag bei der Autoversicherung ab. Die Nutzer der Anwendung sind Mitarbeiter der Autoversicherung und tragen die Daten für die jeweiligen Kunden in das System ein.                                                                         |
 | Premium     | die monatlichen Kosten einer Policy, um diese aktiv zu halten                           | Im Rahmen einer Versicherung wird Premium als der monatlich zu entrichtende Betrag definiert                                                                                                                                
-## Entities - Policy Entity
+## 6.2 Entities - Policy Entity
 
 ```mermaid
 classDiagram
@@ -1097,9 +1071,8 @@ Policy wird als Entity modelliert, weil:
 3. Sie sich im Laufe der Zeit ändern kann (z. B. Änderung der Kosten), behält aber ihre Identität.  
 4. Sie eine zentrale Rolle im Modell spielt und mit anderen Entitäten (wie Customer) in Beziehung steht.  
 
----
 
-## Value Objects - Premium Value Object
+## 6.3 Value Objects - Premium Value Object
 
 ```mermaid
 classDiagram
@@ -1123,9 +1096,7 @@ Premium wird als Value Object modelliert, weil:
 3. Es Verhaltenslogik enthält (z. B. Addition, Subtraktion), die für alle Premium-Objekte gleich ist.  
 4. Es ein konzeptionell zusammengehöriges Paar von Werten (Betrag und Währung) repräsentiert.  
 
----
-
-## Aggregates - Customer Aggregate
+## 6.4 Aggregates - Customer Aggregate
 
 ```mermaid
 classDiagram
@@ -1177,11 +1148,8 @@ Ein Aggregat wird hier eingesetzt, weil:
 2. Es die Konsistenz der Daten sicherstellt. Änderungen an Policies, Accidents oder Tickets müssen immer im Kontext des zugehörigen Kunden erfolgen.  
 3. Es die Komplexität reduziert, indem es einen einzelnen Zugriffspunkt (Customer als Aggregate Root) für zusammengehörige Daten bietet.  
 
----
 
-## Repositories
-
-### Customer Repository
+## 6.5 Repositories - Customer Repository
 
 ```mermaid
 classDiagram
@@ -1208,8 +1176,8 @@ Ein Repository für Customer wird eingesetzt, weil:
 4. Es unterstützt das Prinzip der Aggregate Root in DDD, da Customer ein Aggregate Root ist.  
 
 # 7. Refactoring
-## Code Smells
-### Long Method
+## 7.1 Code Smells
+### 7.1.1 Long Method
 
 **Code-Beispiel:**
 Die Methode `addPolicyToCustomer` in `PolicyManagementImpl` ist zu lang und enthält zu viele Verantwortlichkeiten.
@@ -1268,7 +1236,7 @@ private void addPolicyAndSaveCustomer(Customer customer, Policy policy) {
 }
 ```
 
-### Duplicated Code
+### 7.1.2 Duplicated Code
 
 **Code-Beispiel:**
 In der `PolicyManagementImpl` und `TicketManagementImpl` gibt es ähnliche Logik für das Abrufen und Überprüfen von Kunden.
@@ -1306,9 +1274,9 @@ public class CustomerHelper {
 }
 ```
 
-## Refactorings
+## 7.2 Refactorings
 
-### Refactoring: Replace Conditional with Polymorphism
+### 7.2.1 Replace Conditional with Polymorphism
 
 **Begründung:**
 Das Refactoring "Replace Conditional with Polymorphism" wird angewendet, um die Wartbarkeit und Erweiterbarkeit des Codes zu verbessern. Anstatt eine lange `switch`-Anweisung zu verwenden, um die Premium-Berechnung basierend auf dem `PolicyProgram` zu bestimmen, wird das Strategy-Pattern verwendet. Dies ermöglicht es, neue Berechnungsstrategien hinzuzufügen, ohne den bestehenden Code zu ändern.
@@ -1367,7 +1335,7 @@ classDiagram
     PremiumCalculationStrategy <|.. DeluxePremiumCalculationStrategy
 ```
 
-### Refactoring: Extract Method
+### 7.2.2 Extract Method
 
 **Begründung:**
 Das Refactoring "Extract Method" wurde angewendet, um die Lesbarkeit und Wartbarkeit des Codes zu verbessern. Durch das Extrahieren der Menüauswahl-Logik in eine separate Methode `handleChoice` wird die `start`-Methode vereinfacht und die Verantwortlichkeiten klarer getrennt.
@@ -1455,11 +1423,11 @@ private boolean handleChoice(int choice) throws BaseDomainException {
 ```
 
 # 8. Design Patterns
-## Strategy Pattern
+## 8.1 Strategy Pattern
 **Begründung:**
 Das Strategy Pattern wird verwendet, um verschiedene Berechnungsstrategien für Premiums zu kapseln. Dies ermöglicht es, die Berechnungslogik für verschiedene Policy-Programme (BASIC, STANDARD, DELUXE) zu variieren, ohne den Code der PolicyManagementImpl-Klasse zu ändern.
 
-**UML:**
+
 ```mermaid
 classDiagram
     class PremiumCalculationStrategy {
@@ -1507,12 +1475,12 @@ classDiagram
     PolicyManagementImpl -->  PremiumCalculationStrategy
 ```
 
-## Builder Pattern
+## 8.2 Builder Pattern
 
 **Begründung:**
 Das Builder Pattern wird verwendet, um die Erstellung komplexer Customer-Objekte zu vereinfachen. Der CustomerDirector nutzt den Builder, um verschiedene Arten von Customer-Objekten zu erstellen, was die Lesbarkeit und Wartbarkeit des Codes verbessert.
 
-**UML:**
+
 ```mermaid
 classDiagram    
     class Customer {
@@ -1561,5 +1529,5 @@ classDiagram
     CustomerDirector --> Customer
     CustomerRepositoryImpl --> CustomerDirector
 ```
-
-git show 44667a8446d2a43913175c99e16068f6a90446eb
+---
+Größten Respekt, falls du hier angekommen bist ;)
