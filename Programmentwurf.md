@@ -717,10 +717,27 @@ Die Methoden der Klasse `Premium` nutzen die Attribute der Klasse intensiv, was 
 
 
 ## Don’t Repeat Yourself (DRY)
-**Commit Hash:**
+**Commit Hash:** 44667a8446d2a43913175c99e16068f6a90446eb
+
 **Code-Beispiel Vorher:**
+
+Dieses Beispiel wäre im Laufe der Entwicklung noch komplizierter geworden, da der Name und E-Mail durch eigene Value-Objects ersetzt wurden.
+```java
+String firstName = "Anna";
+String lastName = "Schmidt";
+LocalDate dateOfBirth = LocalDate.of(1987, 6, 15);
+String email = "anna.schmidt@example.com";
+Address address = new Address("Musterstraße 1", "12345", "Musterstadt");
+Customer customer = new Customer(0, firstName, lastName, dateOfBirth, email, address);
+```
+
 **Code-Beispiel Nachher:**
+```java
+Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser()
+```
+
 **Begründung und Auswirkung:**
+Durch die Verwendung des `TestCustomerDirector` zur Erstellung von `Customer`-Objekten wird duplizierte Logik vermieden und die Erstellung von `Customer`-Objekten zentralisiert. In sämtlichen Tests wurden vorher die Customer Objekte manuell angelegt, diese Erstellung mit Mitgabe der Parameter war in jedem Test zi finden. Durch das Zusammenfassen dieser Erstellung in `TestCustomerDirector.createMockuser` ist diese Erstellung von `Customer-Objekten` nur noch einmal zu finden. Dies erhöht die Wartbarkeit und Lesbarkeit des Codes, da Änderungen an der Erstellung von `Customer`-Objekten nur an einer Stelle vorgenommen werden müssen. Außerdem werden die Tests deutlich kürzer.
 
 # 5. Unit Tests
 ## 10 Unit Tests
@@ -1544,3 +1561,5 @@ classDiagram
     CustomerDirector --> Customer
     CustomerRepositoryImpl --> CustomerDirector
 ```
+
+git show 44667a8446d2a43913175c99e16068f6a90446eb
