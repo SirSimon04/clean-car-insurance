@@ -10,6 +10,7 @@ import de.sri.domain.exceptions.CustomerTooYoungException;
 import de.sri.domain.exceptions.InvalidEmailAddress;
 import de.sri.domain.exceptions.InvalidPremiumAmountException;
 import de.sri.domain.exceptions.PropertyNotNullException;
+import de.sri.domain.exceptions.BaseDomainException;
 import de.sri.domain.exceptions.CarTooExpensiveException;
 import de.sri.application.premiumcalculator.PremiumCalculationStrategyFactory;
 import de.sri.application.premiumcalculator.PremiumCalculationStrategy;
@@ -62,8 +63,7 @@ public class PolicyManagementImpl implements PolicyManagement {
     }
 
     @Override
-    public void removePolicyFromCustomer(int customerId, Policy policy)
-            throws CustomerNotFoundException, PropertyNotNullException, InvalidEmailAddress {
+    public void removePolicyFromCustomer(int customerId, Policy policy) throws BaseDomainException {
         Customer customer = getCustomer(customerId);
         customer.removePolicy(policy.getId());
         customerRepository.save(customer);

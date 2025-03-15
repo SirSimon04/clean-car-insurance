@@ -4,6 +4,7 @@ import de.sri.domain.entities.*;
 import de.sri.domain.repositories.CustomerRepository;
 import de.sri.domain.usecases.WriteCustomerManagement;
 import de.sri.domain.usecases.ReadCustomerManagement;
+import de.sri.domain.exceptions.BaseDomainException;
 import de.sri.domain.exceptions.CustomerNotFoundException;
 import de.sri.domain.exceptions.InvalidEmailAddress;
 import de.sri.domain.exceptions.PropertyNotNullException;
@@ -24,8 +25,7 @@ public class WriteCustomerManagementImpl implements WriteCustomerManagement {
     }
 
     @Override
-    public void updateCustomer(Customer customer)
-            throws CustomerNotFoundException, PropertyNotNullException, InvalidEmailAddress {
+    public void updateCustomer(Customer customer) throws BaseDomainException {
         if (!customerRepository.findById(customer.getId()).isPresent()) {
             throw new CustomerNotFoundException(customer.getId());
         }
@@ -38,8 +38,7 @@ public class WriteCustomerManagementImpl implements WriteCustomerManagement {
     }
 
     @Override
-    public void createAccidentForCustomer(int customerId, Accident accident)
-            throws CustomerNotFoundException, PropertyNotNullException, InvalidEmailAddress {
+    public void createAccidentForCustomer(int customerId, Accident accident) throws BaseDomainException {
         Customer customer = this.readCustomerManagement.getCustomer(customerId);
         customer.addAccident(accident);
         updateCustomer(customer);

@@ -12,20 +12,13 @@ import de.sri.domain.valueobjects.PersonName;
 import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.Accident;
 import de.sri.domain.entities.Ticket;
-import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.exceptions.CustomerNotFoundException;
 import de.sri.domain.directors.CustomerDirector;
-import de.sri.domain.directors.TestCustomerDirector;
-import de.sri.domain.exceptions.CarTooExpensiveException;
-import de.sri.domain.exceptions.CustomerTooYoungException;
-import de.sri.domain.exceptions.InvalidEmailAddress;
-import de.sri.domain.exceptions.InvalidPremiumAmountException;
-import de.sri.domain.exceptions.PropertyNotNullException;
+import de.sri.domain.exceptions.BaseDomainException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -59,12 +52,10 @@ class ConsoleAdapterTest {
     private ConsoleAdapter consoleAdapter;
 
     private ByteArrayOutputStream outputStream;
-    private PrintStream originalSystemOut;
 
     @BeforeEach
     void setUp() {
         outputStream = new ByteArrayOutputStream();
-        originalSystemOut = System.out;
         System.setOut(new PrintStream(outputStream));
     }
 
@@ -73,7 +64,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void createCustomer_success() throws PropertyNotNullException, InvalidEmailAddress {
+    void createCustomer_success() throws BaseDomainException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -101,7 +92,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void getCustomer_success() throws CustomerNotFoundException, PropertyNotNullException, InvalidEmailAddress {
+    void getCustomer_success() throws BaseDomainException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(2).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -122,7 +113,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void listAllCustomers_success() throws PropertyNotNullException, InvalidEmailAddress {
+    void listAllCustomers_success() throws BaseDomainException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(3).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -151,7 +142,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void updateCustomer_success() throws CustomerNotFoundException, PropertyNotNullException, InvalidEmailAddress {
+    void updateCustomer_success() throws BaseDomainException {
         consoleAdapter = Mockito.spy(consoleAdapter);
         doReturn(4).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
         doReturn("Jane").when(consoleAdapter).getStringInputWithDefault(eq("Enter new first name"), eq("John"));
@@ -199,8 +190,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void addPolicyToCustomer_success() throws CustomerNotFoundException, CarTooExpensiveException,
-            CustomerTooYoungException, InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
+    void addPolicyToCustomer_success() throws BaseDomainException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(6).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -217,8 +207,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void createAccidentForCustomer_success()
-            throws CustomerNotFoundException, PropertyNotNullException, InvalidEmailAddress {
+    void createAccidentForCustomer_success() throws BaseDomainException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(7).doReturn(1).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -233,8 +222,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void createTicketForCustomer_success() throws CustomerNotFoundException, InvalidPremiumAmountException,
-            PropertyNotNullException, InvalidEmailAddress {
+    void createTicketForCustomer_success() throws BaseDomainException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(8).doReturn(1).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -249,7 +237,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void getCustomersByPolicyStatus_success() throws PropertyNotNullException, InvalidEmailAddress {
+    void getCustomersByPolicyStatus_success() throws BaseDomainException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(9).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -279,7 +267,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void getCustomersByAccidentCostGreaterThan_success() throws PropertyNotNullException, InvalidEmailAddress {
+    void getCustomersByAccidentCostGreaterThan_success() throws BaseDomainException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(10).doReturn(12).when(consoleAdapter).getIntInput(anyString());
@@ -309,7 +297,7 @@ class ConsoleAdapterTest {
     }
 
     @Test
-    void getCustomersByTicketSpeedExcessGreaterThan_success() throws PropertyNotNullException, InvalidEmailAddress {
+    void getCustomersByTicketSpeedExcessGreaterThan_success() throws BaseDomainException {
         consoleAdapter = Mockito.spy(consoleAdapter);
 
         doReturn(11).doReturn(12).when(consoleAdapter).getIntInput(anyString());

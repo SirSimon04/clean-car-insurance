@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import de.sri.application.repositories.CustomerRepositoryImpl;
 import de.sri.application.usecases.AccidentManagementImpl;
 import de.sri.application.usecases.PolicyManagementImpl;
 import de.sri.domain.entities.Accident;
@@ -21,13 +20,7 @@ import de.sri.domain.entities.Policy;
 import de.sri.domain.entities.PolicyProgram;
 import de.sri.domain.entities.PolicyStatus;
 import de.sri.domain.repositories.CustomerRepository;
-import de.sri.domain.exceptions.CustomerNotFoundException;
-import de.sri.domain.exceptions.CustomerTooYoungException;
-import de.sri.domain.exceptions.InvalidEmailAddress;
-import de.sri.domain.exceptions.InvalidPremiumAmountException;
-import de.sri.domain.exceptions.CarTooExpensiveException;
-import de.sri.domain.exceptions.PolicyNotFoundException;
-import de.sri.domain.exceptions.PropertyNotNullException;
+import de.sri.domain.exceptions.BaseDomainException;
 import de.sri.domain.directors.TestCustomerDirector;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,9 +35,7 @@ public class AccidentManagementImplTest {
     private PolicyManagementImpl policyManagementImpl;
 
     @Test
-    void create_accident_for_customer()
-            throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException,
-            PolicyNotFoundException, PropertyNotNullException, InvalidPremiumAmountException, InvalidEmailAddress {
+    void create_accident_for_customer() throws BaseDomainException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -59,9 +50,7 @@ public class AccidentManagementImplTest {
     }
 
     @Test
-    void increase_policy_premium_per_accident()
-            throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException,
-            PolicyNotFoundException, PropertyNotNullException, InvalidPremiumAmountException, InvalidEmailAddress {
+    void increase_policy_premium_per_accident() throws BaseDomainException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -78,9 +67,7 @@ public class AccidentManagementImplTest {
     }
 
     @Test
-    void decline_policy_when_accidents_amount_reaches_3()
-            throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException,
-            PolicyNotFoundException, PropertyNotNullException, InvalidPremiumAmountException, InvalidEmailAddress {
+    void decline_policy_when_accidents_amount_reaches_3() throws BaseDomainException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -96,9 +83,7 @@ public class AccidentManagementImplTest {
     }
 
     @Test
-    void not_decline_policy_when_accident_cost_is_under_60000()
-            throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException,
-            PolicyNotFoundException, InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
+    void not_decline_policy_when_accident_cost_is_under_60000() throws BaseDomainException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -112,9 +97,7 @@ public class AccidentManagementImplTest {
     }
 
     @Test
-    void decline_policy_when_accident_cost_is_over_60000()
-            throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException,
-            PolicyNotFoundException, InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
+    void decline_policy_when_accident_cost_is_over_60000() throws BaseDomainException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
@@ -128,9 +111,7 @@ public class AccidentManagementImplTest {
     }
 
     @Test
-    void decline_policy_when_accident_cost_is_over_car_value()
-            throws CustomerNotFoundException, CustomerTooYoungException, CarTooExpensiveException,
-            PolicyNotFoundException, InvalidPremiumAmountException, PropertyNotNullException, InvalidEmailAddress {
+    void decline_policy_when_accident_cost_is_over_car_value() throws BaseDomainException {
         Customer customer = new TestCustomerDirector(new Customer.Builder()).createMockUser();
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
 
